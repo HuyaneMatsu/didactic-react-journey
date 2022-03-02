@@ -6,6 +6,7 @@ function $(element_id) {
 
 var create_element = React.createElement;
 
+
 /* Define globals */
 
 var ELEMENT_VARIABLE_CONTENT = $('content');
@@ -18,6 +19,7 @@ console.log(content);
 
 var CONTENT_STATE_NONE = 0;
 var CONTENT_STATE_CLICKED = 1;
+
 
 /* Classes */
 
@@ -33,12 +35,14 @@ class StatButtonState {
         if (state == CONTENT_STATE_NONE) {
             class_ = null;
 
-        } else if (state == CONTENT_STATE_CLICKED){
-                class_ = 'clicked';
+        } else if (state == CONTENT_STATE_CLICKED) {
+            class_ = 'clicked';
 
         } else {
             class_ = null;
         }
+
+        return class_
     }
 
     get_variable_content() {
@@ -87,7 +91,7 @@ class StatButton extends React.Component {
 
         var class_ = this.state.get_class();
         if (class_ !== null) {
-            element_attributes['class'] = class_;
+            element_attributes['className'] = class_;
         }
 
         var variable_content = this.state.get_variable_content();
@@ -103,6 +107,8 @@ class StatButton extends React.Component {
     }
 }
 
+
+/* Init */
 
 var BUTTON_STATS = create_element(StatButton);
 
