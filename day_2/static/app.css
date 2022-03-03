@@ -36,6 +36,11 @@ body {
     word-wrap: break-word;
     border-radius: 0.375rem;
     background-color: rgb(173 132 132);
+    margin-right: 1.5rem;
+}
+
+.buttons a:last-child {
+    margin-right: 0rem;
 }
 
 .buttons a.clicked {

@@ -12,7 +12,7 @@ APP = Flask(
     static_folder =join_paths(BASE_PATH, 'static'),
 )
 
-DAY = 1
+DAY = 2
 
 @APP.route('/')
 def index():
@@ -27,7 +27,9 @@ def stats():
     return jsonify(
         {
             'name': 'some name',
-            'created_at': '2017.04.13-14:56:54',
+            'created_at': '2011-10-10T14:48:00',
+            'id': '155652112212323123',
+            'avatar_url': '/static/aliens.png',
         }
     )
 
