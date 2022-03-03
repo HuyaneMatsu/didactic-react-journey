@@ -53,3 +53,9 @@ body {
     padding-top: 1.5rem;
     width: calc(100% - 3rem);
 }
+
+.content .right_300 img {
+    width: 300px;
+    height: 300px;
+    border-radius: 150px;
+}

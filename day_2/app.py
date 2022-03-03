@@ -26,10 +26,10 @@ def index():
 def stats():
     return jsonify(
         {
-            'name': 'some name',
+            'name': 'Alien watermelon',
             'created_at': '2011-10-10T14:48:00',
             'id': '155652112212323123',
-            'avatar_url': '/static/aliens.png',
+            'avatar_url': '/static/default_avatar.png',
         }
     )
 

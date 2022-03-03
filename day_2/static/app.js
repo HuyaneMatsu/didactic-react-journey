@@ -78,9 +78,25 @@ class StatButtonState {
     render() {
         var data = this.data;
         return create_element(
-            'h1',
+            Fragment,
             null,
-            data['name'],
+            create_element(
+                'div',
+                set_class(null, 'left_300'),
+                create_element(
+                    'h1',
+                    null,
+                    data['name'],
+                ),
+            ),
+            create_element(
+                'div',
+                set_class(null, 'right_300'),
+                create_element(
+                    'img',
+                    {'src': data['avatar_url']},
+                ),
+            ),
         );
     }
 }
