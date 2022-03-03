@@ -48,11 +48,27 @@ body {
 }
 
 .content {
+    display: flex;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 1.5rem;
     width: calc(100% - 3rem);
 }
+
+.content .right_300, .content .left_300 {
+    position: relative;
+}
+
+.content .right_300 {
+    width: 300px;
+}
+
+.content .left_300 {
+    width: calc(100% - 300px)
+}
+
+
+
 
 .content .right_300 img {
     width: 300px;
