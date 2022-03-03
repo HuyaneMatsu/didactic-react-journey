@@ -25,6 +25,37 @@ var Fragment = React.Fragment;
 
 var API_BASE_URL = document.location.origin + '/api'
 
+/* Utility functions */
+
+function to_string(value) {
+    return value.toString();
+}
+
+function left_fill(string, fill_till, fill_with) {
+    return string.padStart(fill_till, fill_with)
+}
+
+
+function format_timestamp(timestamp) {
+    return format_date(new Date(timestamp));
+}
+
+function format_date(date) {
+    return [
+        left_fill(to_string(date.getUTCFullYear()), 4, '0'),
+        '-',
+        left_fill(to_string(date.getUTCMonth() + 1), 2, '0'),
+        '-',
+        left_fill(to_string(date.getUTCDate()), 2, '0'),
+        ' ',
+        left_fill(to_string(date.getUTCHours()), 2, '0'),
+        ':',
+        left_fill(to_string(date.getUTCMinutes()), 2, '0'),
+        ':',
+        left_fill(to_string(date.getUTCSeconds()), 2, '0'),
+    ].join('')
+}
+
 /* Classes */
 
 class StatButtonState {
@@ -87,6 +118,18 @@ class StatButtonState {
                     'h1',
                     null,
                     data['name'],
+                ),
+                create_element(
+                    'p',
+                    null,
+                    'id: ',
+                    data['id'],
+                ),
+                create_element(
+                    'p',
+                    null,
+                    'Created at: ',
+                    format_timestamp(data['created_at']),
                 ),
             ),
             create_element(

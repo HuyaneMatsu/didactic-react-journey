@@ -68,7 +68,9 @@ body {
 }
 
 
-
+.h1 {
+    font-size: 3rem;
+}
 
 .content .right_300 img {
     width: 300px;
