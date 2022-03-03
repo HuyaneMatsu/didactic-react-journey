@@ -34,4 +34,14 @@ def stats():
     )
 
 
+@APP.route('/api/credit')
+def credit():
+    return jsonify(
+        {
+            'credit': 55566556,
+            'streak': 222,
+        }
+    )
+
+
 APP.run()

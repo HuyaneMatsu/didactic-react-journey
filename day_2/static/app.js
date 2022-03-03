@@ -5,6 +5,17 @@ function $(element_id) {
 }
 
 function set_class(dictionary, class_name) {
+    if (dictionary === undefined) {
+        throw 'Parameter `dictionary` cannot be `undefined`';
+    }
+
+    if (class_name === undefined) {
+        throw 'Parameter `class_name` cannot be `undefined`';
+    }
+
+    if (class_name === null) {
+        return dictionary;
+    }
     if (dictionary === null) {
         dictionary = {};
     }
@@ -12,9 +23,6 @@ function set_class(dictionary, class_name) {
     return dictionary;
 }
 
-function with_parent(parent) {
-    return {'parent': parent};
-}
 
 var create_element = React.createElement;
 var Component = React.Component;
@@ -32,7 +40,7 @@ function to_string(value) {
 }
 
 function left_fill(string, fill_till, fill_with) {
-    return string.padStart(fill_till, fill_with)
+    return string.padStart(fill_till, fill_with);
 }
 
 
@@ -58,8 +66,45 @@ function format_date(date) {
 
 /* Classes */
 
-class StatButtonState {
-    constructor() {
+function render_stats(data) {
+    return create_element(
+        Fragment,
+        null,
+        create_element(
+            'div',
+            set_class(null, 'left_300'),
+            create_element(
+                'h1',
+                null,
+                data['name'],
+            ),
+            create_element(
+                'p',
+                null,
+                'id: ',
+                data['id'],
+            ),
+            create_element(
+                'p',
+                null,
+                'Created at: ',
+                format_timestamp(data['created_at']),
+            ),
+        ),
+        create_element(
+            'div',
+            set_class(null, 'right_300'),
+            create_element(
+                'img',
+                {'src': data['avatar_url']},
+            ),
+        ),
+    );
+}
+
+class ContentChangerButtonState {
+    constructor(renderer) {
+        this.renderer = renderer;
         this.clicked = false;
         this.loaded = false;
         this.data = null;
@@ -107,53 +152,22 @@ class StatButtonState {
     }
 
     render() {
-        var data = this.data;
-        return create_element(
-            Fragment,
-            null,
-            create_element(
-                'div',
-                set_class(null, 'left_300'),
-                create_element(
-                    'h1',
-                    null,
-                    data['name'],
-                ),
-                create_element(
-                    'p',
-                    null,
-                    'id: ',
-                    data['id'],
-                ),
-                create_element(
-                    'p',
-                    null,
-                    'Created at: ',
-                    format_timestamp(data['created_at']),
-                ),
-            ),
-            create_element(
-                'div',
-                set_class(null, 'right_300'),
-                create_element(
-                    'img',
-                    {'src': data['avatar_url']},
-                ),
-            ),
-        );
+        return this.renderer(this.data);
     }
+
 }
 
 
-class StatButton extends Component {
+class VariableContentButton extends Component {
     constructor(props) {
         super(props);
         this.bind_to_parent()
-        this.state = new StatButtonState();
+        console.log(this.data_renderer);
+        this.state = new ContentChangerButtonState(this.get_data_renderer());
     }
 
     bind_to_parent() {
-        this.props.parent.state.stat_button = this;
+        APP.state.stat_button = this;
     }
 
     update() {
@@ -167,7 +181,7 @@ class StatButton extends Component {
         }
 
         if (! state.loaded) {
-            fetch(API_BASE_URL + '/stats').then(data => this.update_from_payload(data));
+            fetch(API_BASE_URL + this.get_endpoint()).then(this.update_from_payload.bind(this));
         }
 
         state.do_click();
@@ -187,19 +201,31 @@ class StatButton extends Component {
 
     render() {
         var element_attributes = {
-            onClick: () => this.handle_click(),
-        }
+            onClick: this.handle_click.bind(this),
+        };
 
-        var class_ = this.state.get_class();
-        if (class_ !== null) {
-            element_attributes['className'] = class_;
-        }
+        var state = this.state;
+
+        set_class(element_attributes, state.get_class());
 
         return create_element(
             'a',
             element_attributes,
-            'click',
+            this.get_title(),
         );
+    }
+}
+
+
+class VariableContentButtonStats extends VariableContentButton {
+    get_title() {
+        return 'Stats';
+    }
+    get_endpoint() {
+        return '/stats';
+    }
+    get_data_renderer() {
+        return render_stats;
     }
 }
 
@@ -219,7 +245,7 @@ class VariableContent extends Component {
     }
 
     bind_to_parent() {
-        this.props.parent.state.content = this;
+        APP.state.content = this;
     }
 
     update() {
@@ -265,12 +291,12 @@ class App extends Component {
             create_element(
                 'div',
                 set_class(null, 'buttons'),
-                create_element(StatButton, with_parent(this)),
+                create_element(VariableContentButtonStats),
             ),
             create_element(
                 Fragment,
                 null,
-                create_element(VariableContent, with_parent(this)),
+                create_element(VariableContent),
             ),
         );
     }
