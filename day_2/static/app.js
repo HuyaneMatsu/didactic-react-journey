@@ -167,7 +167,7 @@ class VariableContentButton extends Component {
     }
 
     bind_to_parent() {
-        APP.state.stat_button = this;
+        APP.register_variable_field_button(this);
     }
 
     update() {
@@ -195,7 +195,7 @@ class VariableContentButton extends Component {
 
         var variable_content = this.state.get_variable_content();
         if (variable_content !== null) {
-            APP.state.content.set_content(variable_content);
+            APP.content.set_content(variable_content);
         }
     }
 
@@ -245,7 +245,7 @@ class VariableContent extends Component {
     }
 
     bind_to_parent() {
-        APP.state.content = this;
+        APP.content = this;
     }
 
     update() {
@@ -267,19 +267,16 @@ class VariableContent extends Component {
 
 }
 
-
-class AppState {
-    constructor() {
-        this.stat_button = null;
-        this.content = null;
-    }
-}
-
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = new AppState();
+        this.variable_field_buttons = new Set()
+        this.content = null;
         APP = this;
+    }
+
+    register_variable_field_button(component) {
+        this.variable_field_buttons.add(component);
     }
 
     render() {
