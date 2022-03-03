@@ -4,15 +4,24 @@ function $(element_id) {
     return document.getElementById(element_id);
 }
 
+function set_class(dictionary, class_name) {
+    if (dictionary === null) {
+        dictionary = {};
+    }
+    dictionary['className'] = class_name;
+    return dictionary;
+}
+
+function with_parent(parent) {
+    return {'parent': parent};
+}
+
 var create_element = React.createElement;
+var Component = React.Component;
+var Fragment = React.Fragment;
+
 
 /* Define globals */
-
-var ELEMENT_VARIABLE_CONTENT = $('content');
-
-function set_variable_content(content) {
-    ELEMENT_VARIABLE_CONTENT.innerHTML = content;
-}
 
 var API_BASE_URL = document.location.origin + '/api'
 
@@ -67,22 +76,25 @@ class StatButtonState {
     }
 
     render() {
-        var element_parts = [];
         var data = this.data;
-
-        element_parts.push('<h1>');
-        element_parts.push(data['name']);
-        element_parts.push('</h1>');
-
-        return element_parts.join('');
+        return create_element(
+            'h1',
+            null,
+            data['name'],
+        );
     }
 }
 
 
-class StatButton extends React.Component {
+class StatButton extends Component {
     constructor(props) {
         super(props);
+        this.bind_to_parent()
         this.state = new StatButtonState();
+    }
+
+    bind_to_parent() {
+        this.props.parent.state.stat_button = this;
     }
 
     update() {
@@ -107,6 +119,11 @@ class StatButton extends React.Component {
         var data = await request.json();
         this.state.set_data(data);
         this.update();
+
+        var variable_content = this.state.get_variable_content();
+        if (variable_content !== null) {
+            APP.state.content.set_content(variable_content);
+        }
     }
 
     render() {
@@ -119,12 +136,6 @@ class StatButton extends React.Component {
             element_attributes['className'] = class_;
         }
 
-
-        var variable_content = this.state.get_variable_content();
-        if (variable_content !== null) {
-            set_variable_content(variable_content);
-        }
-
         return create_element(
             'a',
             element_attributes,
@@ -134,11 +145,84 @@ class StatButton extends React.Component {
 }
 
 
+class VariableContentState {
+    constructor() {
+        this.value = 'Variable content goes here';
+    }
+}
+
+
+class VariableContent extends Component {
+    constructor(props) {
+        super(props);
+        this.bind_to_parent()
+        this.state = new VariableContentState();
+    }
+
+    bind_to_parent() {
+        this.props.parent.state.content = this;
+    }
+
+    update() {
+        this.forceUpdate();
+    }
+
+    set_content(content) {
+        this.state.value = content;
+        this.update();
+    }
+
+    render() {
+        return create_element(
+            'div',
+            set_class(null, 'content'),
+            this.state.value,
+        )
+    }
+
+}
+
+
+class AppState {
+    constructor() {
+        this.stat_button = null;
+        this.content = null;
+    }
+}
+
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = new AppState();
+        APP = this;
+    }
+
+    render() {
+        var state = this.state;
+
+        return create_element(
+            Fragment,
+            null,
+            create_element(
+                'div',
+                set_class(null, 'buttons'),
+                create_element(StatButton, with_parent(this)),
+            ),
+            create_element(
+                Fragment,
+                null,
+                create_element(VariableContent, with_parent(this)),
+            ),
+        );
+    }
+}
+
 /* Init */
 
-var BUTTON_STATS = create_element(StatButton);
+var APP;
+
 
 ReactDOM.render(
-    BUTTON_STATS,
-    $('stats'),
+    create_element(App),
+    $('app'),
 );
