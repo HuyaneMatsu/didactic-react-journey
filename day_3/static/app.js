@@ -96,10 +96,11 @@ function render_stats(data) {
     );
 }
 
-async function update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request) {
+async function update_from_payload(set_is_loaded, set_is_loading, set_data, renderer, set_variable_content, request) {
     var data = await request.json();
     set_data(data);
     set_is_loaded(true);
+    set_is_loading(false);
     set_variable_content(renderer(data));
 }
 
@@ -107,6 +108,7 @@ function handle_first_click(
     set_clicked_button,
     button_name,
     set_is_loaded,
+    set_is_loading,
     data,
     set_data,
     endpoint,
@@ -114,22 +116,33 @@ function handle_first_click(
     set_variable_content,
 ) {
     set_clicked_button(button_name);
+    set_is_loading(true);
     fetch(
         API_BASE_URL + endpoint
     ).then(
-        (request) => update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request)
+        (request) => update_from_payload(
+            set_is_loaded,
+            set_is_loading,
+            set_data,
+            renderer,
+            set_variable_content,
+            request,
+        )
     );
 }
 
 function handle_other_clicks(
     set_clicked_button,
     button_name,
+    is_loading,
     data,
     renderer,
     set_variable_content,
 ) {
     set_clicked_button(button_name);
-    set_variable_content(renderer(data));
+    if (! is_loading) {
+        set_variable_content(renderer(data));
+    }
 }
 
 
@@ -139,6 +152,8 @@ function render_variable_content_changer_button(
     button_name,
     is_loaded,
     set_is_loaded,
+    is_loading,
+    set_is_loading,
     data,
     set_data,
     endpoint,
@@ -146,10 +161,11 @@ function render_variable_content_changer_button(
     set_variable_content,
 ) {
     var callback
-    if (is_loaded) {
+    if (is_loaded || is_loading) {
         callback = () => handle_other_clicks(
             set_clicked_button,
             button_name,
+            is_loading,
             data,
             renderer,
             set_variable_content,
@@ -159,6 +175,7 @@ function render_variable_content_changer_button(
             set_clicked_button,
             button_name,
             set_is_loaded,
+            set_is_loading,
             data,
             set_data,
             endpoint,
@@ -184,6 +201,7 @@ function render_variable_content_changer_button(
 
 function StatButton({clicked_button, set_clicked_button, set_variable_content}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
+    var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
 
     return render_variable_content_changer_button(
@@ -192,6 +210,8 @@ function StatButton({clicked_button, set_clicked_button, set_variable_content}) 
         'stats',
         is_loaded,
         set_is_loaded,
+        is_loading,
+        set_is_loading,
         data,
         set_data,
         '/stats',
