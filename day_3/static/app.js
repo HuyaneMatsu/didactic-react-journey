@@ -22,6 +22,7 @@ var create_element = React.createElement;
 var Component = React.Component;
 var Fragment = React.Fragment;
 var state_hook = React.useState;
+var reference_hook = React.useRef;
 
 /* Define globals */
 
@@ -124,16 +125,29 @@ function render_loader() {
     );
 }
 
-async function update_from_payload(set_is_loaded, set_is_loading, set_data, renderer, set_variable_content, request) {
+async function update_from_payload(
+    clicked_reference,
+    button_name,
+    set_is_loaded,
+    set_is_loading,
+    set_data,
+    renderer,
+    set_variable_content,
+    request,
+) {
     var data = await request.json();
     set_data(data);
     set_is_loaded(true);
     set_is_loading(false);
-    set_variable_content(renderer(data));
+
+    if (clicked_reference.current == button_name) {
+        set_variable_content(renderer(data));
+    }
 }
 
 function handle_first_click(
     set_clicked_button,
+    clicked_reference,
     button_name,
     set_is_loaded,
     set_is_loading,
@@ -146,11 +160,14 @@ function handle_first_click(
     set_clicked_button(button_name);
     set_is_loading(true);
     set_variable_content(render_loader());
+    clicked_reference.current = button_name;
 
     fetch(
         API_BASE_URL + endpoint
     ).then(
         (request) => update_from_payload(
+            clicked_reference,
+            button_name,
             set_is_loaded,
             set_is_loading,
             set_data,
@@ -163,6 +180,7 @@ function handle_first_click(
 
 function handle_other_clicks(
     set_clicked_button,
+    clicked_reference,
     button_name,
     is_loading,
     data,
@@ -170,6 +188,8 @@ function handle_other_clicks(
     set_variable_content,
 ) {
     set_clicked_button(button_name);
+    clicked_reference.current = button_name;
+
     if (! is_loading) {
         set_variable_content(renderer(data));
     }
@@ -179,6 +199,7 @@ function handle_other_clicks(
 function render_variable_content_changer_button(
     clicked_button,
     set_clicked_button,
+    clicked_reference,
     button_name,
     button_display_value,
     is_loaded,
@@ -195,6 +216,7 @@ function render_variable_content_changer_button(
     if (is_loaded || is_loading) {
         callback = () => handle_other_clicks(
             set_clicked_button,
+            clicked_reference,
             button_name,
             is_loading,
             data,
@@ -204,6 +226,7 @@ function render_variable_content_changer_button(
     } else {
         callback = () => handle_first_click(
             set_clicked_button,
+            clicked_reference,
             button_name,
             set_is_loaded,
             set_is_loading,
@@ -230,7 +253,7 @@ function render_variable_content_changer_button(
     );
 }
 
-function ProfileButton({clicked_button, set_clicked_button, set_variable_content}) {
+function ProfileButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
     var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
@@ -238,6 +261,7 @@ function ProfileButton({clicked_button, set_clicked_button, set_variable_content
     return render_variable_content_changer_button(
         clicked_button,
         set_clicked_button,
+        clicked_reference,
         'profile',
         'Profile',
         is_loaded,
@@ -252,7 +276,7 @@ function ProfileButton({clicked_button, set_clicked_button, set_variable_content
     )
 }
 
-function CreditsButton({clicked_button, set_clicked_button, set_variable_content}) {
+function CreditsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
     var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
@@ -260,6 +284,7 @@ function CreditsButton({clicked_button, set_clicked_button, set_variable_content
     return render_variable_content_changer_button(
         clicked_button,
         set_clicked_button,
+        clicked_reference,
         'credits',
         'Credits',
         is_loaded,
@@ -286,6 +311,7 @@ function VariableContent({variable_content}) {
 function App() {
     var [variable_content, set_variable_content] = state_hook('Variable content goes here')
     var [clicked_button, set_clicked_button] = state_hook(null);
+    var clicked_reference = reference_hook(null);
 
     return create_element(
         Fragment,
@@ -299,6 +325,7 @@ function App() {
                     'clicked_button': clicked_button,
                     'set_clicked_button': set_clicked_button,
                     'set_variable_content': set_variable_content,
+                    'clicked_reference': clicked_reference,
                 },
             ),
             create_element(
@@ -307,6 +334,7 @@ function App() {
                     'clicked_button': clicked_button,
                     'set_clicked_button': set_clicked_button,
                     'set_variable_content': set_variable_content,
+                    'clicked_reference': clicked_reference,
                 },
             ),
         ),
