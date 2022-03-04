@@ -119,7 +119,7 @@ body {
     height: 0;
 }
 
-.switch .span {
+.switch span {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -127,11 +127,11 @@ body {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: .2s;
     border-radius: 34px;
 }
 
-.switch .span:before {
+.switch span:before {
     position: absolute;
     content: "";
     height: 26px;
@@ -143,15 +143,15 @@ body {
     border-radius: 50%;
 }
 
-.switch input:checked + .slider {
+.switch input:checked + span {
     background-color: #2196F3;
 }
 
-.switch input:focus + .slider {
+.switch input:focus + span {
     box-shadow: 0 0 1px #2196F3;
 }
 
-.switch input:checked + .slider:before {
+.switch input:checked + span:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
