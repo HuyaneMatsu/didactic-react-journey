@@ -10,11 +10,11 @@ function set_class_name_to(class_name, into) {
     }
 
     if ((into === undefined) || (into === null)) {
-        dictionary = {};
+        into = {};
     }
 
-    dictionary['className'] = class_name;
-    return dictionary;
+    into['className'] = class_name;
+    return into;
 }
 
 
@@ -180,6 +180,7 @@ function render_variable_content_changer_button(
     clicked_button,
     set_clicked_button,
     button_name,
+    button_display_value,
     is_loaded,
     set_is_loaded,
     is_loading,
@@ -219,13 +220,13 @@ function render_variable_content_changer_button(
     }
 
     if (clicked_button == button_name) {
-        set_class_name_to('clicked', element_attributes)
+        set_class_name_to('clicked', element_attributes);
     }
 
     return create_element(
         'a',
         element_attributes,
-        'Stats',
+        button_display_value,
     );
 }
 
@@ -238,6 +239,7 @@ function StatsButton({clicked_button, set_clicked_button, set_variable_content})
         clicked_button,
         set_clicked_button,
         'stats',
+        'Stats',
         is_loaded,
         set_is_loaded,
         is_loading,
@@ -259,6 +261,7 @@ function CreditsButton({clicked_button, set_clicked_button, set_variable_content
         clicked_button,
         set_clicked_button,
         'credits',
+        'Credits',
         is_loaded,
         set_is_loaded,
         is_loading,
