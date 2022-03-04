@@ -60,7 +60,7 @@ function format_date(date) {
 
 /* Application */
 
-function render_stats(data) {
+function render_profile(data) {
     return create_element(
         'div',
         set_class_name_to('flex'),
@@ -230,7 +230,7 @@ function render_variable_content_changer_button(
     );
 }
 
-function StatsButton({clicked_button, set_clicked_button, set_variable_content}) {
+function ProfileButton({clicked_button, set_clicked_button, set_variable_content}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
     var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
@@ -238,16 +238,16 @@ function StatsButton({clicked_button, set_clicked_button, set_variable_content})
     return render_variable_content_changer_button(
         clicked_button,
         set_clicked_button,
-        'stats',
-        'Stats',
+        'profile',
+        'Profile',
         is_loaded,
         set_is_loaded,
         is_loading,
         set_is_loading,
         data,
         set_data,
-        '/stats',
-        render_stats,
+        '/profile',
+        render_profile,
         set_variable_content,
     )
 }
@@ -294,7 +294,7 @@ function App() {
             'div',
             set_class_name_to('buttons'),
             create_element(
-                StatsButton,
+                ProfileButton,
                 {
                     'clicked_button': clicked_button,
                     'set_clicked_button': set_clicked_button,

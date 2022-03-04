@@ -22,8 +22,8 @@ def index():
     )
 
 
-@APP.route('/api/stats')
-def stats():
+@APP.route('/api/profile')
+def profile():
     return jsonify(
         {
             'name': 'Alien watermelon',

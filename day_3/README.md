@@ -2,12 +2,13 @@
 
 ### backend
 - Index endpoint
-- Stats endpoint
+- Profile endpoint
 - Credit endpoint
 
 ### Frontend
 - Template
 - Base css
-- A button to load stats
+- Button to load profile
+- Button to load credits
 - Use functional components
 - Synchronize requests
