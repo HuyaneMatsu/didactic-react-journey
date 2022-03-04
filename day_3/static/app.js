@@ -313,6 +313,13 @@ function App() {
     var [clicked_button, set_clicked_button] = state_hook(null);
     var clicked_reference = reference_hook(null);
 
+    var button_properties = {
+        'clicked_button': clicked_button,
+        'set_clicked_button': set_clicked_button,
+        'set_variable_content': set_variable_content,
+        'clicked_reference': clicked_reference,
+    };
+
     return create_element(
         Fragment,
         null,
@@ -321,21 +328,11 @@ function App() {
             set_class_name_to('buttons'),
             create_element(
                 ProfileButton,
-                {
-                    'clicked_button': clicked_button,
-                    'set_clicked_button': set_clicked_button,
-                    'set_variable_content': set_variable_content,
-                    'clicked_reference': clicked_reference,
-                },
+                button_properties,
             ),
             create_element(
                 CreditsButton,
-                {
-                    'clicked_button': clicked_button,
-                    'set_clicked_button': set_clicked_button,
-                    'set_variable_content': set_variable_content,
-                    'clicked_reference': clicked_reference,
-                },
+                button_properties,
             ),
         ),
         create_element(
