@@ -4,21 +4,15 @@ function $(element_id) {
     return document.getElementById(element_id);
 }
 
-function set_class(dictionary, class_name) {
-    if (dictionary === undefined) {
-        throw 'Parameter `dictionary` cannot be `undefined`';
-    }
-
+function set_class_name_to(class_name, into) {
     if (class_name === undefined) {
         throw 'Parameter `class_name` cannot be `undefined`';
     }
 
-    if (class_name === null) {
-        return dictionary;
-    }
-    if (dictionary === null) {
+    if ((into === undefined) || (into === null)) {
         dictionary = {};
     }
+
     dictionary['className'] = class_name;
     return dictionary;
 }
@@ -72,7 +66,7 @@ function render_stats(data) {
         null,
         create_element(
             'div',
-            set_class(null, 'left_300'),
+            set_class_name_to('left_300'),
             create_element(
                 'h1',
                 null,
@@ -93,7 +87,7 @@ function render_stats(data) {
         ),
         create_element(
             'div',
-            set_class(null, 'right_300'),
+            set_class_name_to('right_300'),
             create_element(
                 'img',
                 {'src': data['avatar_url']},
@@ -206,7 +200,7 @@ class VariableContentButton extends Component {
 
         var state = this.state;
 
-        set_class(element_attributes, state.get_class());
+        set_class_name_to(state.get_class(), element_attributes);
 
         return create_element(
             'a',
@@ -260,7 +254,7 @@ class VariableContent extends Component {
     render() {
         return create_element(
             'div',
-            set_class(null, 'content'),
+            set_class_name_to('content'),
             this.state.value,
         )
     }
@@ -287,7 +281,7 @@ class App extends Component {
             null,
             create_element(
                 'div',
-                set_class(null, 'buttons'),
+                set_class_name_to('buttons'),
                 create_element(VariableContentButtonStats),
             ),
             create_element(
