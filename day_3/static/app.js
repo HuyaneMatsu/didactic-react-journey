@@ -96,6 +96,14 @@ function render_stats(data) {
     );
 }
 
+
+function render_loader() {
+    return create_element(
+        'div',
+        set_class_name_to('loader'),
+    );
+}
+
 async function update_from_payload(set_is_loaded, set_is_loading, set_data, renderer, set_variable_content, request) {
     var data = await request.json();
     set_data(data);
@@ -117,6 +125,8 @@ function handle_first_click(
 ) {
     set_clicked_button(button_name);
     set_is_loading(true);
+    set_variable_content(render_loader());
+
     fetch(
         API_BASE_URL + endpoint
     ).then(
