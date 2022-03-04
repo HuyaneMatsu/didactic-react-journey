@@ -62,8 +62,8 @@ function format_date(date) {
 
 function render_stats(data) {
     return create_element(
-        Fragment,
-        null,
+        'div',
+        set_class_name_to('flex'),
         create_element(
             'div',
             set_class_name_to('left_300'),
@@ -94,6 +94,26 @@ function render_stats(data) {
             ),
         ),
     );
+}
+
+
+function render_credits(data) {
+    return create_element(
+        Fragment,
+        null,
+        create_element(
+            'p',
+            null,
+            'credit: ',
+            data['credit'],
+        ),
+        create_element(
+            'p',
+            null,
+            'Streak: ',
+            data['streak'],
+        ),
+    )
 }
 
 
@@ -209,7 +229,7 @@ function render_variable_content_changer_button(
     );
 }
 
-function StatButton({clicked_button, set_clicked_button, set_variable_content}) {
+function StatsButton({clicked_button, set_clicked_button, set_variable_content}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
     var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
@@ -226,6 +246,27 @@ function StatButton({clicked_button, set_clicked_button, set_variable_content}) 
         set_data,
         '/stats',
         render_stats,
+        set_variable_content,
+    )
+}
+
+function CreditsButton({clicked_button, set_clicked_button, set_variable_content}) {
+    var [is_loaded, set_is_loaded] = state_hook(false);
+    var [is_loading, set_is_loading] = state_hook(false);
+    var [data, set_data] = state_hook(null);
+
+    return render_variable_content_changer_button(
+        clicked_button,
+        set_clicked_button,
+        'credits',
+        is_loaded,
+        set_is_loaded,
+        is_loading,
+        set_is_loading,
+        data,
+        set_data,
+        '/credits',
+        render_credits,
         set_variable_content,
     )
 }
@@ -250,7 +291,15 @@ function App() {
             'div',
             set_class_name_to('buttons'),
             create_element(
-                StatButton,
+                StatsButton,
+                {
+                    'clicked_button': clicked_button,
+                    'set_clicked_button': set_clicked_button,
+                    'set_variable_content': set_variable_content,
+                },
+            ),
+            create_element(
+                CreditsButton,
                 {
                     'clicked_button': clicked_button,
                     'set_clicked_button': set_clicked_button,

@@ -34,8 +34,8 @@ def stats():
     )
 
 
-@APP.route('/api/credit')
-def credit():
+@APP.route('/api/credits')
+def credits():
     return jsonify(
         {
             'credit': 55566556,

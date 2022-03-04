@@ -36,7 +36,7 @@ body {
     word-wrap: break-word;
     border-radius: 0.375rem;
     background-color: rgb(173 132 132);
-    margin-right: 1.5rem;
+    margin-right: 1rem;
 }
 
 .buttons a:last-child {
@@ -48,18 +48,21 @@ body {
 }
 
 .content {
-    display: flex;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 1.5rem;
     width: calc(100% - 3rem);
 }
 
-.content .right_300, .content .left_300 {
+.content .flex {
+    display: flex;
+}
+
+.content .flex .right_300, .content .left_300 {
     position: relative;
 }
 
-.content .right_300 {
+.content .flex .right_300 {
     width: 300px;
 }
 
