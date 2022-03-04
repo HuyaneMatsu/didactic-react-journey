@@ -4,6 +4,8 @@
 - Index endpoint
 - Profile endpoint
 - Credit endpoint
+- Notification settings | get endpoint
+- Notification settings | edit endpoint
 
 ### Frontend
 - Template
