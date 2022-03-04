@@ -10,3 +10,4 @@
 - Base css
 - A button to load stats
 - Use functional components
+- Synchronize requests

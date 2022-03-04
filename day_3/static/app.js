@@ -103,7 +103,38 @@ async function update_from_payload(set_is_loaded, set_data, renderer, set_variab
     set_variable_content(renderer(data));
 }
 
-function handle_click(
+function handle_first_click(
+    set_clicked_button,
+    button_name,
+    set_is_loaded,
+    data,
+    set_data,
+    endpoint,
+    renderer,
+    set_variable_content,
+) {
+    set_clicked_button(button_name);
+    fetch(
+        API_BASE_URL + endpoint
+    ).then(
+        (request) => update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request)
+    );
+}
+
+function handle_other_clicks(
+    set_clicked_button,
+    button_name,
+    data,
+    renderer,
+    set_variable_content,
+) {
+    set_clicked_button(button_name);
+    set_variable_content(renderer(data));
+}
+
+
+function render_variable_content_changer_button(
+    clicked_button,
     set_clicked_button,
     button_name,
     is_loaded,
@@ -112,40 +143,35 @@ function handle_click(
     set_data,
     endpoint,
     renderer,
-    set_variable_content
+    set_variable_content,
 ) {
-    set_clicked_button(button_name);
+    var callback
     if (is_loaded) {
-        set_variable_content(renderer(data));
-    } else {
-        fetch(
-            API_BASE_URL + endpoint
-        ).then(
-            (request) => update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request)
-        );
-    }
-}
-
-
-function StatButton({clicked_button, set_clicked_button, set_variable_content}) {
-    var [is_loaded, set_is_loaded] = state_hook(false);
-    var [data, set_data] = state_hook(null);
-
-    var element_attributes = {
-        onClick: () => handle_click(
+        callback = () => handle_other_clicks(
             set_clicked_button,
-            'stats',
-            is_loaded,
+            button_name,
+            data,
+            renderer,
+            set_variable_content,
+        )
+    } else {
+        callback = () => handle_first_click(
+            set_clicked_button,
+            button_name,
             set_is_loaded,
             data,
             set_data,
-            '/stats',
-            render_stats,
+            endpoint,
+            renderer,
             set_variable_content,
-        ),
-    };
+        )
+    }
 
-    if (clicked_button == 'stats') {
+    var element_attributes = {
+        onClick: callback,
+    }
+
+    if (clicked_button == button_name) {
         set_class_name_to('clicked', element_attributes)
     }
 
@@ -154,6 +180,24 @@ function StatButton({clicked_button, set_clicked_button, set_variable_content}) 
         element_attributes,
         'Stats',
     );
+}
+
+function StatButton({clicked_button, set_clicked_button, set_variable_content}) {
+    var [is_loaded, set_is_loaded] = state_hook(false);
+    var [data, set_data] = state_hook(null);
+
+    return render_variable_content_changer_button(
+        clicked_button,
+        set_clicked_button,
+        'stats',
+        is_loaded,
+        set_is_loaded,
+        data,
+        set_data,
+        '/stats',
+        render_stats,
+        set_variable_content,
+    )
 }
 
 
