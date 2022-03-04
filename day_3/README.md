@@ -1,4 +1,4 @@
-# Day 2
+# Day 3
 
 ### backend
 - Index endpoint
@@ -9,3 +9,7 @@
 - Template
 - Base css
 - A button to load stats
+
+## Whats today?
+
+- Use functional components
