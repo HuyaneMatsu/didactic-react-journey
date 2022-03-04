@@ -120,7 +120,7 @@ function render_credits(data) {
 function create_slider_checkbox(value) {
     return create_element(
         'label',
-        set_class_name_into('switch'),
+        set_class_name_to('switch'),
         create_element(
             'input',
             {'type': 'checkbox'},
@@ -129,7 +129,7 @@ function create_slider_checkbox(value) {
             'span',
             null,
         ),
-
+    )
 }
 
 function render_notification_option(data, system_name, name) {
@@ -150,14 +150,14 @@ function render_notification_option(data, system_name, name) {
     );
 }
 
-function render_notification_settings(
+function render_notification_settings(data) {
     return create_element(
         Fragment,
         null,
         render_notification_option(data, 'daily', 'Daily'),
         render_notification_option(data, 'proposal', 'Proposal'),
     )
-)
+}
 
 
 function render_loader() {
@@ -342,7 +342,7 @@ function CreditsButton({clicked_button, set_clicked_button, set_variable_content
 }
 
 
-function CreditsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
+function NotificationsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
     var [is_loaded, set_is_loaded] = state_hook(false);
     var [is_loading, set_is_loading] = state_hook(false);
     var [data, set_data] = state_hook(null);
@@ -398,6 +398,10 @@ function App() {
             ),
             create_element(
                 CreditsButton,
+                button_properties,
+            ),
+            create_element(
+                NotificationsButton,
                 button_properties,
             ),
         ),
