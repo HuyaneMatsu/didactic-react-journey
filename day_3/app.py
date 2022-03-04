@@ -46,14 +46,15 @@ def credits():
 
 NOTIFICATIONS = {
     'daily': True,
-    'proposal': True,
 }
+
+NOTIFICATION_NAMES = {'daily', 'proposal'}
 
 @APP.route('/api/notification_settings', methods=['GET'])
 def notification_settings_get():
     return NOTIFICATIONS
 
-@APP.route('/api/notification_settings', methods='PATCH')
+@APP.route('/api/notification_settings', methods=['PATCH'])
 def notification_settings_edit():
     data = request.json
     if not isinstance(data, dict):
@@ -61,7 +62,7 @@ def notification_settings_edit():
         return
     
     for key in data.keys():
-        if key not in NOTIFICATIONS:
+        if key not in NOTIFICATION_NAMES:
             abort(400)
     
     for value in data.values():
@@ -69,7 +70,10 @@ def notification_settings_edit():
             abort(400)
     
     for key, value in data.items():
-        NOTIFICATIONS[key] = value
+        if value:
+            NOTIFICATIONS[key] = value
+        else:
+            del NOTIFICATIONS[key]
     
     return ('', 204)
 

@@ -117,6 +117,48 @@ function render_credits(data) {
     )
 }
 
+function create_slider_checkbox(value) {
+    return create_element(
+        'label',
+        set_class_name_into('switch'),
+        create_element(
+            'input',
+            {'type': 'checkbox'},
+        ),
+        create_element(
+            'span',
+            null,
+        ),
+
+}
+
+function render_notification_option(data, system_name, name) {
+    var value = data[system_name];
+    if (value === undefined) {
+        value = false;
+    }
+
+    return create_element(
+        'div',
+        null,
+        create_element(
+            'p',
+            null,
+            name,
+        ),
+        create_slider_checkbox(value)
+    );
+}
+
+function render_notification_settings(
+    return create_element(
+        Fragment,
+        null,
+        render_notification_option(data, 'daily', 'Daily'),
+        render_notification_option(data, 'proposal', 'Proposal'),
+    )
+)
+
 
 function render_loader() {
     return create_element(
@@ -295,6 +337,30 @@ function CreditsButton({clicked_button, set_clicked_button, set_variable_content
         set_data,
         '/credits',
         render_credits,
+        set_variable_content,
+    )
+}
+
+
+function CreditsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
+    var [is_loaded, set_is_loaded] = state_hook(false);
+    var [is_loading, set_is_loading] = state_hook(false);
+    var [data, set_data] = state_hook(null);
+
+    return render_variable_content_changer_button(
+        clicked_button,
+        set_clicked_button,
+        clicked_reference,
+        'notification_settings',
+        'Notifications',
+        is_loaded,
+        set_is_loaded,
+        is_loading,
+        set_is_loading,
+        data,
+        set_data,
+        '/notification_settings',
+        render_notification_settings,
         set_variable_content,
     )
 }
