@@ -21,7 +21,7 @@ function set_class_name_to(class_name, into) {
 var create_element = React.createElement;
 var Component = React.Component;
 var Fragment = React.Fragment;
-
+var state_hook = React.useState;
 
 /* Define globals */
 
@@ -58,7 +58,7 @@ function format_date(date) {
     ].join('')
 }
 
-/* Classes */
+/* Application */
 
 function render_stats(data) {
     return create_element(
@@ -96,207 +96,108 @@ function render_stats(data) {
     );
 }
 
-class ContentChangerButtonState {
-    constructor(renderer) {
-        this.renderer = renderer;
-        this.clicked = false;
-        this.loaded = false;
-        this.data = null;
-    }
-
-    set_data(data) {
-        this.loaded = true;
-        this.data = data;
-    }
-
-    is_clicked() {
-        return self.clicked;
-    }
-
-    do_click() {
-        this.clicked = true;
-    }
-
-    get_class() {
-        var class_;
-
-        if (this.clicked) {
-            class_ = 'clicked';
-        } else {
-            class_ = null;
-        }
-
-        return class_;
-    }
-
-    get_variable_content() {
-        var variable_content;
-
-        if (this.clicked) {
-            if (this.loaded) {
-                variable_content = this.render();
-            } else {
-                variable_content = 'LOADING';
-            }
-        } else {
-            variable_content = null;
-        }
-
-        return variable_content;
-    }
-
-    render() {
-        return this.renderer(this.data);
-    }
-
+async function update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request) {
+    var data = await request.json();
+    set_data(data);
+    set_is_loaded(true);
+    set_variable_content(renderer(data));
 }
 
-
-class VariableContentButton extends Component {
-    constructor(props) {
-        super(props);
-        this.bind_to_parent()
-        console.log(this.data_renderer);
-        this.state = new ContentChangerButtonState(this.get_data_renderer());
-    }
-
-    bind_to_parent() {
-        APP.register_variable_field_button(this);
-    }
-
-    update() {
-        this.forceUpdate();
-    }
-
-    handle_click() {
-        var state = this.state;
-        if (state.is_clicked()) {
-            return;
-        }
-
-        if (! state.loaded) {
-            fetch(API_BASE_URL + this.get_endpoint()).then(this.update_from_payload.bind(this));
-        }
-
-        state.do_click();
-        this.update();
-    }
-
-    async update_from_payload(request) {
-        var data = await request.json();
-        this.state.set_data(data);
-        this.update();
-
-        var variable_content = this.state.get_variable_content();
-        if (variable_content !== null) {
-            APP.content.set_content(variable_content);
-        }
-    }
-
-    render() {
-        var element_attributes = {
-            onClick: this.handle_click.bind(this),
-        };
-
-        var state = this.state;
-
-        set_class_name_to(state.get_class(), element_attributes);
-
-        return create_element(
-            'a',
-            element_attributes,
-            this.get_title(),
+function handle_click(
+    set_clicked_button,
+    button_name,
+    is_loaded,
+    set_is_loaded,
+    data,
+    set_data,
+    endpoint,
+    renderer,
+    set_variable_content
+) {
+    set_clicked_button(button_name);
+    if (is_loaded) {
+        set_variable_content(renderer(data));
+    } else {
+        fetch(
+            API_BASE_URL + endpoint
+        ).then(
+            (request) => update_from_payload(set_is_loaded, set_data, renderer, set_variable_content, request)
         );
     }
 }
 
 
-class VariableContentButtonStats extends VariableContentButton {
-    get_title() {
-        return 'Stats';
+function StatButton({clicked_button, set_clicked_button, set_variable_content}) {
+    var [is_loaded, set_is_loaded] = state_hook(false);
+    var [data, set_data] = state_hook(null);
+
+    var element_attributes = {
+        onClick: () => handle_click(
+            set_clicked_button,
+            'stats',
+            is_loaded,
+            set_is_loaded,
+            data,
+            set_data,
+            '/stats',
+            render_stats,
+            set_variable_content,
+        ),
+    };
+
+    if (clicked_button == 'stats') {
+        set_class_name_to('clicked', element_attributes)
     }
-    get_endpoint() {
-        return '/stats';
-    }
-    get_data_renderer() {
-        return render_stats;
-    }
+
+    return create_element(
+        'a',
+        element_attributes,
+        'Stats',
+    );
 }
 
 
-class VariableContentState {
-    constructor() {
-        this.value = 'Variable content goes here';
-    }
+function VariableContent({variable_content}) {
+    return create_element(
+        'div',
+        set_class_name_to('content'),
+        variable_content,
+    )
 }
 
+function App() {
+    var [variable_content, set_variable_content] = state_hook('Variable content goes here')
+    var [clicked_button, set_clicked_button] = state_hook(null);
 
-class VariableContent extends Component {
-    constructor(props) {
-        super(props);
-        this.bind_to_parent()
-        this.state = new VariableContentState();
-    }
-
-    bind_to_parent() {
-        APP.content = this;
-    }
-
-    update() {
-        this.forceUpdate();
-    }
-
-    set_content(content) {
-        this.state.value = content;
-        this.update();
-    }
-
-    render() {
-        return create_element(
+    return create_element(
+        Fragment,
+        null,
+        create_element(
             'div',
-            set_class_name_to('content'),
-            this.state.value,
-        )
-    }
-
-}
-
-class App extends Component {
-    constructor(props) {
-        super(props);
-        this.variable_field_buttons = new Set()
-        this.content = null;
-        APP = this;
-    }
-
-    register_variable_field_button(component) {
-        this.variable_field_buttons.add(component);
-    }
-
-    render() {
-        var state = this.state;
-
-        return create_element(
+            set_class_name_to('buttons'),
+            create_element(
+                StatButton,
+                {
+                    'clicked_button': clicked_button,
+                    'set_clicked_button': set_clicked_button,
+                    'set_variable_content': set_variable_content,
+                },
+            ),
+        ),
+        create_element(
             Fragment,
             null,
             create_element(
-                'div',
-                set_class_name_to('buttons'),
-                create_element(VariableContentButtonStats),
+                VariableContent,
+                {
+                    'variable_content': variable_content,
+                },
             ),
-            create_element(
-                Fragment,
-                null,
-                create_element(VariableContent),
-            ),
-        );
-    }
+        ),
+    );
 }
 
 /* Init */
-
-var APP;
-
 
 ReactDOM.render(
     create_element(App),

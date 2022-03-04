@@ -9,7 +9,4 @@
 - Template
 - Base css
 - A button to load stats
-
-## Whats today?
-
 - Use functional components
