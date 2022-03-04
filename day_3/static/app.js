@@ -123,7 +123,10 @@ function create_slider_checkbox(value) {
         set_class_name_to('switch'),
         create_element(
             'input',
-            {'type': 'checkbox'},
+            {
+                'type': 'checkbox',
+                'defaultChecked': value,
+            },
         ),
         create_element(
             'span',

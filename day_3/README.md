@@ -12,5 +12,6 @@
 - Base css
 - Button to load profile
 - Button to load credits
+- Button to load notifications
 - Use functional components
 - Synchronize requests
