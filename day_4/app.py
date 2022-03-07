@@ -42,8 +42,9 @@ def credits():
     )
 
 
+# Default to True
 NOTIFICATIONS = {
-    'daily': True,
+    'daily': False,
 }
 
 NOTIFICATION_NAMES = {'daily', 'proposal'}
@@ -69,9 +70,9 @@ def notification_settings_edit():
     
     for key, value in data.items():
         if value:
-            NOTIFICATIONS[key] = value
-        else:
             del NOTIFICATIONS[key]
+        else:
+            NOTIFICATIONS[key] = True
     
     return ('', 204)
 
