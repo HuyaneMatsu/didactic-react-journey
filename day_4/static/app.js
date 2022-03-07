@@ -170,12 +170,28 @@ function render_notification_option(button_controller, system_name, name) {
     );
 }
 
+function maybe_create_notification_sync_element(button_controller) {
+    if (button_controller.button_config.data_changes === null) {
+        return '';
+    }
+
+    return create_element(
+        SaveNotificationsField,
+        {'button_controller': button_controller},
+    )
+}
+
 function render_notification_settings(button_controller) {
     return create_element(
         Fragment,
         null,
-        render_notification_option(button_controller, 'daily', 'Daily'),
-        render_notification_option(button_controller, 'proposal', 'Proposal'),
+        create_element(
+            'div',
+            set_class_name_to('notifications'),
+            render_notification_option(button_controller, 'daily', 'Daily'),
+            render_notification_option(button_controller, 'proposal', 'Proposal'),
+        ),
+        maybe_create_notification_sync_element(button_controller),
     )
 }
 
@@ -245,15 +261,17 @@ class ButtonController {
         var should_add;
 
         if (value_from_data === undefined) {
-            should_add = true;
-        } else if (value_from_data == field_value) {
             if (field_value == default_value) {
                 should_add = false;
             } else {
                 should_add = true;
             }
         } else {
-            should_add = true;
+            if (value_from_data == field_value) {
+                should_add = false;
+            } else {
+                should_add = true;
+            }
         }
 
         if (should_add) {
@@ -265,7 +283,7 @@ class ButtonController {
 
         } else {
             if (data_changes !== null) {
-                delete data_changes[field_value];
+                delete data_changes[field_name];
 
                 if (Object.keys(data_changes).length == 0) {
                     button_config.data_changes = null;
@@ -367,6 +385,41 @@ function NotificationsButton({button_properties}) {
     return render_variable_content_changer_button(new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties))
 }
 
+function SaveNotificationsField({button_controller}) {
+    var [is_saving, set_is_saving] = state_hook(false);
+
+    var save_parameters = {};
+    var cancel_parameters = {};
+
+    if (is_saving) {
+        set_class_name_to('disabled', save_parameters);
+        set_class_name_to('disabled', cancel_parameters);
+    }
+
+    return create_element(
+        'div',
+        set_class_name_to('save'),
+        create_element(
+            'div',
+            set_class_name_to('left'),
+            'Remember to save your changes',
+        ),
+        create_element(
+            'div',
+            set_class_name_to('right'),
+            create_element(
+                'a',
+                save_parameters,
+                'save',
+            ),
+            create_element(
+                'a',
+                cancel_parameters,
+                'cancel',
+            ),
+        ),
+    )
+}
 
 function VariableContent({variable_content}) {
     return create_element(

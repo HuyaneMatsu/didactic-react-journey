@@ -15,3 +15,4 @@
 - Button to load notifications
 - Use functional components
 - Synchronize requests
+- Popup when notifications settings are changed.

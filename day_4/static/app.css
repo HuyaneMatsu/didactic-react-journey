@@ -9,17 +9,26 @@ body {
     min-width: 600px;
 }
 
+a {
+    cursor: pointer;
+}
+
 .buttons {
     padding-left: 1.5rem;
     padding-top: 1.5rem;
     padding-right: 1.5rem;
     padding-bottom: 1.5rem;
-    border-color-bottom: rgb(200 225 255 / 0.30);
+    border-bottom-color: rgb(200 225 255 / 0.30);
     border-bottom-style: solid;
     border-bottom-width: 1px;
 }
 
 .buttons a {
+    margin-right: 1rem;
+    background-color: rgb(173 132 132);
+}
+
+.buttons a, .save .right a {
     color: inherit;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
@@ -29,14 +38,12 @@ body {
     text-decoration: inherit;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
         'Segoe UI Emoji';
-    color: rgb(255 255 255);
     line-height: 1.25rem;
     font-size: 0.875rem;
     font-weight: 600;
     word-wrap: break-word;
     border-radius: 0.375rem;
-    background-color: rgb(173 132 132);
-    margin-right: 1rem;
+    color: rgb(255 255 255);
 }
 
 .buttons a:last-child {
@@ -155,4 +162,16 @@ body {
 
 .switch input:checked + span:before {
     transform: translateX(calc(10 * var(--switch-scale)));
+}
+
+.content .save {
+    margin-top: 2rem;
+}
+
+.content .save .left {
+    float: left;
+}
+
+.content .save .right {
+    float: right;
 }
