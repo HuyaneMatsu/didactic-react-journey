@@ -202,10 +202,7 @@ function app_state_hook () {
     var [variable_content, set_variable_content] = state_hook('Variable content goes here')
     var clicked_button_name_reference = reference_hook(null);
 
-    var button_properties = new ButtonProperties(
-        set_variable_content,
-        clicked_button_name_reference,
-    )
+    var button_properties = new ButtonProperties(set_variable_content, clicked_button_name_reference)
 
     return [button_properties, variable_content];
 }
@@ -232,11 +229,7 @@ var NOTIFICATION_BUTTON_CONFIG = new VariableContentButtonConfig(
     render_notification_settings,
 );
 
-async function update_from_payload(
-    button_config,
-    button_properties,
-    request,
-) {
+async function update_from_payload(button_config, button_properties, request) {
     var data = await request.json();
     button_config.data = data;
     button_config.is_loaded = true;
@@ -247,10 +240,7 @@ async function update_from_payload(
     }
 }
 
-function handle_first_click(
-    button_config,
-    button_properties,
-) {
+function handle_first_click(button_config, button_properties) {
     var button_name = button_config.button_name;
     button_properties.set_clicked_button(button_name);
     button_config.is_loading = true;
@@ -259,18 +249,11 @@ function handle_first_click(
     fetch(
         API_BASE_URL + button_config.endpoint
     ).then(
-        (request) => update_from_payload(
-            button_config,
-            button_properties,
-            request,
-        )
+        (request) => update_from_payload(button_config, button_properties, request)
     );
 }
 
-function handle_other_clicks(
-    button_config,
-    button_properties,
-) {
+function handle_other_clicks(button_config, button_properties) {
     var button_name = button_config.button_name;
     button_properties.set_clicked_button(button_name);
 
@@ -280,21 +263,12 @@ function handle_other_clicks(
 }
 
 
-function render_variable_content_changer_button(
-    button_config,
-    button_properties,
-) {
+function render_variable_content_changer_button(button_config, button_properties) {
     var callback
     if (button_config.is_loaded || button_config.is_loading) {
-        callback = () => handle_other_clicks(
-            button_config,
-            button_properties,
-        )
+        callback = () => handle_other_clicks(button_config, button_properties)
     } else {
-        callback = () => handle_first_click(
-            button_config,
-            button_properties,
-        )
+        callback = () => handle_first_click(button_config, button_properties)
     }
 
     var element_attributes = {
@@ -313,25 +287,16 @@ function render_variable_content_changer_button(
 }
 
 function ProfileButton({button_properties}) {
-    return render_variable_content_changer_button(
-        PROFILE_BUTTON_CONFIG,
-        button_properties,
-    )
+    return render_variable_content_changer_button(PROFILE_BUTTON_CONFIG, button_properties)
 }
 
 function CreditsButton({button_properties}) {
-    return render_variable_content_changer_button(
-        CREDITS_BUTTON_CONFIG,
-        button_properties,
-    )
+    return render_variable_content_changer_button(CREDITS_BUTTON_CONFIG, button_properties)
 }
 
 
 function NotificationsButton({button_properties}) {
-    return render_variable_content_changer_button(
-        NOTIFICATION_BUTTON_CONFIG,
-        button_properties,
-    )
+    return render_variable_content_changer_button(NOTIFICATION_BUTTON_CONFIG, button_properties)
 }
 
 
