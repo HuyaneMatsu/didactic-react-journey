@@ -184,24 +184,27 @@ class VariableContentButtonConfig {
 }
 
 class ButtonProperties {
-    constructor(clicked_button, set_clicked_button, set_variable_content, clicked_reference) {
-        this.clicked_button = clicked_button;
-        this.set_clicked_button = set_clicked_button;
+    constructor(set_variable_content, clicked_button_name_reference) {
         this.set_variable_content = set_variable_content;
-        this.clicked_reference = clicked_reference;
+        this.clicked_button_name_reference = clicked_button_name_reference;
+    }
+    
+    set_clicked_button(value) {
+        this.clicked_button_name_reference.current = value;
+    }
+    
+    get_clicked_button(value) {
+        return this.clicked_button_name_reference.current;
     }
 }
 
 function app_state_hook () {
-    var [clicked_button, set_clicked_button] = state_hook(null)
     var [variable_content, set_variable_content] = state_hook('Variable content goes here')
-    var clicked_reference = reference_hook(null);
+    var clicked_button_name_reference = reference_hook(null);
 
     var button_properties = new ButtonProperties(
-        clicked_button,
-        set_clicked_button,
         set_variable_content,
-        clicked_reference,
+        clicked_button_name_reference,
     )
 
     return [button_properties, variable_content];
@@ -239,7 +242,7 @@ async function update_from_payload(
     button_config.is_loaded = true;
     button_config.is_loading = false;
 
-    if (button_properties.clicked_reference.current == button_config.button_name) {
+    if (button_properties.get_clicked_button() == button_config.button_name) {
         button_properties.set_variable_content(button_config.renderer(data));
     }
 }
@@ -252,7 +255,6 @@ function handle_first_click(
     button_properties.set_clicked_button(button_name);
     button_config.is_loading = true;
     button_properties.set_variable_content(render_loader());
-    button_properties.clicked_reference.current = button_name;
 
     fetch(
         API_BASE_URL + button_config.endpoint
@@ -271,10 +273,9 @@ function handle_other_clicks(
 ) {
     var button_name = button_config.button_name;
     button_properties.set_clicked_button(button_name);
-    button_properties.clicked_reference.current = button_name;
 
     if (! button_config.is_loading) {
-        set_variable_content(button_config.renderer(button_config.data));
+        button_properties.set_variable_content(button_config.renderer(button_config.data));
     }
 }
 
@@ -300,7 +301,7 @@ function render_variable_content_changer_button(
         onClick: callback,
     }
 
-    if (button_properties.clicked_button == button_config.button_name) {
+    if (button_properties.get_clicked_button() == button_config.button_name) {
         set_class_name_to('clicked', element_attributes);
     }
 
@@ -327,7 +328,6 @@ function CreditsButton({button_properties}) {
 
 
 function NotificationsButton({button_properties}) {
-    console.log(button_properties);
     return render_variable_content_changer_button(
         NOTIFICATION_BUTTON_CONFIG,
         button_properties,
