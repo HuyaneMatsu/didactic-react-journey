@@ -2,7 +2,6 @@ from flask import Flask, render_template, jsonify
 from os.path import join as join_paths
 from os import getcwd as get_current_working_directory
 
-ROUTE = ('web', 'modules')
 
 BASE_PATH = get_current_working_directory()
 

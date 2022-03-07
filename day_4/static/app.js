@@ -170,116 +170,129 @@ function render_loader() {
     );
 }
 
+
+class VariableContentButtonConfig {
+    constructor(button_name, button_display_value, endpoint, renderer) {
+        this.button_name = button_name;
+        this.button_display_value = button_display_value;
+        this.endpoint = endpoint;
+        this.renderer = renderer;
+        this.is_loading = false;
+        this.is_loaded = false;
+        this.data = null;
+    }
+}
+
+class ButtonProperties {
+    constructor(clicked_button, set_clicked_button, set_variable_content, clicked_reference) {
+        this.clicked_button = clicked_button;
+        this.set_clicked_button = set_clicked_button;
+        this.set_variable_content = set_variable_content;
+        this.clicked_reference = clicked_reference;
+    }
+}
+
+function app_state_hook () {
+    var [clicked_button, set_clicked_button] = state_hook(null)
+    var [variable_content, set_variable_content] = state_hook('Variable content goes here')
+    var clicked_reference = reference_hook(null);
+
+    var button_properties = new ButtonProperties(
+        clicked_button,
+        set_clicked_button,
+        set_variable_content,
+        clicked_reference,
+    )
+
+    return [button_properties, variable_content];
+}
+
+
+var PROFILE_BUTTON_CONFIG = new VariableContentButtonConfig(
+    'profile',
+    'Profile',
+    '/profile',
+    render_profile,
+);
+
+var CREDITS_BUTTON_CONFIG = new VariableContentButtonConfig(
+    'credits',
+    'Credits',
+    '/credits',
+    render_credits,
+);
+
+var NOTIFICATION_BUTTON_CONFIG = new VariableContentButtonConfig(
+    'notification_settings',
+    'Notifications',
+    '/notification_settings',
+    render_notification_settings,
+);
+
 async function update_from_payload(
-    clicked_reference,
-    button_name,
-    set_is_loaded,
-    set_is_loading,
-    set_data,
-    renderer,
-    set_variable_content,
+    button_config,
+    button_properties,
     request,
 ) {
     var data = await request.json();
-    set_data(data);
-    set_is_loaded(true);
-    set_is_loading(false);
+    button_config.data = data;
+    button_config.is_loaded = true;
+    button_config.is_loading = false;
 
-    if (clicked_reference.current == button_name) {
-        set_variable_content(renderer(data));
+    if (button_properties.clicked_reference.current == button_config.button_name) {
+        button_properties.set_variable_content(button_config.renderer(data));
     }
 }
 
 function handle_first_click(
-    set_clicked_button,
-    clicked_reference,
-    button_name,
-    set_is_loaded,
-    set_is_loading,
-    data,
-    set_data,
-    endpoint,
-    renderer,
-    set_variable_content,
+    button_config,
+    button_properties,
 ) {
-    set_clicked_button(button_name);
-    set_is_loading(true);
-    set_variable_content(render_loader());
-    clicked_reference.current = button_name;
+    var button_name = button_config.button_name;
+    button_properties.set_clicked_button(button_name);
+    button_config.is_loading = true;
+    button_properties.set_variable_content(render_loader());
+    button_properties.clicked_reference.current = button_name;
 
     fetch(
-        API_BASE_URL + endpoint
+        API_BASE_URL + button_config.endpoint
     ).then(
         (request) => update_from_payload(
-            clicked_reference,
-            button_name,
-            set_is_loaded,
-            set_is_loading,
-            set_data,
-            renderer,
-            set_variable_content,
+            button_config,
+            button_properties,
             request,
         )
     );
 }
 
 function handle_other_clicks(
-    set_clicked_button,
-    clicked_reference,
-    button_name,
-    is_loading,
-    data,
-    renderer,
-    set_variable_content,
+    button_config,
+    button_properties,
 ) {
-    set_clicked_button(button_name);
-    clicked_reference.current = button_name;
+    var button_name = button_config.button_name;
+    button_properties.set_clicked_button(button_name);
+    button_properties.clicked_reference.current = button_name;
 
-    if (! is_loading) {
-        set_variable_content(renderer(data));
+    if (! button_config.is_loading) {
+        set_variable_content(button_config.renderer(button_config.data));
     }
 }
 
 
 function render_variable_content_changer_button(
-    clicked_button,
-    set_clicked_button,
-    clicked_reference,
-    button_name,
-    button_display_value,
-    is_loaded,
-    set_is_loaded,
-    is_loading,
-    set_is_loading,
-    data,
-    set_data,
-    endpoint,
-    renderer,
-    set_variable_content,
+    button_config,
+    button_properties,
 ) {
     var callback
-    if (is_loaded || is_loading) {
+    if (button_config.is_loaded || button_config.is_loading) {
         callback = () => handle_other_clicks(
-            set_clicked_button,
-            clicked_reference,
-            button_name,
-            is_loading,
-            data,
-            renderer,
-            set_variable_content,
+            button_config,
+            button_properties,
         )
     } else {
         callback = () => handle_first_click(
-            set_clicked_button,
-            clicked_reference,
-            button_name,
-            set_is_loaded,
-            set_is_loading,
-            data,
-            set_data,
-            endpoint,
-            renderer,
-            set_variable_content,
+            button_config,
+            button_properties,
         )
     }
 
@@ -287,84 +300,37 @@ function render_variable_content_changer_button(
         onClick: callback,
     }
 
-    if (clicked_button == button_name) {
+    if (button_properties.clicked_button == button_config.button_name) {
         set_class_name_to('clicked', element_attributes);
     }
 
     return create_element(
         'a',
         element_attributes,
-        button_display_value,
+        button_config.button_display_value,
     );
 }
 
-function ProfileButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
-    var [is_loaded, set_is_loaded] = state_hook(false);
-    var [is_loading, set_is_loading] = state_hook(false);
-    var [data, set_data] = state_hook(null);
-
+function ProfileButton({button_properties}) {
     return render_variable_content_changer_button(
-        clicked_button,
-        set_clicked_button,
-        clicked_reference,
-        'profile',
-        'Profile',
-        is_loaded,
-        set_is_loaded,
-        is_loading,
-        set_is_loading,
-        data,
-        set_data,
-        '/profile',
-        render_profile,
-        set_variable_content,
+        PROFILE_BUTTON_CONFIG,
+        button_properties,
     )
 }
 
-function CreditsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
-    var [is_loaded, set_is_loaded] = state_hook(false);
-    var [is_loading, set_is_loading] = state_hook(false);
-    var [data, set_data] = state_hook(null);
-
+function CreditsButton({button_properties}) {
     return render_variable_content_changer_button(
-        clicked_button,
-        set_clicked_button,
-        clicked_reference,
-        'credits',
-        'Credits',
-        is_loaded,
-        set_is_loaded,
-        is_loading,
-        set_is_loading,
-        data,
-        set_data,
-        '/credits',
-        render_credits,
-        set_variable_content,
+        CREDITS_BUTTON_CONFIG,
+        button_properties,
     )
 }
 
 
-function NotificationsButton({clicked_button, set_clicked_button, set_variable_content, clicked_reference}) {
-    var [is_loaded, set_is_loaded] = state_hook(false);
-    var [is_loading, set_is_loading] = state_hook(false);
-    var [data, set_data] = state_hook(null);
-
+function NotificationsButton({button_properties}) {
+    console.log(button_properties);
     return render_variable_content_changer_button(
-        clicked_button,
-        set_clicked_button,
-        clicked_reference,
-        'notification_settings',
-        'Notifications',
-        is_loaded,
-        set_is_loaded,
-        is_loading,
-        set_is_loading,
-        data,
-        set_data,
-        '/notification_settings',
-        render_notification_settings,
-        set_variable_content,
+        NOTIFICATION_BUTTON_CONFIG,
+        button_properties,
     )
 }
 
@@ -378,16 +344,7 @@ function VariableContent({variable_content}) {
 }
 
 function App() {
-    var [variable_content, set_variable_content] = state_hook('Variable content goes here')
-    var [clicked_button, set_clicked_button] = state_hook(null);
-    var clicked_reference = reference_hook(null);
-
-    var button_properties = {
-        'clicked_button': clicked_button,
-        'set_clicked_button': set_clicked_button,
-        'set_variable_content': set_variable_content,
-        'clicked_reference': clicked_reference,
-    };
+    var [button_properties, variable_content] = app_state_hook()
 
     return create_element(
         Fragment,
@@ -397,15 +354,15 @@ function App() {
             set_class_name_to('buttons'),
             create_element(
                 ProfileButton,
-                button_properties,
+                {'button_properties': button_properties},
             ),
             create_element(
                 CreditsButton,
-                button_properties,
+                {'button_properties': button_properties},
             ),
             create_element(
                 NotificationsButton,
-                button_properties,
+                {'button_properties': button_properties},
             ),
         ),
         create_element(
@@ -413,9 +370,7 @@ function App() {
             null,
             create_element(
                 VariableContent,
-                {
-                    'variable_content': variable_content,
-                },
+                {'variable_content': variable_content},
             ),
         ),
     );
