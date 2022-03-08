@@ -321,8 +321,7 @@ class ButtonController {
         var data = this.button_config.data;
         var old_changes = this.copy_changes();
 
-        var key, value;
-        var default_value;
+        var field_name, field_value, default_value;
 
         for ([field_name, field_value] of Object.entries(changes)) {
             default_value = get_from_nullable_dict(default_value_map, field_name, default_default_value);
@@ -333,8 +332,8 @@ class ButtonController {
             }
         }
 
-        if (old_change !== null) {
-            for ([field_name, field_value] of Object.entries(old_change)) {
+        if (old_changes !== null) {
+            for ([field_name, field_value] of Object.entries(old_changes)) {
                 this.change_data(
                     field_name,
                     field_value,
