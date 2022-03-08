@@ -1,6 +1,18 @@
+import sys
 from flask import Flask, render_template, jsonify, request, abort
 from os.path import join as join_paths
 from os import getcwd as get_current_working_directory
+from dotenv import dotenv_values
+
+CONFIG = dotenv_values('.env')
+
+try:
+    CLIENT_ID = CONFIG['CLIENT_ID']
+    CLIENT_SECRET = CONFIG['CLIENT_SECRET']
+except KeyError:
+    sys.stderr.write('Required environmental variables: CLIENT_ID, CLIENT_SECRET.\n')
+    raise SystemExit(1)
+
 
 BASE_PATH = get_current_working_directory()
 
