@@ -13,6 +13,11 @@ a {
     cursor: pointer;
 }
 
+p {
+    margin: 0;
+    padding: 0;
+}
+
 .buttons {
     padding-left: 1.5rem;
     padding-top: 1.5rem;
@@ -21,6 +26,9 @@ a {
     border-bottom-color: rgb(200 225 255 / 0.30);
     border-bottom-style: solid;
     border-bottom-width: 1px;
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .buttons a {
@@ -59,6 +67,9 @@ a {
     padding-right: 1.5rem;
     padding-top: 1.5rem;
     width: calc(100% - 3rem);
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .content .flex {
@@ -165,7 +176,11 @@ a {
 }
 
 .content .save {
-    margin-top: 2rem;
+    margin-top: 6rem;
+    background-color: rgb(31 31 31 / 80%);
+    height: 1.25rem;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
 }
 
 .content .save .left {
@@ -174,4 +189,45 @@ a {
 
 .content .save .right {
     float: right;
+}
+
+.content .save .right a {
+    margin-right: 1rem;
+}
+
+.content .save .right a:last-child {
+    margin-right: 0rem;
+}
+
+.save_execute_enabled {
+    background-color: rgb(75 184 20);
+}
+
+.save_execute_disabled {
+    background-color: rgb(53 96 32);
+}
+
+.save_cancel_enabled {
+    background-color: rgb(184 20 20);
+}
+
+.save_cancel_disabled {
+    background-color: rgb(96 32 32);
+}
+
+.content .notifications div {
+    display: flex;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.content .notifications div p {
+    width: 200px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.content p {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
 }

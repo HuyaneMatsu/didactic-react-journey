@@ -465,9 +465,12 @@ function SaveNotificationsField({button_controller}) {
     var cancel_parameters = {};
 
     if (is_saving) {
-        set_class_name_to('disabled', save_parameters);
-        set_class_name_to('disabled', cancel_parameters);
+        set_class_name_to('save_execute_disabled', save_parameters);
+        set_class_name_to('save_cancel_disabled', cancel_parameters);
     } else {
+        set_class_name_to('save_execute_enabled', save_parameters);
+        set_class_name_to('save_cancel_enabled', cancel_parameters);
+
         save_parameters['onClick'] = () => save_notification_settings(button_controller, set_is_saving);
         cancel_parameters['onClick'] = () => button_controller.revert_changes();
     }
