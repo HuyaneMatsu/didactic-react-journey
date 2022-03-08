@@ -120,13 +120,13 @@ function render_credits(button_controller) {
 }
 
 function change_notification_option(button_controller, option_system_name, event) {
-    button_controller.change_data(option_system_name, event.target.checked, false)
+    button_controller.change_data(option_system_name, event.target.checked, true)
 }
 
 function render_notification_option(button_controller, system_name, name) {
     var old_value = button_controller.button_config.data[system_name];
     if (old_value === undefined) {
-        old_value = false;
+        old_value = true;
     }
 
     var value;
@@ -143,6 +143,7 @@ function render_notification_option(button_controller, system_name, name) {
         }
     }
 
+console.log(value);
     return create_element(
         'div',
         null,
@@ -158,7 +159,7 @@ function render_notification_option(button_controller, system_name, name) {
                 'input',
                 {
                     'type': 'checkbox',
-                    'defaultChecked': value,
+                    'checked': value,
                     'onChange': (event) => change_notification_option(button_controller, system_name, event),
                 },
             ),
@@ -182,6 +183,7 @@ function maybe_create_notification_sync_element(button_controller) {
 }
 
 function render_notification_settings(button_controller) {
+console.log('rendering notifications');
     return create_element(
         Fragment,
         null,
@@ -292,6 +294,12 @@ class ButtonController {
         }
         this.display();
     }
+
+    revert_changes() {
+        console.log('Changes reverted');
+        this.button_config.data_changes = null;
+        this.display();
+    }
 }
 
 var PROFILE_BUTTON_CONFIG = new VariableContentButtonConfig(
@@ -358,7 +366,7 @@ function render_variable_content_changer_button(button_controller) {
     }
 
     var element_attributes = {
-        onClick: callback,
+        'onClick': callback,
     }
 
     if (button_controller.button_properties.get_clicked_button() == button_controller.button_config.button_name) {
@@ -385,11 +393,14 @@ function NotificationsButton({button_properties}) {
     return render_variable_content_changer_button(new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties))
 }
 
+
 function SaveNotificationsField({button_controller}) {
     var [is_saving, set_is_saving] = state_hook(false);
 
     var save_parameters = {};
-    var cancel_parameters = {};
+    var cancel_parameters = {
+        'onClick': () => button_controller.revert_changes(),
+    };
 
     if (is_saving) {
         set_class_name_to('disabled', save_parameters);
