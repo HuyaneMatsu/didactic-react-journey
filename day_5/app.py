@@ -1,3 +1,4 @@
+from scarletio.web_common import URL, quote
 import sys
 from flask import Flask, render_template, jsonify, request, abort
 from os.path import join as join_paths
@@ -11,7 +12,21 @@ try:
     CLIENT_SECRET = CONFIG['CLIENT_SECRET']
 except KeyError:
     sys.stderr.write('Required environmental variables: CLIENT_ID, CLIENT_SECRET.\n')
-    raise SystemExit(1)
+    raise SystemExit(1) from None
+
+
+AUTHORIZATION_URL = str(
+    URL(
+        'https://discordapp.com/oauth2/authorize'
+    ).extend_query(
+        {
+            'client_id': CLIENT_ID,
+            'redirect_uri': 'http://127.0.0.1:5000/api/auth',
+            'response_type': 'code',
+            'scope': 'identify',
+        }
+    )
+)
 
 
 BASE_PATH = get_current_working_directory()
