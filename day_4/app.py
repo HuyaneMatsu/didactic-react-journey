@@ -72,7 +72,7 @@ def notification_settings_edit():
         if value:
             del NOTIFICATIONS[key]
         else:
-            NOTIFICATIONS[key] = True
+            NOTIFICATIONS[key] = False
     
     return ('', 204)
 

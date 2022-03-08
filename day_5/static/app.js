@@ -17,6 +17,18 @@ function set_class_name_to(class_name, into) {
     return into;
 }
 
+function get_from_nullable_dict(dictionary, key, default_value) {
+    if (dictionary === null){
+        return default_value;
+    }
+
+    value = dictionary[key];
+    if (value === undefined) {
+        return default_value;
+    }
+
+    return value;
+}
 
 var create_element = React.createElement;
 var Component = React.Component;
@@ -120,7 +132,7 @@ function render_credits(button_controller) {
 }
 
 function change_notification_option(button_controller, option_system_name, event) {
-    button_controller.change_data(option_system_name, event.target.checked, true)
+    button_controller.change_data(option_system_name, event.target.checked, true, true)
 }
 
 function render_notification_option(button_controller, system_name, name) {
@@ -143,7 +155,6 @@ function render_notification_option(button_controller, system_name, name) {
         }
     }
 
-console.log(value);
     return create_element(
         'div',
         null,
@@ -183,7 +194,6 @@ function maybe_create_notification_sync_element(button_controller) {
 }
 
 function render_notification_settings(button_controller) {
-console.log('rendering notifications');
     return create_element(
         Fragment,
         null,
@@ -253,7 +263,7 @@ class ButtonController {
         this.button_properties.set_variable_content(this.button_config.renderer(this));
     }
 
-    change_data(field_name, field_value, default_value) {
+    change_data(field_name, field_value, default_value, display_after) {
         var button_config = this.button_config;
         var data = button_config.data;
         var data_changes = button_config.data_changes;
@@ -292,12 +302,48 @@ class ButtonController {
                 }
             }
         }
-        this.display();
+
+        if (display_after) {
+            this.display();
+        }
     }
 
     revert_changes() {
-        console.log('Changes reverted');
         this.button_config.data_changes = null;
+        this.display();
+    }
+
+    copy_changes() {
+        return {...this.button_config.data_changes}
+    }
+
+    apply_changes(changes, default_value_map, default_default_value) {
+        var data = this.button_config.data;
+        var old_changes = this.copy_changes();
+
+        var key, value;
+        var default_value;
+
+        for ([field_name, field_value] of Object.entries(changes)) {
+            default_value = get_from_nullable_dict(default_value_map, field_name, default_default_value);
+            if (field_value == default_value) {
+                delete data[field_name];
+            } else {
+                data[field_name] = field_value;
+            }
+        }
+
+        if (old_change !== null) {
+            for ([field_name, field_value] of Object.entries(old_change)) {
+                this.change_data(
+                    field_name,
+                    field_value,
+                    get_from_nullable_dict(default_value_map, field_name, default_default_value),
+                    false,
+                );
+            }
+        }
+
         this.display();
     }
 }
@@ -393,18 +439,38 @@ function NotificationsButton({button_properties}) {
     return render_variable_content_changer_button(new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties))
 }
 
+async function save_notification_settings(button_controller, set_is_saving) {
+    set_is_saving(true);
+    var changes = button_controller.copy_changes();
+    response = await fetch(
+        API_BASE_URL + button_controller.button_config.endpoint,
+        {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(changes),
+        },
+    );
+    set_is_saving(false);
+
+    var response_status = response.status;
+    if ((response_status >= 200) && (response_status < 400)) {
+        button_controller.apply_changes(changes, null, true);
+    }
+}
+
 
 function SaveNotificationsField({button_controller}) {
     var [is_saving, set_is_saving] = state_hook(false);
 
     var save_parameters = {};
-    var cancel_parameters = {
-        'onClick': () => button_controller.revert_changes(),
-    };
+    var cancel_parameters = {};
 
     if (is_saving) {
         set_class_name_to('disabled', save_parameters);
         set_class_name_to('disabled', cancel_parameters);
+    } else {
+        save_parameters['onClick'] = () => save_notification_settings(button_controller, set_is_saving);
+        cancel_parameters['onClick'] = () => button_controller.revert_changes();
     }
 
     return create_element(

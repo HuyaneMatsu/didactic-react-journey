@@ -70,9 +70,9 @@ def notification_settings_edit():
     
     for key, value in data.items():
         if value:
-            NOTIFICATIONS[key] = value
-        else:
             del NOTIFICATIONS[key]
+        else:
+            NOTIFICATIONS[key] = False
     
     return ('', 204)
 
