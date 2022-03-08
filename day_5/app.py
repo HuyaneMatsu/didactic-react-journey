@@ -1,10 +1,14 @@
-from scarletio.web_common import URL, quote
+from scarletio import get_event_loop, to_json
+from scarletio.web_common import URL
+from hata import Client, parse_oauth2_redirect_url, now_as_id, DiscordException
 import sys
 from flask import Flask, render_template, jsonify, request, abort
 from os.path import join as join_paths
-from os import getcwd as get_current_working_directory
+from os import getcwd as get_current_working_directory, urandom
 from dotenv import dotenv_values
+from base64 import b64encode
 
+# Setup oath 2
 CONFIG = dotenv_values('.env')
 
 try:
@@ -17,17 +21,40 @@ except KeyError:
 
 AUTHORIZATION_URL = str(
     URL(
-        'https://discordapp.com/oauth2/authorize'
+        'https://discordapp.com/oauth2/authorize',
     ).extend_query(
         {
             'client_id': CLIENT_ID,
             'redirect_uri': 'http://127.0.0.1:5000/api/auth',
             'response_type': 'code',
             'scope': 'identify',
-        }
+        },
     )
 )
 
+CLIENT = Client('', client_id=CLIENT_ID, secret=CLIENT_SECRET)
+
+LOOP = CLIENT.loop
+
+
+def create_authorization_token(user_id):
+    user_id_key = b64encode(str(user_id).encode()).decode()
+    current_time_key = b64encode(str(now_as_id()).encode()).decode()
+    token_key = b64encode(urandom(32)).decode()
+    return f'{user_id_key}.{current_time_key}.{token_key}'
+
+
+AUTHORIZATION_TOKEN_TO_USER = {}
+
+
+def serialise_user(user):
+    return {
+        'name': user.name,
+        'id': user.id,
+        'avatar_url': user.avatar_url_as(size=512),
+    }
+
+# Setup Flask
 
 BASE_PATH = get_current_working_directory()
 
@@ -105,6 +132,37 @@ def notification_settings_edit():
             NOTIFICATIONS[key] = False
     
     return ('', 204)
+
+
+@APP.route('/api/auth')
+def authenticate():
+    result = parse_oauth2_redirect_url(request.url)
+    if result is None:
+        abort(400)
+    
+    try:
+        access = LOOP.run(CLIENT.activate_authorization_code(*result, 'identify'))
+    except DiscordException as err:
+        if err.status == 400:
+            access = None
+        
+        else:
+            raise
+    
+    if access is None:
+        abort(400)
+    
+    user = LOOP.run(CLIENT.user_info_get(access))
+    
+    token = create_authorization_token(user.id)
+    
+    AUTHORIZATION_TOKEN_TO_USER[token] = user
+    
+    return render_template(
+        'authorized.html',
+        token = token,
+        user = to_json(serialise_user(user)),
+    )
 
 
 APP.run()

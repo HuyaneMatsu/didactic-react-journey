@@ -1,8 +1,12 @@
+* {
+
+    margin: 0;
+    padding: 0;
+}
+
 body {
     min-height: 100%;
     max-height: 100%;
-    margin: 0;
-    padding: 0;
     background-color: rgb(54 57 63);
     color: rgb(255 255 255);
     font-size: 1rem;
@@ -11,11 +15,6 @@ body {
 
 a {
     cursor: pointer;
-}
-
-p {
-    margin: 0;
-    padding: 0;
 }
 
 .buttons {
@@ -62,6 +61,15 @@ p {
     background-color: rgb(173 96 96);
 }
 
+.buttons h1 {
+    font-size: 2rem;
+    line-height: 2rem;
+    font-weight 800;
+    margin-left: auto;
+    margin-right: auto;
+    width: max-content;
+}
+
 .content {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -89,7 +97,7 @@ p {
 }
 
 
-.h1 {
+.content h1 {
     font-size: 3rem;
 }
 
