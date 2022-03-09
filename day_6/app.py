@@ -77,14 +77,19 @@ def index():
 
 @APP.route('/api/profile')
 def profile():
-    return jsonify(
-        {
-            'name': 'Alien watermelon',
-            'created_at': '2011-10-10T14:48:00',
-            'id': '155652112212323123',
-            'avatar_url': '/static/default_avatar.png',
-        }
-    )
+    try:
+        token = request.headers['Authorization']
+    except KeyError:
+        abort(401)
+        return
+    
+    try:
+        user = AUTHORIZATION_TOKEN_TO_USER[token]
+    except KeyError:
+        abort(401)
+        return
+    
+    return jsonify(serialise_user(user))
 
 
 @APP.route('/api/credits')
