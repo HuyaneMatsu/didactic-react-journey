@@ -75,8 +75,7 @@ def index():
     )
 
 
-@APP.route('/api/profile')
-def profile():
+def get_user():
     try:
         token = request.headers['Authorization']
     except KeyError:
@@ -89,6 +88,12 @@ def profile():
         abort(401)
         return
     
+    return user
+
+
+@APP.route('/api/profile')
+def profile():
+    user = get_user()
     return jsonify(serialise_user(user))
 
 
