@@ -1,8 +1,8 @@
-from scarletio import get_event_loop, to_json
+from scarletio import to_json
 from scarletio.web_common import URL
 from hata import Client, parse_oauth2_redirect_url, now_as_id, DiscordException, datetime_to_timestamp
 import sys
-from flask import Flask, render_template, jsonify, request, abort
+from flask import Flask, render_template, jsonify, request, abort, redirect
 from os.path import join as join_paths
 from os import getcwd as get_current_working_directory, urandom
 from dotenv import dotenv_values
@@ -53,6 +53,7 @@ def serialise_user(user):
         'id': user.id,
         'created_at': datetime_to_timestamp(user.created_at),
         'avatar_url': user.avatar_url_as(size=512),
+        'discriminator': user.discriminator,
     }
 
 # Setup Flask
@@ -174,6 +175,11 @@ def authenticate():
         token = token,
         user = to_json(serialise_user(user)),
     )
+
+
+@APP.route('/login')
+def login():
+    return redirect(AUTHORIZATION_URL)
 
 
 APP.run()

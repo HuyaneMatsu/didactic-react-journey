@@ -17,3 +17,4 @@
 - Use functional components
 - Synchronize requests
 - Popup when notifications settings are changed.
+- Actually save notification settings.

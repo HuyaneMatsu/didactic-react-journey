@@ -239,3 +239,13 @@ a {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
+
+
+.content .login_reminder {
+    margin-left: auto;
+    width: fit-content;
+    margin-right: auto;
+    margin-top: 6rem;
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+}

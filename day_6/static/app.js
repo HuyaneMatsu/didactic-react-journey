@@ -30,6 +30,10 @@ function get_from_nullable_dict(dictionary, key, default_value) {
     return value;
 }
 
+function choice(list_) {
+    return list_[Math.floor(Math.random() * list_.length)]
+}
+
 var create_element = React.createElement;
 var Component = React.Component;
 var Fragment = React.Fragment;
@@ -80,11 +84,12 @@ class User {
         this.id = new BigInt(data['id']);
         this.avatar_url = data['avatar_url'];
         this.created_at = new Date(data['created_at']);
+        this.discriminator = left_fill(to_string(data['discriminator']), 4, '0')
     }
 }
 
 class LoginState {
-    constructor(
+    constructor(){
         var state_found, user, token;
 
         while (1) {
@@ -300,9 +305,26 @@ class ButtonProperties {
     }
 }
 
+
+WELCOME_MESSAGES = [
+    'Isn\'t  it a great day?',
+    'What a great Day!',
+    'Good to see you again darling.',
+    'The creature',
+]
+
 function get_random_welcome_message() {
-    'Isn\'t  it a great day?'
+    return choice(WELCOME_MESSAGES);
 }
+
+
+function create_login_reminder() {
+    return create_element(
+        'div',
+        set_class_name_to('login_reminder'),
+        'Please log in first',
+    )
+)
 
 function render_default_message() {
     var element;
@@ -321,13 +343,9 @@ function render_default_message() {
                 set_class_name_to('message'),
                 get_random_welcome_message(),
             ),
-        ),
-    } else {
-        element = create_element(
-            'div',
-            set_class_name_to('login_reminder'),
-            'Please log in first',
         )
+    } else {
+        element = create_login_reminder();
     }
     return element;
 }
@@ -600,8 +618,27 @@ function VariableContent({variable_content}) {
         'div',
         set_class_name_to('content'),
         variable_content,
-    )
+    );
 }
+
+function create_login_button() {
+    var element;
+    if (LOGIN_STATE.logged_in) {
+        element = create_element(
+            'p',
+            set_class_name_to('logged_in'),
+            `${LOGIN_STATE.user.name}#${LOGIN_STATE.user.discriminator}`,
+        );
+    } else {
+        element = create_element(
+            'p'
+            set_class_name_to('login', {'href': '/login'})
+            'Login',
+        );
+    }
+    return element;
+}
+
 
 function App() {
     var [button_properties, variable_content] = app_state_hook()
@@ -613,16 +650,24 @@ function App() {
             'div',
             set_class_name_to('buttons'),
             create_element(
-                ProfileButton,
-                {'button_properties': button_properties},
-            ),
+                'div',
+                set_class_name_to('left'),
+                create_element(
+                    ProfileButton,
+                    {'button_properties': button_properties},
+                ),
+                create_element(
+                    CreditsButton,
+                    {'button_properties': button_properties},
+                ),
+                create_element(
+                    NotificationsButton,
+                    {'button_properties': button_properties},
+                ),
             create_element(
-                CreditsButton,
-                {'button_properties': button_properties},
-            ),
-            create_element(
-                NotificationsButton,
-                {'button_properties': button_properties},
+                'div',
+                set_class_name_to('right'),
+                create_login_button(),
             ),
         ),
         create_element(
