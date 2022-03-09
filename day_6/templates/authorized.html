@@ -24,8 +24,15 @@
         </div>
     </div>
     <script type = "text/javascript">
-        localStorage.setItem('token', '{{ token }}');
-        localStorage.setItem('user', '{{ user }}');
+        var token = '{{ token }}';
+        var user = '{{ user }}';
+
+        token = unescape(token);
+        user = unescape(user);
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', user');
+
         window.location.href = document.location.origin;
     </script>
 </body>

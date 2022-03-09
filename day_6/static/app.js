@@ -71,6 +71,62 @@ function format_date(date) {
     ].join('')
 }
 
+/* Login State */
+
+
+class User {
+    constructor(data) {
+        this.name = data['name'];
+        this.id = new BigInt(data['id']);
+        this.avatar_url = data['avatar_url'];
+        this.created_at = new Date(data['created_at']);
+    }
+}
+
+class LoginState {
+    constructor(
+        var state_found, user, token;
+
+        while (1) {
+            token = localStorage.getItem('token')
+            if (token === null) {
+                state_found = false;
+                break;
+            }
+
+            var raw_user_data = localStorage.getItem('user');
+            if (raw_user_data === null) {
+                state_found = false;
+                break;
+            }
+
+            var user_data;
+            try {
+                user_data = JSON.parse(raw_user_data);
+            } catch {
+                state_found = false;
+                break;
+            }
+
+            user = new User(user_data);
+            state_found = true;
+            break;
+        }
+
+        if (state_found) {
+            token = null;
+            user = null;
+            localStorage.removeItem('token');
+            localStorage.localStorage('user');
+        }
+
+        this.user = user;
+        this.token = token;
+        this.logged_in = state_found;
+    }
+}
+
+
 /* Application */
 
 function render_profile(button_controller) {
@@ -244,9 +300,47 @@ class ButtonProperties {
     }
 }
 
+function get_random_welcome_message() {
+    'Isn\'t  it a great day?'
+}
+
+function render_default_message() {
+    var element;
+    if (LOGIN_STATE.logged_in) {
+        element = create_element(
+            'div',
+            set_class_name_to('welcome'),
+            create_element(
+                'div',
+                set_class_name_to('user'),
+                'Welcome ',
+                LOGIN_STATE.user.name,
+            ),
+            create_element(
+                'div',
+                set_class_name_to('message'),
+                get_random_welcome_message(),
+            ),
+        ),
+    } else {
+        element = create_element(
+            'div',
+            set_class_name_to('login_reminder'),
+            'Please log in first',
+        )
+    }
+    return element;
+}
+
+
 function app_state_hook () {
-    var [variable_content, set_variable_content] = state_hook('Variable content goes here')
+    var [variable_content, set_variable_content] = state_hook(null)
     var clicked_button_name_reference = reference_hook(null);
+
+    if (variable_content === null) {
+        variable_content = render_default_message();
+        set_variable_content(variable_content);
+    }
 
     var button_properties = new ButtonProperties(set_variable_content, clicked_button_name_reference)
 
@@ -500,6 +594,7 @@ function SaveNotificationsField({button_controller}) {
     )
 }
 
+
 function VariableContent({variable_content}) {
     return create_element(
         'div',
@@ -542,6 +637,8 @@ function App() {
 }
 
 /* Init */
+
+LOGIN_STATE = new LoginState()
 
 ReactDOM.render(
     create_element(App),
