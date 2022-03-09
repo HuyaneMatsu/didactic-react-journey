@@ -81,7 +81,7 @@ function format_date(date) {
 class User {
     constructor(data) {
         this.name = data['name'];
-        this.id = new BigInt(data['id']);
+        this.id = BigInt(data['id']);
         this.avatar_url = data['avatar_url'];
         this.created_at = new Date(data['created_at']);
         this.discriminator = left_fill(to_string(data['discriminator']), 4, '0')
@@ -118,16 +118,16 @@ class LoginState {
             break;
         }
 
-        if (state_found) {
+        if (! state_found) {
             token = null;
             user = null;
             localStorage.removeItem('token');
-            localStorage.localStorage('user');
+            localStorage.removeItem('user');
         }
 
         this.user = user;
         this.token = token;
-        this.logged_in = state_found;
+        this.is_logged_in = state_found;
     }
 }
 
@@ -145,19 +145,19 @@ function render_profile(button_controller) {
             create_element(
                 'h1',
                 null,
-                data['name'],
+                LOGIN_STATE.user.name,
             ),
             create_element(
                 'p',
                 null,
                 'id: ',
-                data['id'],
+                to_string(LOGIN_STATE.user.id),
             ),
             create_element(
                 'p',
                 null,
                 'Created at: ',
-                format_timestamp(data['created_at']),
+                format_date(LOGIN_STATE.user.created_at),
             ),
         ),
         create_element(
@@ -165,7 +165,7 @@ function render_profile(button_controller) {
             set_class_name_to('right_300'),
             create_element(
                 'img',
-                {'src': data['avatar_url']},
+                {'src': LOGIN_STATE.user.avatar_url},
             ),
         ),
     );
@@ -279,12 +279,19 @@ function render_loader() {
 
 class VariableContentButtonConfig {
     constructor(button_name, button_display_value, endpoint, renderer) {
+        var is_loaded;
+        if (endpoint === null ) {
+            is_loaded = true;
+        } else {
+            is_loaded = false;
+        }
+
         this.button_name = button_name;
         this.button_display_value = button_display_value;
         this.endpoint = endpoint;
         this.renderer = renderer;
         this.is_loading = false;
-        this.is_loaded = false;
+        this.is_loaded = is_loaded;
         this.data = null;
         this.data_changes = null;
     }
@@ -306,12 +313,12 @@ class ButtonProperties {
 }
 
 
-WELCOME_MESSAGES = [
+var WELCOME_MESSAGES = [
     'Isn\'t  it a great day?',
     'What a great Day!',
     'Good to see you again darling.',
     'The creature',
-]
+];
 
 function get_random_welcome_message() {
     return choice(WELCOME_MESSAGES);
@@ -324,11 +331,11 @@ function create_login_reminder() {
         set_class_name_to('login_reminder'),
         'Please log in first',
     )
-)
+}
 
 function render_default_message() {
     var element;
-    if (LOGIN_STATE.logged_in) {
+    if (LOGIN_STATE.is_logged_in) {
         element = create_element(
             'div',
             set_class_name_to('welcome'),
@@ -457,12 +464,78 @@ class ButtonController {
 
         this.display();
     }
+
+    render_variable_content_changer_button() {
+        var element_attributes = {};
+
+        if (LOGIN_STATE.is_logged_in) {
+            var callback;
+            if (this.button_config.is_loaded || this.button_config.is_loading) {
+                callback = () => this.handle_other_clicks()
+            } else {
+                callback = () => this.handle_first_click()
+            }
+
+            var element_attributes = {
+                'onClick': callback,
+            }
+
+            if (this.button_properties.get_clicked_button() == this.button_config.button_name) {
+                set_class_name_to('clicked', element_attributes);
+            }
+
+        } else {
+             set_class_name_to('disabled', element_attributes);
+        }
+
+        return create_element(
+            'a',
+            element_attributes,
+            this.button_config.button_display_value,
+        );
+    }
+
+    handle_first_click() {
+        var button_name = this.button_config.button_name;
+        this.button_properties.set_clicked_button(button_name);
+        this.button_config.is_loading = true;
+        this.button_properties.set_variable_content(render_loader());
+
+        fetch(
+            API_BASE_URL + this.button_config.endpoint
+        ).then(
+            (request) => this.update_from_payload(request)
+        );
+    }
+
+    handle_other_clicks() {
+        var button_name = this.button_config.button_name;
+        this.button_properties.set_clicked_button(button_name);
+
+        if (! this.button_config.is_loading) {
+            this.display()
+        }
+    }
+
+    async update_from_payload(request) {
+        var button_config = this.button_config;
+
+        var data = await request.json();
+
+        button_config.data = data;
+        button_config.is_loaded = true;
+        button_config.is_loading = false;
+
+        if (this.button_properties.get_clicked_button() == button_config.button_name) {
+            this.display();
+        }
+    }
 }
 
 var PROFILE_BUTTON_CONFIG = new VariableContentButtonConfig(
     'profile',
     'Profile',
-    '/profile',
+    null,
     render_profile,
 );
 
@@ -480,75 +553,19 @@ var NOTIFICATION_BUTTON_CONFIG = new VariableContentButtonConfig(
     render_notification_settings,
 );
 
-async function update_from_payload(button_controller, request) {
-    var data = await request.json();
-    button_controller.button_config.data = data;
-    button_controller.button_config.is_loaded = true;
-    button_controller.button_config.is_loading = false;
-
-    if (button_controller.button_properties.get_clicked_button() == button_controller.button_config.button_name) {
-        button_controller.display();
-    }
-}
-
-function handle_first_click(button_controller) {
-    var button_name = button_controller.button_config.button_name;
-    button_controller.button_properties.set_clicked_button(button_name);
-    button_controller.button_config.is_loading = true;
-    button_controller.button_properties.set_variable_content(render_loader());
-
-    fetch(
-        API_BASE_URL + button_controller.button_config.endpoint
-    ).then(
-        (request) => update_from_payload(button_controller, request)
-    );
-}
-
-function handle_other_clicks(button_controller) {
-    var button_name = button_controller.button_config.button_name;
-    button_controller.button_properties.set_clicked_button(button_name);
-
-    if (! button_controller.button_config.is_loading) {
-        button_controller.display()
-    }
-}
-
-
-function render_variable_content_changer_button(button_controller) {
-    var callback
-    if (button_controller.button_config.is_loaded || button_controller.button_config.is_loading) {
-        callback = () => handle_other_clicks(button_controller)
-    } else {
-        callback = () => handle_first_click(button_controller)
-    }
-
-    var element_attributes = {
-        'onClick': callback,
-    }
-
-    if (button_controller.button_properties.get_clicked_button() == button_controller.button_config.button_name) {
-        set_class_name_to('clicked', element_attributes);
-    }
-
-    return create_element(
-        'a',
-        element_attributes,
-        button_controller.button_config.button_display_value,
-    );
-}
 
 function ProfileButton({button_properties}) {
-    return render_variable_content_changer_button(new ButtonController(PROFILE_BUTTON_CONFIG, button_properties))
+    return (new ButtonController(PROFILE_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
 
 function CreditsButton({button_properties}) {
-    return render_variable_content_changer_button(new ButtonController(CREDITS_BUTTON_CONFIG, button_properties))
+    return (new ButtonController(CREDITS_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
-
 
 function NotificationsButton({button_properties}) {
-    return render_variable_content_changer_button(new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties))
+    return (new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
+
 
 async function save_notification_settings(button_controller, set_is_saving) {
     set_is_saving(true);
@@ -623,16 +640,20 @@ function VariableContent({variable_content}) {
 
 function create_login_button() {
     var element;
-    if (LOGIN_STATE.logged_in) {
+    if (LOGIN_STATE.is_logged_in) {
         element = create_element(
-            'p',
-            set_class_name_to('logged_in'),
+            'a',
+            set_class_name_to('is_logged_in'),
+            create_element(
+                'img',
+                {'src': LOGIN_STATE.user.avatar_url},
+            ),
             `${LOGIN_STATE.user.name}#${LOGIN_STATE.user.discriminator}`,
         );
     } else {
         element = create_element(
-            'p'
-            set_class_name_to('login', {'href': '/login'})
+            'a',
+            set_class_name_to('login', {'href': '/login'}),
             'Login',
         );
     }
@@ -664,6 +685,7 @@ function App() {
                     NotificationsButton,
                     {'button_properties': button_properties},
                 ),
+            ),
             create_element(
                 'div',
                 set_class_name_to('right'),

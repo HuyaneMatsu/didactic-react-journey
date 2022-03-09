@@ -1,7 +1,17 @@
 * {
-
     margin: 0;
     padding: 0;
+}
+
+:root {
+    --switch-scale: 0.15rem;
+    --color-green: rgb(75 184 20);
+    --color-green-disabled: rgb(53 96 32);
+    --color-red: rgb(184 20 20);
+    --color-red-disabled: rgb(96 32 32);
+    --color-rose: rgb(173 132 132);
+    --color-rose-selected: rgb(173 96 96);
+    --color-rose-disabled: rgb(122 82 82);
 }
 
 body {
@@ -28,11 +38,46 @@ a {
     max-width: 1024px;
     margin-left: auto;
     margin-right: auto;
+    height: 1.25rem;
 }
 
-.buttons a {
+.buttons .left, .buttons .right {
+    width: max-content;
+}
+
+.buttons .left {
+    float: left;
+}
+
+.buttons .right {
+    float: right;
+}
+
+.buttons .left a {
     margin-right: 1rem;
-    background-color: rgb(173 132 132);
+    background-color: var(--color-rose);
+}
+.buttons .left a:last-child {
+    margin-right: 0rem;
+}
+
+.buttons .right a[href] {
+    background-color: var(--color-green);
+    cursor: pointer;
+}
+
+.buttons .right a {
+    background-color: var(--color-green-disabled);
+    cursor: default;
+}
+
+.buttons .right a img {
+    height: 1.75rem;
+    width: 1.75rem;
+    border-radius: 50%;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+    margin-right: 0.75rem;
 }
 
 .buttons a, .save .right a {
@@ -53,12 +98,14 @@ a {
     color: rgb(255 255 255);
 }
 
-.buttons a:last-child {
-    margin-right: 0rem;
+
+.buttons a.disabled {
+    background-color: var(--color-rose-disabled);
+    cursor: default;
 }
 
 .buttons a.clicked {
-    background-color: rgb(173 96 96);
+    background-color: var(--color-rose-selected);
 }
 
 .buttons h1 {
@@ -130,9 +177,6 @@ a {
     }
 }
 
-:root {
-    --switch-scale: 0.15rem;
-}
 
 .switch {
     position: relative;
@@ -208,19 +252,19 @@ a {
 }
 
 .save_execute_enabled {
-    background-color: rgb(75 184 20);
+    background-color: var(--color-green);
 }
 
 .save_execute_disabled {
-    background-color: rgb(53 96 32);
+    background-color: var(--color-green-disabled);
 }
 
 .save_cancel_enabled {
-    background-color: rgb(184 20 20);
+    background-color: var(--color-red);
 }
 
 .save_cancel_disabled {
-    background-color: rgb(96 32 32);
+    background-color: var(--color-red-disabled);
 }
 
 .content .notifications div {
@@ -246,6 +290,29 @@ a {
     width: fit-content;
     margin-right: auto;
     margin-top: 6rem;
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+}
+
+.content .welcome {
+    margin-top: 6rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: max-content;
+    text-align: center;
+}
+
+.content .welcome .user {
+    font-size: 2rem;
+    line-height: 2rem;
+    border-bottom-color: rgb(200 225 255 / 0.30);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.content .welcome .message {
     font-size: 1.4rem;
     line-height: 1.4rem;
 }

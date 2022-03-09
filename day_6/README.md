@@ -18,3 +18,4 @@
 - Synchronize requests
 - Popup when notifications settings are changed.
 - Actually save notification settings.
+- oauth2 login
