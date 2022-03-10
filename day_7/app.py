@@ -1,12 +1,15 @@
+import sys
+from base64 import b64encode
+from datetime import timedelta
+from os import getcwd as get_current_working_directory, urandom
+from os.path import join as join_paths
+
+from dotenv import dotenv_values
+from hata import Client, DiscordException, datetime_to_timestamp, now_as_id, parse_oauth2_redirect_url
+from flask import Flask, abort, jsonify, redirect, render_template, request
 from scarletio import to_json
 from scarletio.web_common import URL
-from hata import Client, parse_oauth2_redirect_url, now_as_id, DiscordException, datetime_to_timestamp
-import sys
-from flask import Flask, render_template, jsonify, request, abort, redirect
-from os.path import join as join_paths
-from os import getcwd as get_current_working_directory, urandom
-from dotenv import dotenv_values
-from base64 import b64encode
+
 
 # Setup oath 2
 CONFIG = dotenv_values('.env')
@@ -44,17 +47,62 @@ def create_authorization_token(user_id):
     return f'{user_id_key}.{current_time_key}.{token_key}'
 
 
+def get_access_expires_at(user):
+    access = user.access
+    return access.created_at + timedelta(seconds=access.expires_in)
+
+
 AUTHORIZATION_TOKEN_TO_USER = {}
 
 
 def serialise_user(user):
     return {
         'name': user.name,
-        'id': user.id,
+        'id': str(user.id),
         'created_at': datetime_to_timestamp(user.created_at),
-        'avatar_url': user.avatar_url_as(size=512),
+        'avatar_hash': str(user.avatar_hash),
+        'avatar_type': user.avatar_type.value,
         'discriminator': user.discriminator,
     }
+
+
+NOTIFICATION_SETTINGS = {
+    # Some default value
+    184734189386465281: {
+        'daily': False,
+    }
+}
+
+def get_notification_settings_of(user_id):
+    try:
+        notification_settings = NOTIFICATION_SETTINGS[user_id]
+    except KeyError:
+        notification_settings = {}
+    
+    return notification_settings
+
+
+def set_notification_settings_of(user_id, notification_settings):
+    NOTIFICATION_SETTINGS[user_id] = notification_settings
+
+STATS = {
+    # Some default value
+    184734189386465281: {
+        'total_love': 55566556,
+        'streak': 222,
+    }
+}
+
+def get_stats_of(user_id):
+    try:
+        stats = STATS[user_id]
+    except KeyError:
+        stats = {
+            'total_love': 0,
+            'streak': 0,
+        }
+    
+    return stats
 
 # Setup Flask
 
@@ -100,27 +148,22 @@ def profile():
 
 @APP.route('/api/stats')
 def stats():
-    return jsonify(
-        {
-            'total_love': 55566556,
-            'streak': 222,
-        }
-    )
+    user = get_user()
+    return jsonify(get_stats_of(user.id))
 
-
-# Default to True
-NOTIFICATIONS = {
-    'daily': False,
-}
 
 NOTIFICATION_NAMES = {'daily', 'proposal'}
 
 @APP.route('/api/notification_settings', methods=['GET'])
 def notification_settings_get():
-    return NOTIFICATIONS
+    user = get_user()
+    return jsonify(get_notification_settings_of(user.id))
+
 
 @APP.route('/api/notification_settings', methods=['PATCH'])
 def notification_settings_edit():
+    user = get_user()
+    
     data = request.json
     if not isinstance(data, dict):
         abort(400)
@@ -134,14 +177,18 @@ def notification_settings_edit():
         if not isinstance(value, bool):
             abort(400)
     
+    notification_settings = get_notification_settings_of(user.id)
+    
     for key, value in data.items():
         if value:
             try:
-                del NOTIFICATIONS[key]
+                del notification_settings[key]
             except KeyError:
                 pass
         else:
-            NOTIFICATIONS[key] = False
+            notification_settings[key] = False
+    
+    set_notification_settings_of(user.id, notification_settings)
     
     return ('', 204)
 
@@ -174,6 +221,7 @@ def authenticate():
         'authorized.html',
         token = token,
         user = to_json(serialise_user(user)),
+        expires_at = datetime_to_timestamp(get_access_expires_at(user)),
     )
 
 

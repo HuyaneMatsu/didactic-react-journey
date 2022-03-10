@@ -154,6 +154,16 @@ a {
     padding-right: var(--size-button-border);
 }
 
+.header .middle {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+    height: var(--size-button-total-height);
+    font-size: var(--size-button-total-height);
+    line-height: var(--size-button-total-height);
+    font-weight: var(--font-medium-title-weight);
+}
+
 .header .left {
     float: left;
 }
@@ -190,7 +200,7 @@ a {
     position: absolute;
 }
 
-.header a, .save .right a {
+.header a, .save .right a, .content .welcome a {
     padding-left: var(--size-button-border);
     padding-right: var(--size-button-border);
     padding-top: var(--size-button-border);
@@ -221,14 +231,6 @@ a {
     background-color: var(--color-rose-selected);
 }
 
-.header h1 {
-    font-size: var(--font-medium-title-size);
-    line-height: var(--font-medium-title-line-height);
-    font-weight var(--font-medium-title-weight);
-    margin-left: auto;
-    margin-right: auto;
-    width: max-content;
-}
 
 /* Content */
 
@@ -255,6 +257,10 @@ a {
     border-color: var(--color-loader-background);
     border-left-color: var(--color-loader-foreground);
     animation: loading 1.4s infinite linear;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
 }
 
 @keyframes loading {
@@ -444,6 +450,8 @@ a {
     font-weight: var(--font-medium-weight);
 }
 
+/* Content - Welcome */
+
 .content .welcome {
     margin-top: var(--size-content-initial-spacing-top);
     margin-left: auto;
@@ -467,4 +475,8 @@ a {
     font-size: var(--font-medium-size);
     line-height: var(--font-medium-size);
     font-weight: var(--font-medium-weight);
+}
+
+.content .welcome .message a {
+    background-color: var(--color-red);
 }

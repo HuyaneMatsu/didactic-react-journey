@@ -18,7 +18,7 @@ function set_class_name_to(class_name, into) {
 }
 
 function get_from_nullable_dict(dictionary, key, default_value) {
-    if (dictionary === null){
+    if (dictionary === null) {
         return default_value;
     }
 
@@ -50,6 +50,10 @@ function to_string(value) {
     return value.toString();
 }
 
+function to_string_base_16(value) {
+    return value.toString(16);
+}
+
 function left_fill(string, fill_till, fill_with) {
     return string.padStart(fill_till, fill_with);
 }
@@ -77,20 +81,111 @@ function format_date(date) {
 
 /* Login State */
 
+var ICON_TYPE_NONE = 0;
+var ICON_TYPE_STATIC = 1;
+var ICON_TYPE_ANIMATED = 2;
+
+var DISCORD_CDN_ENDPOINT = 'https://cdn.discordapp.com'
+var DEFAULT_AVATAR_COUNT = BigInt(5);
 
 class User {
     constructor(data) {
         this.name = data['name'];
         this.id = BigInt(data['id']);
-        this.avatar_url = data['avatar_url'];
+        this.avatar_hash = BigInt(data['avatar_hash']);
+        this.avatar_type = data['avatar_type'];
         this.created_at = new Date(data['created_at']);
-        this.discriminator = left_fill(to_string(data['discriminator']), 4, '0')
+        this.discriminator = data['discriminator']
+    }
+
+    get_full_name() {
+        return [
+            this.name,
+            '#',
+            left_fill(to_string(this.discriminator), 4, '0')
+        ].join('');
+    }
+
+    get_avatar_url_as(parameter_1, parameter_2) {
+        var ext, size;
+
+        if (parameter_1 === undefined) {
+            ext = null;
+            size = null;
+        } else {
+            if (parameter_2 === undefined) {
+                if (typeof(parameter_1) == 'number') {
+                    ext = null;
+                    size = parameter_1;
+                } else {
+                    ext = parameter_1;
+                    size = null;
+                }
+
+            } else {
+                ext = parameter_1;
+                size = parameter_2;
+            }
+        }
+
+        var icon_type = this.avatar_type;
+
+        if (icon_type == ICON_TYPE_NONE) {
+            return this.get_default_avatar_url();
+        }
+
+        var end;
+        if (size === null) {
+            end = '';
+        } else {
+            end = '?size=' + to_string(size);
+        }
+
+        var prefix, ext;
+        if (ext === null) {
+            if (icon_type == ICON_TYPE_STATIC) {
+                prefix = '';
+                ext = 'png';
+            } else {
+                prefix = 'a_';
+                ext = 'gif';
+            }
+        } else {
+            if (icon_type == ICON_TYPE_STATIC) {
+                prefix = '';
+            } else {
+                prefix = 'a_';
+            }
+        }
+
+        return [
+            DISCORD_CDN_ENDPOINT,
+            '/avatars/',
+            to_string(this.id),
+            '/',
+            prefix,
+            left_fill(to_string_base_16(this.avatar_hash), 32, '0'),
+            '.',
+            ext,
+            end,
+        ].join('');
+    }
+
+    get_default_avatar_url() {
+        var default_avatar_value = this.id % DEFAULT_AVATAR_COUNT;
+
+        return [
+            DISCORD_CDN_ENDPOINT,
+            '/embed/avatars/',
+            to_string(default_avatar_value),
+            '.png',
+        ].join('');
     }
 }
 
 class LoginState {
     constructor(){
-        var state_found, user, token;
+        var state_found, user, token, expires_at;
 
         while (1) {
             token = localStorage.getItem('token')
@@ -114,6 +209,14 @@ class LoginState {
             }
 
             user = new User(user_data);
+
+            expires_at = localStorage.getItem('expires_at');
+            if (expires_at === null) {
+                state_found = false;
+                break;
+            }
+            expires_at = new Date(expires_at);
+
             state_found = true;
             break;
         }
@@ -121,13 +224,32 @@ class LoginState {
         if (! state_found) {
             token = null;
             user = null;
+            expires_at = null
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            localStorage.removeItem('expires_at');
+        }
+
+        var is_logged_in, was_logged_in;
+
+        if (state_found) {
+            if (expires_at < (new Date())) {
+                was_logged_in = true;
+                is_logged_in = false;
+            } else {
+                was_logged_in = false;
+                is_logged_in = true;
+            }
+        } else {
+            is_logged_in = false;
+            was_logged_in = false;
         }
 
         this.user = user;
         this.token = token;
+        this.was_logged_in = was_logged_in;
         this.is_logged_in = state_found;
+        this.un_authorized = false;
     }
 }
 
@@ -165,7 +287,7 @@ function render_profile(button_controller) {
             set_class_name_to('right'),
             create_element(
                 'img',
-                {'src': LOGIN_STATE.user.avatar_url},
+                {'src': LOGIN_STATE.user.get_avatar_url_as(site=512)},
             ),
         ),
     );
@@ -181,13 +303,13 @@ function render_stats(button_controller) {
             'p',
             null,
             'Hearts: ',
-            data['total_love'],
+            to_string(data['total_love']),
         ),
         create_element(
             'p',
             null,
             'Streak: ',
-            data['streak'],
+            to_string(data['streak']),
         ),
     )
 }
@@ -333,23 +455,44 @@ function create_login_reminder() {
     )
 }
 
+function welcome_or_notify_expired_login() {
+    var inner_element;
+
+    if (LOGIN_STATE.is_logged_in) {
+        inner_element = get_random_welcome_message();
+    } else {
+        inner_element = create_element(
+            'a',
+            set_class_name_to('login', {'href': '/login'}),
+            'Your session expired, please login',
+        );
+    }
+
+    return create_element(
+        'div',
+        set_class_name_to('message'),
+        inner_element,
+    );
+}
+
 function render_default_message() {
     var element;
-    if (LOGIN_STATE.is_logged_in) {
+    if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
+        var welcome_text;
+        if (LOGIN_STATE.un_authorized) {
+            welcome_text = 'Something went wrong';
+        } else {
+            welcome_text = 'Welcome ' + LOGIN_STATE.user.name;
+        }
         element = create_element(
             'div',
             set_class_name_to('welcome'),
             create_element(
                 'div',
                 set_class_name_to('user'),
-                'Welcome ',
-                LOGIN_STATE.user.name,
+                welcome_text,
             ),
-            create_element(
-                'div',
-                set_class_name_to('message'),
-                get_random_welcome_message(),
-            ),
+            welcome_or_notify_expired_login(),
         )
     } else {
         element = create_login_reminder();
@@ -502,7 +645,12 @@ class ButtonController {
         this.button_properties.set_variable_content(render_loader());
 
         fetch(
-            API_BASE_URL + this.button_config.endpoint
+            API_BASE_URL + this.button_config.endpoint,
+            {
+                'headers': {
+                    'Authorization': LOGIN_STATE.token,
+                },
+            },
         ).then(
             (request) => this.update_from_payload(request)
         );
@@ -513,21 +661,36 @@ class ButtonController {
         this.button_properties.set_clicked_button(button_name);
 
         if (! this.button_config.is_loading) {
-            this.display()
+            this.display();
         }
     }
 
     async update_from_payload(request) {
-        var button_config = this.button_config;
+        var status = request.status;
 
-        var data = await request.json();
+        if (status == 200) {
+            var data = await request.json();
 
-        button_config.data = data;
-        button_config.is_loaded = true;
-        button_config.is_loading = false;
+            LOGIN_STATE.un_authorized = false;
 
-        if (this.button_properties.get_clicked_button() == button_config.button_name) {
-            this.display();
+            var button_config = this.button_config;
+            button_config.data = data;
+            button_config.is_loaded = true;
+            button_config.is_loading = false;
+
+            if (this.button_properties.get_clicked_button() == button_config.button_name) {
+                this.display();
+            }
+
+        } else {
+            this.button_config.is_loading = false;
+
+            if (status == 401) {
+                LOGIN_STATE.was_logged_in = true;
+                LOGIN_STATE.is_logged_in = false;
+                LOGIN_STATE.un_authorized = true;
+                this.button_properties.set_variable_content(null);
+            }
         }
     }
 }
@@ -574,7 +737,10 @@ async function save_notification_settings(button_controller, set_is_saving) {
         API_BASE_URL + button_controller.button_config.endpoint,
         {
             method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Authorization': LOGIN_STATE.token,
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(changes),
         },
     );
@@ -646,12 +812,12 @@ function create_login_button() {
             set_class_name_to('is_logged_in'),
             create_element(
                 'img',
-                {'src': LOGIN_STATE.user.avatar_url},
+                {'src': LOGIN_STATE.user.get_avatar_url_as(size=32)},
             ),
             create_element(
                 'p',
                 null,
-                `${LOGIN_STATE.user.name}#${LOGIN_STATE.user.discriminator}`,
+                LOGIN_STATE.user.get_full_name(),
             )
         );
     } else {
