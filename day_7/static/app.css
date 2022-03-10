@@ -49,7 +49,7 @@
     --color-rose: rgb(173 132 132);
     --color-rose-selected: rgb(173 96 96);
     --color-rose-disabled: rgb(122 82 82);
-
+    --color-blue: rgb(20 102 184);
 
     /* Header */
 
@@ -88,6 +88,7 @@
     /* Content - Welcome */
 
     --size-welcome-spacing: 1rem;
+    --size-welcome-logoff-spacing: 4rem;
 
     /* Content - Profile */
 
@@ -145,20 +146,15 @@ a {
     height: var(--size-button-total-height);
 }
 
-.header .left, .header .right {
+.header .left, .header .right, .header .middle {
     width: max-content;
     height: var(--size-button-total-height);
-    padding-bottom: var(--size-button-border);
-    padding-top: var(--size-button-border);
-    padding-left: var(--size-button-border);
-    padding-right: var(--size-button-border);
+    display: flex;
 }
 
 .header .middle {
-    width: max-content;
     margin-left: auto;
     margin-right: auto;
-    height: var(--size-button-total-height);
     font-size: var(--size-button-total-height);
     line-height: var(--size-button-total-height);
     font-weight: var(--font-medium-title-weight);
@@ -180,14 +176,9 @@ a {
     margin-right: 0rem;
 }
 
-.header .right a[href] {
+.header .right a {
     background-color: var(--color-green);
     cursor: pointer;
-}
-
-.header .right a {
-    background-color: var(--color-green-disabled);
-    cursor: default;
 }
 
 .header .right a img {
@@ -475,8 +466,25 @@ a {
     font-size: var(--font-medium-size);
     line-height: var(--font-medium-size);
     font-weight: var(--font-medium-weight);
+    height: var(--size-button-total-height);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: max-content;
 }
 
 .content .welcome .message a {
     background-color: var(--color-red);
+}
+
+.content .welcome .message .right {
+    margin-left: var(--size-welcome-logoff-spacing);
+}
+
+.content .welcome .message a.right {
+    background-color: var(--color-blue);
+}
+
+.content .welcome .message .left {
+    margin-right: var(--size-welcome-logoff-spacing);
 }

@@ -215,7 +215,13 @@ class LoginState {
                 state_found = false;
                 break;
             }
-            expires_at = new Date(expires_at);
+
+            try {
+                expires_at = new Date(expires_at);
+            } catch {
+                state_found = false;
+                break;
+            }
 
             state_found = true;
             break;
@@ -250,6 +256,17 @@ class LoginState {
         this.was_logged_in = was_logged_in;
         this.is_logged_in = state_found;
         this.un_authorized = false;
+    }
+
+    clear() {
+        this.user = null;
+        this.token = null;
+        this.was_logged_in = false;
+        this.is_logged_in = false;
+        this.un_authorized = false;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('expires_at');
     }
 }
 
@@ -420,15 +437,20 @@ class VariableContentButtonConfig {
 }
 
 class ButtonProperties {
-    constructor(set_variable_content, clicked_button_name_reference) {
+    constructor(set_variable_content, variable_content, clicked_button_name_reference) {
         this.set_variable_content = set_variable_content;
+        this.variable_content = variable_content;
         this.clicked_button_name_reference = clicked_button_name_reference;
     }
     
     set_clicked_button(value) {
         this.clicked_button_name_reference.current = value;
     }
-    
+
+    get_variable_content(value) {
+        return this.variable_content;
+    }
+
     get_clicked_button(value) {
         return this.clicked_button_name_reference.current;
     }
@@ -456,23 +478,19 @@ function create_login_reminder() {
 }
 
 function welcome_or_notify_expired_login() {
-    var inner_element;
+    var element;
 
     if (LOGIN_STATE.is_logged_in) {
-        inner_element = get_random_welcome_message();
+        element = get_random_welcome_message();
     } else {
-        inner_element = create_element(
+        element = create_element(
             'a',
             set_class_name_to('login', {'href': '/login'}),
             'Your session expired, please login',
         );
     }
 
-    return create_element(
-        'div',
-        set_class_name_to('message'),
-        inner_element,
-    );
+    return element;
 }
 
 function render_default_message() {
@@ -492,7 +510,11 @@ function render_default_message() {
                 set_class_name_to('user'),
                 welcome_text,
             ),
-            welcome_or_notify_expired_login(),
+            create_element(
+                'div',
+                set_class_name_to('message'),
+                welcome_or_notify_expired_login(),
+            ),
         )
     } else {
         element = create_login_reminder();
@@ -506,13 +528,12 @@ function app_state_hook () {
     var clicked_button_name_reference = reference_hook(null);
 
     if (variable_content === null) {
-        variable_content = render_default_message();
+        variable_content = render_default_message(set_variable_content);
         set_variable_content(variable_content);
     }
 
-    var button_properties = new ButtonProperties(set_variable_content, clicked_button_name_reference)
+    return new ButtonProperties(set_variable_content, variable_content, clicked_button_name_reference)
 
-    return [button_properties, variable_content];
 }
 
 class ButtonController {
@@ -804,12 +825,64 @@ function VariableContent({variable_content}) {
     );
 }
 
-function create_login_button() {
+function execute_logoff(button_properties) {
+    LOGIN_STATE.clear();
+    button_properties.set_variable_content(null);
+}
+
+function cancel_logoff(button_properties, old_clicked_button, old_variable_content) {
+    button_properties.set_clicked_button(old_clicked_button);
+    button_properties.set_variable_content(old_variable_content);
+}
+
+function question_logoff(button_properties) {
+    var old_clicked_button = button_properties.get_clicked_button();
+    var old_variable_content = button_properties.get_variable_content();
+    button_properties.set_clicked_button(null);
+
+    var element = create_element(
+        'div',
+        set_class_name_to('welcome'),
+        create_element(
+            'div',
+            set_class_name_to('user'),
+            'Are you sure to logoff?',
+        ),
+        create_element(
+            'div',
+            set_class_name_to('message'),
+            create_element(
+                'a',
+                set_class_name_to('left', {'onClick': () => execute_logoff(button_properties)}),
+                'Yeah',
+            ),
+            create_element(
+                'a',
+                set_class_name_to(
+                    'right',
+                    {
+                        'onClick': () => cancel_logoff(
+                            button_properties,
+                            old_clicked_button,
+                            old_variable_content,
+                        )
+                    },
+                ),
+                'Nah',
+            ),
+        )
+    );
+
+    button_properties.set_variable_content(element);
+}
+
+
+function create_login_button(button_properties) {
     var element;
     if (LOGIN_STATE.is_logged_in) {
         element = create_element(
             'a',
-            set_class_name_to('is_logged_in'),
+            set_class_name_to('login', {'onClick': () => question_logoff(button_properties)}),
             create_element(
                 'img',
                 {'src': LOGIN_STATE.user.get_avatar_url_as(size=32)},
@@ -832,7 +905,7 @@ function create_login_button() {
 
 
 function App() {
-    var [button_properties, variable_content] = app_state_hook()
+    var button_properties = app_state_hook()
 
     return create_element(
         Fragment,
@@ -859,7 +932,7 @@ function App() {
             create_element(
                 'div',
                 set_class_name_to('right'),
-                create_login_button(),
+                create_login_button(button_properties),
             ),
         ),
         create_element(
@@ -867,7 +940,7 @@ function App() {
             null,
             create_element(
                 VariableContent,
-                {'variable_content': variable_content},
+                {'variable_content': button_properties.get_variable_content()},
             ),
         ),
     );

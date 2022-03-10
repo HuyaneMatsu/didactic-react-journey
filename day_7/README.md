@@ -6,11 +6,12 @@
 - Stats endpoint
 - Notification settings | get endpoint
 - Notification settings | edit endpoint
-- oauth2 login
+- Oauth2 login
+- Locking every endpoint behind authorization
 
 ### Frontend
 - Template
-- Base css
+- Pretty good css
 - Button to load profile
 - Button to load stats
 - Button to load notifications
@@ -18,4 +19,6 @@
 - Synchronize requests
 - Popup when notifications settings are changed.
 - Actually save notification settings.
-- oauth2 login
+- Oauth2 login
+- Handle being unauthorised
+- Logoff
