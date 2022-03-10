@@ -98,11 +98,11 @@ def profile():
     return jsonify(serialise_user(user))
 
 
-@APP.route('/api/credits')
-def credits():
+@APP.route('/api/stats')
+def stats():
     return jsonify(
         {
-            'credit': 55566556,
+            'total_love': 55566556,
             'streak': 222,
         }
     )

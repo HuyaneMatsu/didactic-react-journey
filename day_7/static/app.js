@@ -138,10 +138,10 @@ function render_profile(button_controller) {
     var data = button_controller.button_config.data;
     return create_element(
         'div',
-        set_class_name_to('flex'),
+        set_class_name_to('profile'),
         create_element(
             'div',
-            set_class_name_to('left_300'),
+            set_class_name_to('left'),
             create_element(
                 'h1',
                 null,
@@ -162,7 +162,7 @@ function render_profile(button_controller) {
         ),
         create_element(
             'div',
-            set_class_name_to('right_300'),
+            set_class_name_to('right'),
             create_element(
                 'img',
                 {'src': LOGIN_STATE.user.avatar_url},
@@ -172,16 +172,16 @@ function render_profile(button_controller) {
 }
 
 
-function render_credits(button_controller) {
+function render_stats(button_controller) {
     var data = button_controller.button_config.data;
     return create_element(
-        Fragment,
-        null,
+        'div',
+        set_class_name_to('stats'),
         create_element(
             'p',
             null,
-            'credit: ',
-            data['credit'],
+            'Hearts: ',
+            data['total_love'],
         ),
         create_element(
             'p',
@@ -196,7 +196,7 @@ function change_notification_option(button_controller, option_system_name, event
     button_controller.change_data(option_system_name, event.target.checked, true, true)
 }
 
-function render_notification_option(button_controller, system_name, name) {
+function render_notification(button_controller, system_name, name) {
     var old_value = button_controller.button_config.data[system_name];
     if (old_value === undefined) {
         old_value = true;
@@ -256,13 +256,13 @@ function maybe_create_notification_sync_element(button_controller) {
 
 function render_notification_settings(button_controller) {
     return create_element(
-        Fragment,
-        null,
+        'div',
+        set_class_name_to('notifications'),
         create_element(
             'div',
-            set_class_name_to('notifications'),
-            render_notification_option(button_controller, 'daily', 'Daily'),
-            render_notification_option(button_controller, 'proposal', 'Proposal'),
+            set_class_name_to('listing'),
+            render_notification(button_controller, 'daily', 'Daily'),
+            render_notification(button_controller, 'proposal', 'Proposal'),
         ),
         maybe_create_notification_sync_element(button_controller),
     )
@@ -540,10 +540,10 @@ var PROFILE_BUTTON_CONFIG = new VariableContentButtonConfig(
 );
 
 var CREDITS_BUTTON_CONFIG = new VariableContentButtonConfig(
-    'credits',
-    'Credits',
-    '/credits',
-    render_credits,
+    'stats',
+    'Stats',
+    '/stats',
+    render_stats,
 );
 
 var NOTIFICATION_BUTTON_CONFIG = new VariableContentButtonConfig(
@@ -558,7 +558,7 @@ function ProfileButton({button_properties}) {
     return (new ButtonController(PROFILE_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
 
-function CreditsButton({button_properties}) {
+function StatsButton({button_properties}) {
     return (new ButtonController(CREDITS_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
 
@@ -648,7 +648,11 @@ function create_login_button() {
                 'img',
                 {'src': LOGIN_STATE.user.avatar_url},
             ),
-            `${LOGIN_STATE.user.name}#${LOGIN_STATE.user.discriminator}`,
+            create_element(
+                'p',
+                null,
+                `${LOGIN_STATE.user.name}#${LOGIN_STATE.user.discriminator}`,
+            )
         );
     } else {
         element = create_element(
@@ -668,8 +672,8 @@ function App() {
         Fragment,
         null,
         create_element(
-            'div',
-            set_class_name_to('buttons'),
+            'nav',
+            set_class_name_to('header'),
             create_element(
                 'div',
                 set_class_name_to('left'),
@@ -678,7 +682,7 @@ function App() {
                     {'button_properties': button_properties},
                 ),
                 create_element(
-                    CreditsButton,
+                    StatsButton,
                     {'button_properties': button_properties},
                 ),
                 create_element(

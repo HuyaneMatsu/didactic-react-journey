@@ -3,7 +3,7 @@
 ### backend
 - Index endpoint
 - Profile endpoint
-- Credit endpoint
+- Stats endpoint
 - Notification settings | get endpoint
 - Notification settings | edit endpoint
 - oauth2 login
@@ -12,7 +12,7 @@
 - Template
 - Base css
 - Button to load profile
-- Button to load credits
+- Button to load stats
 - Button to load notifications
 - Use functional components
 - Synchronize requests
