@@ -40,6 +40,10 @@ var Fragment = React.Fragment;
 var state_hook = React.useState;
 var reference_hook = React.useRef;
 
+var Link = ReactRouterDOM.Link;
+var Router = ReactRouterDOM.BrowserRouter;
+var Route = ReactRouterDOM.Route;
+
 /* Define globals */
 
 var API_BASE_URL = document.location.origin + '/api'
@@ -304,7 +308,7 @@ function render_profile(button_controller) {
             set_class_name_to('right'),
             create_element(
                 'img',
-                {'src': LOGIN_STATE.user.get_avatar_url_as(site=512)},
+                {'src': LOGIN_STATE.user.get_avatar_url_as(512)},
             ),
         ),
     );
@@ -885,7 +889,7 @@ function create_login_button(button_properties) {
             set_class_name_to('login', {'onClick': () => question_logoff(button_properties)}),
             create_element(
                 'img',
-                {'src': LOGIN_STATE.user.get_avatar_url_as(size=32)},
+                {'src': LOGIN_STATE.user.get_avatar_url_as(32)},
             ),
             create_element(
                 'p',
@@ -908,7 +912,7 @@ function App() {
     var button_properties = app_state_hook()
 
     return create_element(
-        Fragment,
+        Router,
         null,
         create_element(
             'nav',
@@ -936,19 +940,15 @@ function App() {
             ),
         ),
         create_element(
-            Fragment,
-            null,
-            create_element(
-                VariableContent,
-                {'variable_content': button_properties.get_variable_content()},
-            ),
+            VariableContent,
+            {'variable_content': button_properties.get_variable_content()},
         ),
     );
 }
 
 /* Init */
 
-LOGIN_STATE = new LoginState()
+var LOGIN_STATE = new LoginState()
 
 ReactDOM.render(
     create_element(App),
