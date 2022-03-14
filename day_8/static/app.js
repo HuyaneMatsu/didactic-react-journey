@@ -30,6 +30,7 @@ var use_effect = React.useEffect;
 
 var Link = ReactRouterDOM.Link;
 var Router = ReactRouterDOM.BrowserRouter;
+var Routes = ReactRouterDOM.Routes;
 var Route = ReactRouterDOM.Route;
 var get_navigator = ReactRouterDOM.useNavigate;
 
@@ -248,25 +249,30 @@ class LoginState {
 
 function create_header_button(system_name, to, display_name, clicked) {
     var element_attributes = {};
+    var element_type;
 
     if (LOGIN_STATE.is_logged_in) {
         if (system_name == clicked) {
-            element_attributes['to'] = to;
             element_attributes['className'] = 'clicked';
+            element_type = 'a'
+        } else {
+            element_attributes['to'] = to;
+            element_type = Link;
         }
 
     } else {
         element_attributes['className'] = 'disabled';
+        element_type = 'a'
     }
 
     return create_element(
-        Link,
+        element_type,
         element_attributes,
         display_name,
     );
 }
 
-function create_login_button(button_properties) {
+function create_login_button() {
     var element;
 
     if (LOGIN_STATE.is_logged_in) {
@@ -275,7 +281,7 @@ function create_login_button(button_properties) {
             {
                 'className': 'login',
                 'to': '/logoff',
-            }
+            },
             create_element(
                 'img',
                 {'src': LOGIN_STATE.user.get_avatar_url_as(null, 32)},
@@ -284,7 +290,7 @@ function create_login_button(button_properties) {
                 'p',
                 null,
                 LOGIN_STATE.user.get_full_name(),
-            )
+            ),
         );
 
     } else {
@@ -293,10 +299,11 @@ function create_login_button(button_properties) {
             {
                 'className': 'login',
                 'href': '/login'
-            ),
+            },
             'Login',
         );
     }
+
     return element;
 }
 
@@ -315,7 +322,7 @@ function create_header(clicked) {
         create_element(
             'div',
             {'className': 'right'},
-            create_login_button(button_properties),
+            create_login_button(),
         ),
     );
 }
@@ -370,7 +377,7 @@ function IndexPage() {
             create_element(
                 'div',
                 {'className': 'message'},
-                welcome_or_notify_expired_login,
+                notify_expired_login_element,
             ),
         );
     } else {
@@ -391,10 +398,11 @@ function IndexPage() {
 
 
 function navigate_if_not_logged_in() {
+    var navigator = get_navigator();
     if (LOGIN_STATE.is_logged_in) {
         return false;
     } else {
-        get_navigator().navigate('/');
+        navigator('/');
         return true;
     }
 }
@@ -454,7 +462,7 @@ function create_loader() {
 }
 
 
-LOADER_HOOKS = {}
+var LOADER_HOOKS = {};
 
 class LoaderHook {
     constructor(endpoint, set_change_counter) {
@@ -503,7 +511,7 @@ class LoaderHook {
             API_BASE_URL + this.endpoint,
             {
                 'headers': {
-                    'Authorization': token,
+                    'Authorization': this.token,
                 },
             },
         ).then(
@@ -523,6 +531,7 @@ class LoaderHook {
             this.is_loaded = true;
             this.is_loading = false;
 
+            this.display();
         } else {
             this.is_loading = false;
 
@@ -530,6 +539,8 @@ class LoaderHook {
                 LOGIN_STATE.was_logged_in = true;
                 LOGIN_STATE.is_logged_in = false;
                 LOGIN_STATE.un_authorized = true;
+
+                this.display();
             }
         }
     }
@@ -885,11 +896,18 @@ function LogoffPage() {
                 'a',
                 {
                     'className': 'right',
-                    'onClick': () => cancel_logoff(navigator);
+                    'onClick': () => cancel_logoff(navigator),
                 },
                 'Nah',
             ),
         )
+    );
+
+    return create_element(
+        Fragment,
+        null,
+        create_header(null),
+        create_content(content_element),
     );
 }
 
@@ -899,39 +917,43 @@ function App() {
         Router,
         null,
         create_element(
-            Route,
-            {
-                'path': '/',
-                'element': create_element(IndexPage, null),
-            },
-        ),
-        create_element(
-            Route,
-            {
-                'path': '/profile',
-                'element': create_element(ProfilePage, null),
-            },
-        ),
-        create_element(
-            Route,
-            {
-                'path': '/stats',
-                'element': create_element(StatsPage, null),
-            },
-        ),
-        create_element(
-            Route,
-            {
-                'path': '/notifications',
-                'element': create_element(NotificationsPage, null),
-            },
-        ),
-        create_element(
-            Route,
-            {
-                'path': '/logoff',
-                'element': create_element(LogoffPage, null),
-            },
+            Routes,
+            null,
+            create_element(
+                Route,
+                {
+                    'path': '/',
+                    'element': create_element(IndexPage, null),
+                },
+            ),
+            create_element(
+                Route,
+                {
+                    'path': '/profile',
+                    'element': create_element(ProfilePage, null),
+                },
+            ),
+            create_element(
+                Route,
+                {
+                    'path': '/stats',
+                    'element': create_element(StatsPage, null),
+                },
+            ),
+            create_element(
+                Route,
+                {
+                    'path': '/notifications',
+                    'element': create_element(NotificationsPage, null),
+                },
+            ),
+            create_element(
+                Route,
+                {
+                    'path': '/logoff',
+                    'element': create_element(LogoffPage, null),
+                },
+            ),
         ),
     )
 }
