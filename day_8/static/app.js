@@ -4,19 +4,6 @@ function $(element_id) {
     return document.getElementById(element_id);
 }
 
-function set_class_name_to(class_name, into) {
-    if (class_name === undefined) {
-        throw 'Parameter `class_name` cannot be `undefined`';
-    }
-
-    if ((into === undefined) || (into === null)) {
-        into = {};
-    }
-
-    into['className'] = class_name;
-    return into;
-}
-
 function get_from_nullable_dict(dictionary, key, default_value) {
     if (dictionary === null) {
         return default_value;
@@ -39,16 +26,19 @@ var Component = React.Component;
 var Fragment = React.Fragment;
 var state_hook = React.useState;
 var reference_hook = React.useRef;
+var use_effect = React.useEffect;
 
 var Link = ReactRouterDOM.Link;
 var Router = ReactRouterDOM.BrowserRouter;
 var Route = ReactRouterDOM.Route;
+var get_navigator = ReactRouterDOM.useNavigate;
 
 /* Define globals */
 
 var API_BASE_URL = document.location.origin + '/api'
 
 /* Utility functions */
+
 
 function to_string(value) {
     return value.toString();
@@ -85,6 +75,7 @@ function format_date(date) {
 
 /* Login State */
 
+
 var ICON_TYPE_NONE = 0;
 var ICON_TYPE_STATIC = 1;
 var ICON_TYPE_ANIMATED = 2;
@@ -110,28 +101,7 @@ class User {
         ].join('');
     }
 
-    get_avatar_url_as(parameter_1, parameter_2) {
-        var ext, size;
-
-        if (parameter_1 === undefined) {
-            ext = null;
-            size = null;
-        } else {
-            if (parameter_2 === undefined) {
-                if (typeof(parameter_1) == 'number') {
-                    ext = null;
-                    size = parameter_1;
-                } else {
-                    ext = parameter_1;
-                    size = null;
-                }
-
-            } else {
-                ext = parameter_1;
-                size = parameter_2;
-            }
-        }
-
+    get_avatar_url_as(ext, size) {
         var icon_type = this.avatar_type;
 
         if (icon_type == ICON_TYPE_NONE) {
@@ -274,17 +244,172 @@ class LoginState {
     }
 }
 
-
 /* Application */
 
-function render_profile(button_controller) {
-    var data = button_controller.button_config.data;
+function create_header_button(system_name, to, display_name, clicked) {
+    var element_attributes = {};
+
+    if (LOGIN_STATE.is_logged_in) {
+        if (system_name == clicked) {
+            element_attributes['to'] = to;
+            element_attributes['className'] = 'clicked';
+        }
+
+    } else {
+        element_attributes['className'] = 'disabled';
+    }
+
     return create_element(
-        'div',
-        set_class_name_to('profile'),
+        Link,
+        element_attributes,
+        display_name,
+    );
+}
+
+function create_login_button(button_properties) {
+    var element;
+
+    if (LOGIN_STATE.is_logged_in) {
+        element = create_element(
+            Link,
+            {
+                'className': 'login',
+                'to': '/logoff',
+            }
+            create_element(
+                'img',
+                {'src': LOGIN_STATE.user.get_avatar_url_as(null, 32)},
+            ),
+            create_element(
+                'p',
+                null,
+                LOGIN_STATE.user.get_full_name(),
+            )
+        );
+
+    } else {
+        element = create_element(
+            'a',
+            {
+                'className': 'login',
+                'href': '/login'
+            ),
+            'Login',
+        );
+    }
+    return element;
+}
+
+
+function create_header(clicked) {
+    return create_element(
+        'nav',
+        {'className': 'header'},
         create_element(
             'div',
-            set_class_name_to('left'),
+            {'className': 'left'},
+            create_header_button('profile', '/profile', 'Profile', clicked),
+            create_header_button('stats', '/stats', 'Stats', clicked),
+            create_header_button('notifications', '/notifications', 'Notifications', clicked),
+        ),
+        create_element(
+            'div',
+            {'className': 'right'},
+            create_login_button(button_properties),
+        ),
+    );
+}
+
+function create_content(content_element) {
+    return create_element(
+        'div',
+        {'className': 'content'},
+        content_element,
+    );
+}
+
+
+var WELCOME_MESSAGES = [
+    'Isn\'t  it a great day?',
+    'What a great Day!',
+    'Good to see you again darling.',
+    'The creature',
+];
+
+function IndexPage() {
+    var content_element;
+
+    if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
+        var welcome_text;
+        if (LOGIN_STATE.un_authorized) {
+            welcome_text = 'Something went wrong';
+        } else {
+            welcome_text = 'Welcome ' + LOGIN_STATE.user.name;
+        }
+
+        var notify_expired_login_element;
+
+        if (LOGIN_STATE.is_logged_in) {
+            notify_expired_login_element = choice(WELCOME_MESSAGES);
+        } else {
+            notify_expired_login_element = create_element(
+                'a',
+                {'className': 'login', 'href': '/login'},
+                'Your session expired, please login',
+            );
+        }
+
+        content_element = create_element(
+            'div',
+            {'className': 'welcome'},
+            create_element(
+                'div',
+                {'className': 'user'},
+                welcome_text,
+            ),
+            create_element(
+                'div',
+                {'className': 'message'},
+                welcome_or_notify_expired_login,
+            ),
+        );
+    } else {
+        content_element = create_element(
+        'div',
+            {'className': 'login_reminder'},
+            'Please log in first',
+        );
+    }
+
+    return create_element(
+        Fragment,
+        null,
+        create_header(null),
+        create_content(content_element),
+    );
+}
+
+
+function navigate_if_not_logged_in() {
+    if (LOGIN_STATE.is_logged_in) {
+        return false;
+    } else {
+        get_navigator().navigate('/');
+        return true;
+    }
+}
+
+function ProfilePage() {
+    if (navigate_if_not_logged_in()) {
+        return;
+    }
+
+    var content_element = create_element(
+        'div',
+        {'className': 'profile'},
+        create_element(
+            'div',
+            {'className': 'left'},
             create_element(
                 'h1',
                 null,
@@ -305,255 +430,120 @@ function render_profile(button_controller) {
         ),
         create_element(
             'div',
-            set_class_name_to('right'),
+            {'className': 'right'},
             create_element(
                 'img',
-                {'src': LOGIN_STATE.user.get_avatar_url_as(512)},
+                {'src': LOGIN_STATE.user.get_avatar_url_as(null, 512)},
             ),
         ),
     );
-}
-
-
-function render_stats(button_controller) {
-    var data = button_controller.button_config.data;
-    return create_element(
-        'div',
-        set_class_name_to('stats'),
-        create_element(
-            'p',
-            null,
-            'Hearts: ',
-            to_string(data['total_love']),
-        ),
-        create_element(
-            'p',
-            null,
-            'Streak: ',
-            to_string(data['streak']),
-        ),
-    )
-}
-
-function change_notification_option(button_controller, option_system_name, event) {
-    button_controller.change_data(option_system_name, event.target.checked, true, true)
-}
-
-function render_notification(button_controller, system_name, name) {
-    var old_value = button_controller.button_config.data[system_name];
-    if (old_value === undefined) {
-        old_value = true;
-    }
-
-    var value;
-
-    var data_changes = button_controller.button_config.data_changes;
-    if (data_changes === null) {
-        value = old_value;
-    } else {
-        var new_value = data_changes[system_name];
-        if (new_value === undefined) {
-            value = old_value;
-        } else {
-            value = new_value;
-        }
-    }
 
     return create_element(
-        'div',
+        Fragment,
         null,
-        create_element(
-            'p',
-            null,
-            name,
-        ),
-        create_element(
-            'label',
-            set_class_name_to('switch'),
-            create_element(
-                'input',
-                {
-                    'type': 'checkbox',
-                    'checked': value,
-                    'onChange': (event) => change_notification_option(button_controller, system_name, event),
-                },
-            ),
-            create_element(
-                'span',
-                null,
-            ),
-        )
-    );
-}
-
-function maybe_create_notification_sync_element(button_controller) {
-    if (button_controller.button_config.data_changes === null) {
-        return '';
-    }
-
-    return create_element(
-        SaveNotificationsField,
-        {'button_controller': button_controller},
+        create_header('profile'),
+        create_content(content_element),
     )
 }
 
-function render_notification_settings(button_controller) {
+function create_loader() {
     return create_element(
         'div',
-        set_class_name_to('notifications'),
-        create_element(
-            'div',
-            set_class_name_to('listing'),
-            render_notification(button_controller, 'daily', 'Daily'),
-            render_notification(button_controller, 'proposal', 'Proposal'),
-        ),
-        maybe_create_notification_sync_element(button_controller),
-    )
-}
-
-
-function render_loader() {
-    return create_element(
-        'div',
-        set_class_name_to('loader'),
+        {'className': 'loader'},
     );
 }
 
 
-class VariableContentButtonConfig {
-    constructor(button_name, button_display_value, endpoint, renderer) {
-        var is_loaded;
-        if (endpoint === null ) {
-            is_loaded = true;
-        } else {
-            is_loaded = false;
-        }
+LOADER_HOOKS = {}
 
-        this.button_name = button_name;
-        this.button_display_value = button_display_value;
+class LoaderHook {
+    constructor(endpoint, set_change_counter) {
         this.endpoint = endpoint;
-        this.renderer = renderer;
+        this.token = LOGIN_STATE.token;
+
+        this.change_counter = 0;
+        this.set_change_counter = set_change_counter;
+
+
+        this.is_loaded = false;
         this.is_loading = false;
-        this.is_loaded = is_loaded;
+
         this.data = null;
         this.data_changes = null;
-    }
-}
 
-class ButtonProperties {
-    constructor(set_variable_content, variable_content, clicked_button_name_reference) {
-        this.set_variable_content = set_variable_content;
-        this.variable_content = variable_content;
-        this.clicked_button_name_reference = clicked_button_name_reference;
-    }
-    
-    set_clicked_button(value) {
-        this.clicked_button_name_reference.current = value;
+        this.load();
     }
 
-    get_variable_content(value) {
-        return this.variable_content;
+    check_reload() {
+        var token = LOGIN_STATE.token;
+        if (this.token == token) {
+            return;
+        }
+
+        this.token = token;
+
+        this.is_loaded = false;
+        this.is_loading = false;
+
+        this.data = null;
+        this.data_changes = null;
+
+        this.load();
+        this.display()
     }
 
-    get_clicked_button(value) {
-        return this.clicked_button_name_reference.current;
-    }
-}
+    load () {
+        if (this.is_loading) {
+            return;
+        }
 
+        this.is_loading = true;
 
-var WELCOME_MESSAGES = [
-    'Isn\'t  it a great day?',
-    'What a great Day!',
-    'Good to see you again darling.',
-    'The creature',
-];
-
-function get_random_welcome_message() {
-    return choice(WELCOME_MESSAGES);
-}
-
-
-function create_login_reminder() {
-    return create_element(
-        'div',
-        set_class_name_to('login_reminder'),
-        'Please log in first',
-    )
-}
-
-function welcome_or_notify_expired_login() {
-    var element;
-
-    if (LOGIN_STATE.is_logged_in) {
-        element = get_random_welcome_message();
-    } else {
-        element = create_element(
-            'a',
-            set_class_name_to('login', {'href': '/login'}),
-            'Your session expired, please login',
+        fetch(
+            API_BASE_URL + this.endpoint,
+            {
+                'headers': {
+                    'Authorization': token,
+                },
+            },
+        ).then(
+            (request) => this.update_from_payload(request)
         );
     }
 
-    return element;
-}
+    async update_from_payload(request) {
+        var status = request.status;
 
-function render_default_message() {
-    var element;
-    if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
-        var welcome_text;
-        if (LOGIN_STATE.un_authorized) {
-            welcome_text = 'Something went wrong';
+        if (status == 200) {
+            var data = await request.json();
+
+            LOGIN_STATE.un_authorized = false;
+
+            this.data = data;
+            this.is_loaded = true;
+            this.is_loading = false;
+
         } else {
-            welcome_text = 'Welcome ' + LOGIN_STATE.user.name;
+            this.is_loading = false;
+
+            if (status == 401) {
+                LOGIN_STATE.was_logged_in = true;
+                LOGIN_STATE.is_logged_in = false;
+                LOGIN_STATE.un_authorized = true;
+            }
         }
-        element = create_element(
-            'div',
-            set_class_name_to('welcome'),
-            create_element(
-                'div',
-                set_class_name_to('user'),
-                welcome_text,
-            ),
-            create_element(
-                'div',
-                set_class_name_to('message'),
-                welcome_or_notify_expired_login(),
-            ),
-        )
-    } else {
-        element = create_login_reminder();
-    }
-    return element;
-}
-
-
-function app_state_hook () {
-    var [variable_content, set_variable_content] = state_hook(null)
-    var clicked_button_name_reference = reference_hook(null);
-
-    if (variable_content === null) {
-        variable_content = render_default_message(set_variable_content);
-        set_variable_content(variable_content);
-    }
-
-    return new ButtonProperties(set_variable_content, variable_content, clicked_button_name_reference)
-
-}
-
-class ButtonController {
-    constructor(button_config, button_properties) {
-        this.button_config = button_config;
-        this.button_properties = button_properties;
     }
 
     display() {
-        this.button_properties.set_variable_content(this.button_config.renderer(this));
+        /* When we call `set_change_counter` with a new value, react will reload the element */
+        var change_counter = this.change_counter + 1;
+        this.change_counter = change_counter;
+        this.set_change_counter(change_counter);
     }
-
+    
     change_data(field_name, field_value, default_value, display_after) {
-        var button_config = this.button_config;
-        var data = button_config.data;
-        var data_changes = button_config.data_changes;
+        var data = this.data;
+        var data_changes = this.data_changes;
 
         var value_from_data = data[field_name];
 
@@ -576,7 +566,7 @@ class ButtonController {
         if (should_add) {
             if (data_changes === null) {
                 data_changes = {};
-                button_config.data_changes = data_changes;
+                this.data_changes = data_changes;
             }
             data_changes[field_name] = field_value;
 
@@ -585,7 +575,7 @@ class ButtonController {
                 delete data_changes[field_name];
 
                 if (Object.keys(data_changes).length == 0) {
-                    button_config.data_changes = null;
+                    this.data_changes = null;
                 }
             }
         }
@@ -596,16 +586,16 @@ class ButtonController {
     }
 
     revert_changes() {
-        this.button_config.data_changes = null;
+        this.data_changes = null;
         this.display();
     }
 
     copy_changes() {
-        return {...this.button_config.data_changes}
+        return {...this.data_changes}
     }
 
     apply_changes(changes, default_value_map, default_default_value) {
-        var data = this.button_config.data;
+        var data = this.data;
         var old_changes = this.copy_changes();
 
         var field_name, field_value, default_value;
@@ -633,133 +623,69 @@ class ButtonController {
         this.display();
     }
 
-    render_variable_content_changer_button() {
-        var element_attributes = {};
-
-        if (LOGIN_STATE.is_logged_in) {
-            var callback;
-            if (this.button_config.is_loaded || this.button_config.is_loading) {
-                callback = () => this.handle_other_clicks()
-            } else {
-                callback = () => this.handle_first_click()
-            }
-
-            var element_attributes = {
-                'onClick': callback,
-            }
-
-            if (this.button_properties.get_clicked_button() == this.button_config.button_name) {
-                set_class_name_to('clicked', element_attributes);
-            }
-
-        } else {
-             set_class_name_to('disabled', element_attributes);
-        }
-
-        return create_element(
-            'a',
-            element_attributes,
-            this.button_config.button_display_value,
-        );
-    }
-
-    handle_first_click() {
-        var button_name = this.button_config.button_name;
-        this.button_properties.set_clicked_button(button_name);
-        this.button_config.is_loading = true;
-        this.button_properties.set_variable_content(render_loader());
-
-        fetch(
-            API_BASE_URL + this.button_config.endpoint,
-            {
-                'headers': {
-                    'Authorization': LOGIN_STATE.token,
-                },
-            },
-        ).then(
-            (request) => this.update_from_payload(request)
-        );
-    }
-
-    handle_other_clicks() {
-        var button_name = this.button_config.button_name;
-        this.button_properties.set_clicked_button(button_name);
-
-        if (! this.button_config.is_loading) {
-            this.display();
-        }
-    }
-
-    async update_from_payload(request) {
-        var status = request.status;
-
-        if (status == 200) {
-            var data = await request.json();
-
-            LOGIN_STATE.un_authorized = false;
-
-            var button_config = this.button_config;
-            button_config.data = data;
-            button_config.is_loaded = true;
-            button_config.is_loading = false;
-
-            if (this.button_properties.get_clicked_button() == button_config.button_name) {
-                this.display();
-            }
-
-        } else {
-            this.button_config.is_loading = false;
-
-            if (status == 401) {
-                LOGIN_STATE.was_logged_in = true;
-                LOGIN_STATE.is_logged_in = false;
-                LOGIN_STATE.un_authorized = true;
-                this.button_properties.set_variable_content(null);
-            }
-        }
-    }
-}
-
-var PROFILE_BUTTON_CONFIG = new VariableContentButtonConfig(
-    'profile',
-    'Profile',
-    null,
-    render_profile,
-);
-
-var CREDITS_BUTTON_CONFIG = new VariableContentButtonConfig(
-    'stats',
-    'Stats',
-    '/stats',
-    render_stats,
-);
-
-var NOTIFICATION_BUTTON_CONFIG = new VariableContentButtonConfig(
-    'notification_settings',
-    'Notifications',
-    '/notification_settings',
-    render_notification_settings,
-);
-
-
-function ProfileButton({button_properties}) {
-    return (new ButtonController(PROFILE_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
-}
-
-function StatsButton({button_properties}) {
-    return (new ButtonController(CREDITS_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
-}
-
-function NotificationsButton({button_properties}) {
-    return (new ButtonController(NOTIFICATION_BUTTON_CONFIG, button_properties)).render_variable_content_changer_button()
 }
 
 
-async function save_notification_settings(button_controller, set_is_saving) {
+function get_loader_hook(endpoint) {
+    var loader_hook = LOADER_HOOKS[endpoint];
+    if (loader_hook === undefined) {
+        var [change_counter, set_change_counter] = state_hook(0);
+        loader_hook = new LoaderHook(endpoint, set_change_counter);
+        LOADER_HOOKS[endpoint] = loader_hook;
+    } else {
+       loader_hook.check_reload();
+    }
+
+    return loader_hook
+
+}
+
+
+function StatsPage() {
+    if (navigate_if_not_logged_in()) {
+        return;
+    }
+
+    var loader_hook = get_loader_hook('/stats')
+    var content_element;
+
+    if (loader_hook.is_loaded) {
+        var data = loader_hook.data;
+
+        content_element = create_element(
+            'div',
+            {'className': 'stats'},
+            create_element(
+                'p',
+                null,
+                'Hearts: ',
+                to_string(data['total_love']),
+            ),
+            create_element(
+                'p',
+                null,
+                'Streak: ',
+                to_string(data['streak']),
+            ),
+        )
+    } else {
+        content_element = create_loader();
+    }
+
+    return create_element(
+        Fragment,
+        null,
+        create_header('stats'),
+        create_content(content_element),
+    )
+}
+
+
+async function save_notification_settings(loader_hook, set_is_saving) {
     set_is_saving(true);
-    var changes = button_controller.copy_changes();
+    var changes = loader_hook.copy_changes();
     response = await fetch(
-        API_BASE_URL + button_controller.button_config.endpoint,
+        API_BASE_URL + loader_hook.endpoint,
         {
             method: 'PATCH',
             headers: {
@@ -773,39 +699,91 @@ async function save_notification_settings(button_controller, set_is_saving) {
 
     var response_status = response.status;
     if ((response_status >= 200) && (response_status < 400)) {
-        button_controller.apply_changes(changes, null, true);
+        loader_hook.apply_changes(changes, null, true);
     }
 }
 
 
-function SaveNotificationsField({button_controller}) {
+function change_notification_option(loader_hook, option_system_name, event) {
+    loader_hook.change_data(option_system_name, event.target.checked, true, true)
+}
+
+function render_notification(loader_hook, system_name, name) {
+    var old_value = loader_hook.data[system_name];
+    if (old_value === undefined) {
+        old_value = true;
+    }
+
+    var value;
+
+    var data_changes = loader_hook.data_changes;
+    if (data_changes === null) {
+        value = old_value;
+    } else {
+        var new_value = data_changes[system_name];
+        if (new_value === undefined) {
+            value = old_value;
+        } else {
+            value = new_value;
+        }
+    }
+
+    return create_element(
+        'div',
+        null,
+        create_element(
+            'p',
+            null,
+            name,
+        ),
+        create_element(
+            'label',
+            {'className': 'switch'},
+            create_element(
+                'input',
+                {
+                    'type': 'checkbox',
+                    'checked': value,
+                    'onChange': (event) => change_notification_option(loader_hook, system_name, event),
+                },
+            ),
+            create_element(
+                'span',
+                null,
+            ),
+        ),
+    );
+}
+
+
+function SaveNotificationsField({loader_hook}) {
     var [is_saving, set_is_saving] = state_hook(false);
 
     var save_parameters = {};
     var cancel_parameters = {};
 
     if (is_saving) {
-        set_class_name_to('save_execute_disabled', save_parameters);
-        set_class_name_to('save_cancel_disabled', cancel_parameters);
+        save_parameters['className'] = 'save_execute_disabled';
+        cancel_parameters['className'] = 'save_cancel_disabled';
     } else {
-        set_class_name_to('save_execute_enabled', save_parameters);
-        set_class_name_to('save_cancel_enabled', cancel_parameters);
+        save_parameters['className'] = 'save_execute_enabled';
+        cancel_parameters['className'] = 'save_cancel_enabled';
 
-        save_parameters['onClick'] = () => save_notification_settings(button_controller, set_is_saving);
-        cancel_parameters['onClick'] = () => button_controller.revert_changes();
+        save_parameters['onClick'] = () => save_notification_settings(loader_hook, set_is_saving);
+        cancel_parameters['onClick'] = () => loader_hook.revert_changes();
     }
 
     return create_element(
         'div',
-        set_class_name_to('save'),
+        {'className': 'save'},
         create_element(
             'div',
-            set_class_name_to('left'),
+            {'className': 'left'},
             'Remember to save your changes',
         ),
         create_element(
             'div',
-            set_class_name_to('right'),
+            {'className': 'right'},
             create_element(
                 'a',
                 save_parameters,
@@ -821,129 +799,141 @@ function SaveNotificationsField({button_controller}) {
 }
 
 
-function VariableContent({variable_content}) {
+function maybe_create_notification_sync_element(loader_hook) {
+    if (loader_hook.data_changes === null) {
+        return '';
+    }
+
     return create_element(
-        'div',
-        set_class_name_to('content'),
-        variable_content,
-    );
+        SaveNotificationsField,
+        {'loader_hook': loader_hook},
+    )
 }
 
-function execute_logoff(button_properties) {
+
+function NotificationsPage() {
+    if (navigate_if_not_logged_in()) {
+        return;
+    }
+
+    var loader_hook = get_loader_hook('/notification_settings')
+    var content_element;
+
+    if (loader_hook.is_loaded) {
+        content_element = create_element(
+            'div',
+            {'className': 'notifications'},
+            create_element(
+                'div',
+                {'className': 'listing'},
+                render_notification(loader_hook, 'daily', 'Daily'),
+                render_notification(loader_hook, 'proposal', 'Proposal'),
+            ),
+            maybe_create_notification_sync_element(loader_hook),
+        )
+    } else {
+        content_element = create_loader();
+    }
+
+    return create_element(
+        Fragment,
+        null,
+        create_header('stats'),
+        create_content(content_element),
+    )
+}
+
+
+function execute_logoff(navigator) {
     LOGIN_STATE.clear();
-    button_properties.set_variable_content(null);
+    navigator('/');
 }
 
-function cancel_logoff(button_properties, old_clicked_button, old_variable_content) {
-    button_properties.set_clicked_button(old_clicked_button);
-    button_properties.set_variable_content(old_variable_content);
+function cancel_logoff(navigator) {
+    navigator('/');
 }
 
-function question_logoff(button_properties) {
-    var old_clicked_button = button_properties.get_clicked_button();
-    var old_variable_content = button_properties.get_variable_content();
-    button_properties.set_clicked_button(null);
+function LogoffPage() {
+    /* If we were logged in, but now we are not, we log off instantly */
+    var navigator = get_navigator();
+    if (LOGIN_STATE.was_logged_in) {
+        execute_logoff(navigator);
+        return;
+    }
 
-    var element = create_element(
+
+    var content_element = create_element(
         'div',
-        set_class_name_to('welcome'),
+        {'className': 'welcome'},
         create_element(
             'div',
-            set_class_name_to('user'),
+            {'className': 'user'},
             'Are you sure to logoff?',
         ),
         create_element(
             'div',
-            set_class_name_to('message'),
+            {'className': 'message'},
             create_element(
                 'a',
-                set_class_name_to('left', {'onClick': () => execute_logoff(button_properties)}),
+                {
+                    'className': 'left',
+                    'onClick': () => execute_logoff(navigator),
+                },
                 'Yeah',
             ),
             create_element(
                 'a',
-                set_class_name_to(
-                    'right',
-                    {
-                        'onClick': () => cancel_logoff(
-                            button_properties,
-                            old_clicked_button,
-                            old_variable_content,
-                        )
-                    },
-                ),
+                {
+                    'className': 'right',
+                    'onClick': () => cancel_logoff(navigator);
+                },
                 'Nah',
             ),
         )
     );
-
-    button_properties.set_variable_content(element);
-}
-
-
-function create_login_button(button_properties) {
-    var element;
-    if (LOGIN_STATE.is_logged_in) {
-        element = create_element(
-            'a',
-            set_class_name_to('login', {'onClick': () => question_logoff(button_properties)}),
-            create_element(
-                'img',
-                {'src': LOGIN_STATE.user.get_avatar_url_as(32)},
-            ),
-            create_element(
-                'p',
-                null,
-                LOGIN_STATE.user.get_full_name(),
-            )
-        );
-    } else {
-        element = create_element(
-            'a',
-            set_class_name_to('login', {'href': '/login'}),
-            'Login',
-        );
-    }
-    return element;
 }
 
 
 function App() {
-    var button_properties = app_state_hook()
-
     return create_element(
         Router,
         null,
         create_element(
-            'nav',
-            set_class_name_to('header'),
-            create_element(
-                'div',
-                set_class_name_to('left'),
-                create_element(
-                    ProfileButton,
-                    {'button_properties': button_properties},
-                ),
-                create_element(
-                    StatsButton,
-                    {'button_properties': button_properties},
-                ),
-                create_element(
-                    NotificationsButton,
-                    {'button_properties': button_properties},
-                ),
-            ),
-            create_element(
-                'div',
-                set_class_name_to('right'),
-                create_login_button(button_properties),
-            ),
+            Route,
+            {
+                'path': '/',
+                'element': create_element(IndexPage, null),
+            },
         ),
         create_element(
-            VariableContent,
-            {'variable_content': button_properties.get_variable_content()},
+            Route,
+            {
+                'path': '/profile',
+                'element': create_element(ProfilePage, null),
+            },
         ),
-    );
+        create_element(
+            Route,
+            {
+                'path': '/stats',
+                'element': create_element(StatsPage, null),
+            },
+        ),
+        create_element(
+            Route,
+            {
+                'path': '/notifications',
+                'element': create_element(NotificationsPage, null),
+            },
+        ),
+        create_element(
+            Route,
+            {
+                'path': '/logoff',
+                'element': create_element(LogoffPage, null),
+            },
+        ),
+    )
 }
 
 /* Init */
