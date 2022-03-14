@@ -9,6 +9,7 @@ Each day of development is separated into it's own folder.
 - [React.js Docs](https://reactjs.org/docs/getting-started.html)
 - [Youtube | freeCodeCamp.org](https://www.youtube.com/c/Freecodecamp)
 - [React Router docs](https://reactrouter.com/docs/en/v6)
+- [ Youtube | react router v6](https://www.youtube.com/watch?v=zEQiNFAwDGo&ab_channel=Academind)
 
 ### Roadmap
 
