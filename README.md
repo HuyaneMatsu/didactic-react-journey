@@ -7,9 +7,29 @@ Each day of development is separated into it's own folder.
 ### Docs
 
 - [React.js Docs](https://reactjs.org/docs/getting-started.html)
+    Everything about react.
+
 - [Youtube | freeCodeCamp.org](https://www.youtube.com/c/Freecodecamp)
+    Explains many js and react concepts pretty well.
+
+- [React roadmap](https://www.freecodecamp.org/news/react-fundamentals-for-beginners/)
+    Learn react roadmap. Contains many different topics if you are out of ideas.
+
+- [React articles](https://reactjs.org/community/articles.html)
+    React community resources.
+
+- [React/Redux Links](https://github.com/markerikson/react-redux-links)
+    React and other learning material links.
+
 - [React Router docs](https://reactrouter.com/docs/en/v6)
-- [ Youtube | react router v6](https://www.youtube.com/watch?v=zEQiNFAwDGo&ab_channel=Academind)
+    React router docs.
+
+- [Youtube | React router v5](https://www.youtube.com/watch?v=Jppuj6M1sJ4&ab_channel=freeCodeCamp.org)
+    React router v5 tutorial.
+
+- [Youtube | react router v5 -> v6](https://www.youtube.com/watch?v=zEQiNFAwDGo&ab_channel=Academind)
+    Migrating from router v5 to v6.
+
 
 ### Roadmap
 

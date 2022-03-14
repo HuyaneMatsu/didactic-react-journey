@@ -11,7 +11,7 @@ from scarletio import to_json
 from scarletio.web_common import URL
 
 
-# Setup oath 2
+# Setup oauth 2
 CONFIG = dotenv_values('.env')
 
 try:
@@ -229,5 +229,12 @@ def authenticate():
 def login():
     return redirect(AUTHORIZATION_URL)
 
+
+@APP.route('/<path:path>')
+def catch_all(path):
+    return render_template(
+        'index.html',
+        day = DAY,
+    )
 
 APP.run()

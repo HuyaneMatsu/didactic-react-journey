@@ -33,6 +33,7 @@ var Router = ReactRouterDOM.BrowserRouter;
 var Routes = ReactRouterDOM.Routes;
 var Route = ReactRouterDOM.Route;
 var get_navigator = ReactRouterDOM.useNavigate;
+var Navigate = ReactRouterDOM.Navigate;
 
 /* Define globals */
 
@@ -206,9 +207,7 @@ class LoginState {
             token = null;
             user = null;
             expires_at = null
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('expires_at');
+            this.clear_locale_storage();
         }
 
         var is_logged_in, was_logged_in;
@@ -233,15 +232,26 @@ class LoginState {
         this.un_authorized = false;
     }
 
+    clear_locale_storage() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('expires_at');
+    }
+
     clear() {
         this.user = null;
         this.token = null;
         this.was_logged_in = false;
         this.is_logged_in = false;
         this.un_authorized = false;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('expires_at');
+        this.clear_locale_storage();
+    }
+
+    un_authorize() {
+        LOGIN_STATE.was_logged_in = true;
+        LOGIN_STATE.is_logged_in = false;
+        LOGIN_STATE.un_authorized = true;
+        this.clear_locale_storage();
     }
 }
 
@@ -397,21 +407,21 @@ function IndexPage() {
 }
 
 
-function navigate_if_not_logged_in() {
-    var navigator = get_navigator();
+function redirect_if_not_logged_in(component) {
     if (LOGIN_STATE.is_logged_in) {
-        return false;
+        return create_element(
+            component,
+            null,
+        );
     } else {
-        navigator('/');
-        return true;
+        return create_element(
+            Navigate,
+            {'to': '/', 'replace': true},
+        );
     }
 }
 
 function ProfilePage() {
-    if (navigate_if_not_logged_in()) {
-        return;
-    }
-
     var content_element = create_element(
         'div',
         {'className': 'profile'},
@@ -465,13 +475,14 @@ function create_loader() {
 var LOADER_HOOKS = {};
 
 class LoaderHook {
-    constructor(endpoint, set_change_counter) {
+    constructor(endpoint, set_change_counter, navigator) {
         this.endpoint = endpoint;
         this.token = LOGIN_STATE.token;
 
         this.change_counter = 0;
         this.set_change_counter = set_change_counter;
 
+        this.navigator = navigator;
 
         this.is_loaded = false;
         this.is_loading = false;
@@ -521,7 +532,6 @@ class LoaderHook {
 
     async update_from_payload(request) {
         var status = request.status;
-
         if (status == 200) {
             var data = await request.json();
 
@@ -536,11 +546,10 @@ class LoaderHook {
             this.is_loading = false;
 
             if (status == 401) {
-                LOGIN_STATE.was_logged_in = true;
-                LOGIN_STATE.is_logged_in = false;
-                LOGIN_STATE.un_authorized = true;
-
-                this.display();
+                LOGIN_STATE.un_authorize();
+                /* `.display()` wont do anything, because it will run ur own element only, which wont redirect, */
+                /* because redirect is checked one stack above it */
+                this.navigator('/');
             }
         }
     }
@@ -638,10 +647,12 @@ class LoaderHook {
 
 
 function get_loader_hook(endpoint) {
+    var [change_counter, set_change_counter] = state_hook(0);
+    var navigator = get_navigator();
+
     var loader_hook = LOADER_HOOKS[endpoint];
     if (loader_hook === undefined) {
-        var [change_counter, set_change_counter] = state_hook(0);
-        loader_hook = new LoaderHook(endpoint, set_change_counter);
+        loader_hook = new LoaderHook(endpoint, set_change_counter, navigator);
         LOADER_HOOKS[endpoint] = loader_hook;
     } else {
        loader_hook.check_reload();
@@ -653,11 +664,7 @@ function get_loader_hook(endpoint) {
 
 
 function StatsPage() {
-    if (navigate_if_not_logged_in()) {
-        return;
-    }
-
-    var loader_hook = get_loader_hook('/stats')
+    var loader_hook = get_loader_hook('/stats');
     var content_element;
 
     if (loader_hook.is_loaded) {
@@ -695,7 +702,7 @@ function StatsPage() {
 async function save_notification_settings(loader_hook, set_is_saving) {
     set_is_saving(true);
     var changes = loader_hook.copy_changes();
-    response = await fetch(
+    var response = await fetch(
         API_BASE_URL + loader_hook.endpoint,
         {
             method: 'PATCH',
@@ -823,10 +830,6 @@ function maybe_create_notification_sync_element(loader_hook) {
 
 
 function NotificationsPage() {
-    if (navigate_if_not_logged_in()) {
-        return;
-    }
-
     var loader_hook = get_loader_hook('/notification_settings')
     var content_element;
 
@@ -849,7 +852,7 @@ function NotificationsPage() {
     return create_element(
         Fragment,
         null,
-        create_header('stats'),
+        create_header('notifications'),
         create_content(content_element),
     )
 }
@@ -865,13 +868,15 @@ function cancel_logoff(navigator) {
 }
 
 function LogoffPage() {
-    /* If we were logged in, but now we are not, we log off instantly */
     var navigator = get_navigator();
-    if (LOGIN_STATE.was_logged_in) {
-        execute_logoff(navigator);
-        return;
-    }
 
+    if (LOGIN_STATE.was_logged_in) {
+        LOGIN_STATE.clear();
+        return create_element(
+            Navigate,
+            {'to': '/', 'replace': true},
+        );
+    }
 
     var content_element = create_element(
         'div',
@@ -930,28 +935,28 @@ function App() {
                 Route,
                 {
                     'path': '/profile',
-                    'element': create_element(ProfilePage, null),
+                    'element': redirect_if_not_logged_in(ProfilePage),
                 },
             ),
             create_element(
                 Route,
                 {
                     'path': '/stats',
-                    'element': create_element(StatsPage, null),
+                    'element': redirect_if_not_logged_in(StatsPage),
                 },
             ),
             create_element(
                 Route,
                 {
                     'path': '/notifications',
-                    'element': create_element(NotificationsPage, null),
+                    'element': redirect_if_not_logged_in(NotificationsPage),
                 },
             ),
             create_element(
                 Route,
                 {
                     'path': '/logoff',
-                    'element': create_element(LogoffPage, null),
+                    'element': redirect_if_not_logged_in(LogoffPage),
                 },
             ),
         ),
