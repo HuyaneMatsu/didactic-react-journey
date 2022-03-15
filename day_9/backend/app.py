@@ -21,6 +21,10 @@ except KeyError:
     sys.stderr.write('Required environmental variables: CLIENT_ID, CLIENT_SECRET.\n')
     raise SystemExit(1) from None
 
+FRONTEND_URL = 'http://127.0.0.1:3000'
+FRONTEND_ALLOWED_URLS = FRONTEND_URL + '/*'
+
+FRONTEND_AUTHORIZATION_URL = FRONTEND_URL + 'auth'
 
 AUTHORIZATION_URL = str(
     URL(
@@ -28,7 +32,7 @@ AUTHORIZATION_URL = str(
     ).extend_query(
         {
             'client_id': CLIENT_ID,
-            'redirect_uri': 'http://127.0.0.1:5000/api/auth',
+            'redirect_uri': FRONTEND_AUTHORIZATION_URL,
             'response_type': 'code',
             'scope': 'identify',
         },
@@ -114,15 +118,8 @@ APP = Flask(
     static_folder =join_paths(BASE_PATH, 'static'),
 )
 
-DAY = 8
-
-@APP.route('/')
-def index():
-    return render_template(
-        'index.html',
-        day = DAY,
-    )
-
+DAY = 9
+FRONTEND_BASE_URL = 'http://127.0.0.1:3000/'
 
 def get_user():
     try:
@@ -193,14 +190,14 @@ def notification_settings_edit():
     return ('', 204)
 
 
-@APP.route('/api/auth')
+@APP.route('/api/auth', methods=['POST'])
 def authenticate():
-    result = parse_oauth2_redirect_url(request.url)
-    if result is None:
+    code = request.args.get('code')
+    if code is None:
         abort(400)
     
     try:
-        access = LOOP.run(CLIENT.activate_authorization_code(*result, 'identify'))
+        access = LOOP.run(CLIENT.activate_authorization_code(FRONTEND_AUTHORIZATION_URL, code, 'identify'))
     except DiscordException as err:
         if err.status == 400:
             access = None
@@ -217,12 +214,11 @@ def authenticate():
     
     AUTHORIZATION_TOKEN_TO_USER[token] = user
     
-    return render_template(
-        'authorized.html',
-        token = token,
-        user = to_json(serialise_user(user)),
-        expires_at = datetime_to_timestamp(get_access_expires_at(user)),
-    )
+    return jsonify({
+        'token': token,
+        'user': serialise_user(user),
+        'expires_at': datetime_to_timestamp(get_access_expires_at(user)),
+    })
 
 
 @APP.route('/login')
@@ -230,11 +226,10 @@ def login():
     return redirect(AUTHORIZATION_URL)
 
 
-@APP.route('/<path:path>')
-def catch_all(path):
-    return render_template(
-        'index.html',
-        day = DAY,
-    )
+@APP.after_request
+def apply_caching(response):
+    response.headers['Access-Control-Allow-Origin'] = 'http://127.0.0.1:3000'
+    return response
+
 
 APP.run()

@@ -7,6 +7,7 @@ import {ProfilePage} from './components/profile_page';
 import {NotificationsPage} from './components/notifications_page';
 import {LogoffPage} from './components/logoff_page';
 import {StatsPage} from './components/stats_page';
+import {AuthPage} from './components/auth_page';
 
 export default function App() {
     return create_element(
@@ -48,6 +49,13 @@ export default function App() {
                 {
                     'path': '/logoff',
                     'element': redirect_if_not_logged_in(LogoffPage),
+                },
+            ),
+            create_element(
+                Route,
+                {
+                    'path': '/auth',
+                    'element': create_element(AuthPage, null),
                 },
             ),
         ),

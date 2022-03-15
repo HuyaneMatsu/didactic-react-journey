@@ -78,7 +78,12 @@ class User {
 }
 
  class LoginState {
-    constructor(){
+    constructor() {
+        this.set_default_attributes();
+        this.try_load_from_locale_storage();
+    }
+
+    try_load_from_locale_storage() {
         var state_found, user, token, expires_at;
 
         while (1) {
@@ -156,12 +161,16 @@ class User {
         localStorage.removeItem('expires_at');
     }
 
-    clear() {
+    set_default_attributes() {
         this.user = null;
         this.token = null;
         this.was_logged_in = false;
         this.is_logged_in = false;
         this.un_authorized = false;
+    }
+
+    clear() {
+        this.set_default_attributes();
         this.clear_locale_storage();
     }
 

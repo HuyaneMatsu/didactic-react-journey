@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import {createElement as create_element} from 'react';
 
 import {LOGIN_STATE} from './../login_state';
+import {BACKEND_URL} from './../constants';
 
 
 function create_header_button(system_name, to, display_name, clicked) {
@@ -55,7 +56,7 @@ function create_login_button() {
             'a',
             {
                 'className': 'login',
-                'href': '/login'
+                'href': BACKEND_URL + '/login'
             },
             'Login',
         );

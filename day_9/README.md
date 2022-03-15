@@ -1,4 +1,4 @@
-# Day 8
+# Day 9
 
 ### backend
 - Index endpoint
@@ -23,3 +23,4 @@
 - Handle being unauthorised
 - Logoff
 - Routing
+- Separate frontend application
