@@ -5,9 +5,8 @@ from os import getcwd as get_current_working_directory, urandom
 from os.path import join as join_paths
 
 from dotenv import dotenv_values
-from hata import Client, DiscordException, datetime_to_timestamp, now_as_id, parse_oauth2_redirect_url
-from flask import Flask, abort, jsonify, redirect, render_template, request
-from scarletio import to_json
+from hata import Client, DiscordException, datetime_to_timestamp, now_as_id
+from flask import Flask, abort, jsonify, redirect, request
 from scarletio.web_common import URL
 
 
@@ -22,9 +21,8 @@ except KeyError:
     raise SystemExit(1) from None
 
 FRONTEND_URL = 'http://127.0.0.1:3000'
-FRONTEND_ALLOWED_URLS = FRONTEND_URL + '/*'
 
-FRONTEND_AUTHORIZATION_URL = FRONTEND_URL + 'auth'
+FRONTEND_AUTHORIZATION_URL = FRONTEND_URL + '/auth'
 
 AUTHORIZATION_URL = str(
     URL(
@@ -192,9 +190,15 @@ def notification_settings_edit():
 
 @APP.route('/api/auth', methods=['POST'])
 def authenticate():
-    code = request.args.get('code')
-    if code is None:
+    data = request.json
+    if not isinstance(data, dict):
         abort(400)
+        return
+    
+    code = data.get('code', None)
+    if (code is None) or (not isinstance(code, str)):
+        abort(400)
+        return
     
     try:
         access = LOOP.run(CLIENT.activate_authorization_code(FRONTEND_AUTHORIZATION_URL, code, 'identify'))
@@ -228,7 +232,10 @@ def login():
 
 @APP.after_request
 def apply_caching(response):
-    response.headers['Access-Control-Allow-Origin'] = 'http://127.0.0.1:3000'
+    response.headers['Access-Control-Allow-Origin'] = FRONTEND_URL
+    response.headers['Access-Control-Allow-Methods'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Vary'] = 'Origin'
     return response
 
 

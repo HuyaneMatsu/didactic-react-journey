@@ -9,7 +9,7 @@ import {LogoffPage} from './components/logoff_page';
 import {StatsPage} from './components/stats_page';
 import {AuthPage} from './components/auth_page';
 
-export default function App() {
+export function App() {
     return create_element(
         Router,
         null,
