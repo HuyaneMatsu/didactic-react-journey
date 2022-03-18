@@ -44,4 +44,4 @@ Each day of development is separated into it's own folder.
 - day 9: Separate app for back & front-end
 - day 10: Components with cleanup | UseEffect
 - day 11: Improve user login system
-- day 12: Type checking & Form Handling & Theming
+- day 12: Type checking & Form Handling
