@@ -41,7 +41,7 @@ Each day of development is separated into it's own folder.
 - day 6: login (oauth2)
 - day 7: logoff (locking components)
 - day 8: Routing
-- day 9: Components with cleanup | UseEffect
-- day 10: Form Handling
-- day 11: Type checking
-- day 12: Theming
+- day 9: Separate app for back & front-end
+- day 10: Components with cleanup | UseEffect
+- day 11: Improve user login system
+- day 12: Type checking & Form Handling & Theming
