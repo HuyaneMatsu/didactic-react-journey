@@ -10,7 +10,7 @@ import {create_loader} from './loader';
 import {to_string, get_from_dict, int_field_validator} from './../utils';
 import {get_loader_api} from './../loader_api';
 import {API_BASE_URL} from './../constants';
-import {get_handler, create_handler} from './../request_life_cycle_handler';
+import {get_handler, set_handler} from './../request_life_cycle_handler';
 
 
 var STATS_DATA_STRUCTURE = {
@@ -62,11 +62,11 @@ function re_set_daily_streak(setter, default_value) {
 
 var SUBMIT_SELL_DAILY_CUSTOM_ID = 'stats.sell_daily';
 
-function submit_sell_daily_streak_callback(event, input_value, subscription) {
+function submit_sell_daily_streak_callback(event, input_value, handler, subscription) {
     event.preventDefault();
 
-    create_handler(
-        SUBMIT_SELL_DAILY_CUSTOM_ID,
+    set_handler(
+        handler,
         (handler) => submit_sell_daily_streak(handler, input_value),
         subscription,
     );
@@ -118,7 +118,7 @@ async function submit_sell_daily_streak(handler, input_value) {
 function StatsPageSellDaily({data}) {
     var subscription = get_loader_api_subscription();
     var handler = get_handler(SUBMIT_SELL_DAILY_CUSTOM_ID);
-    use_effect(subscription.get_subscriber_callback(handler), [])
+    use_effect(subscription.get_subscriber_callback(handler), []);
 
     var streak = get_from_dict(data, 'streak', 0);
 
@@ -126,11 +126,11 @@ function StatsPageSellDaily({data}) {
         return <Navigate to=".." />
     }
 
-    var [input_value, set_input_value] = state_hook('')
+    var [input_value, set_input_value] = state_hook('');
 
 
     var submit_button_parameters = {};
-    if (handler !== null) {
+    if (handler.is_set()) {
         submit_button_parameters['className'] = 'disabled';
     }
 
@@ -141,17 +141,17 @@ function StatsPageSellDaily({data}) {
     );
 
     var submit_event_handler;
-    if (handler === null) {
-        submit_event_handler = (event) => submit_sell_daily_streak_callback(event, input_value, subscription);
-    } else {
+    if (handler.is_set()) {
         submit_event_handler = (event) => submit_sell_daily_streak_placeholder_callback(event);
+    } else {
+        submit_event_handler = (event) => submit_sell_daily_streak_callback(event, input_value, handler, subscription);
     }
 
     var change_handler;
-    if (handler === null) {
-        change_handler = (event) => validate_and_re_set_daily_streak(event, set_input_value, input_value, streak);
-    } else {
+    if (handler.is_set()) {
         change_handler = (event) => re_set_daily_streak(set_input_value, input_value);
+    } else {
+        change_handler = (event) => validate_and_re_set_daily_streak(event, set_input_value, input_value, streak);
     }
 
     return (

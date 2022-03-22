@@ -376,6 +376,10 @@ a {
     background-color: var(--color-green);
 }
 
+.content .stats form button.disabled {
+    background-color: var(--color-green-disabled);
+}
+
 .content .stats form button {
     cursor: pointer;
 }

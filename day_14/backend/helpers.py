@@ -37,10 +37,10 @@ def set_notification_settings_of(user_id, notification_settings):
     NOTIFICATION_SETTINGS[user_id] = notification_settings
 
 STATS = {
-    # Some default value
+    # Some default value | set high streak so we can test
     184734189386465281: {
         'total_love': 55566556,
-        'streak': 222,
+        'streak': 222222,
     }
 }
 

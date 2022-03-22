@@ -9,6 +9,7 @@
 - Oauth2 login
 - Locking every endpoint behind authorization
 - Improved token handling
+- Sell streak endpoint
 
 ### Frontend
 - Template
@@ -29,3 +30,4 @@
 - Subscription based API for cached content
 - Auto authorization from local storage
 - Submitting form
+- Handling form submit response

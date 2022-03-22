@@ -9,6 +9,7 @@
 - Oauth2 login
 - Locking every endpoint behind authorization
 - Improved token handling
+- Sell streak endpoint
 
 ### Frontend
 - Template

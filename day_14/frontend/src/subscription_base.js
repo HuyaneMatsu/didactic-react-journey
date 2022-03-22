@@ -10,17 +10,33 @@ export class SubscriptionBase {
             route = null;
         }
 
+        var subscribers = this.subscribers;
+
+        var to_log;
+        if (route === null) {
+            to_log = `Triggering subscription update in ${subscribers.length} subscribers`;
+        } else {
+            to_log = `Triggering subscription update in ${subscribers.length} subscribers| Redirecting to ${route}`;
+        }
+        console.log(to_log);
+
         var subscriber;
-        for (subscriber of this.subscribers) {
+        for (subscriber of subscribers) {
             subscriber.trigger(route);
         }
     }
 
     subscribe(subscriber) {
-        this.subscribers.push(subscriber);
+        var subscribers = this.subscribers;
+        subscribers.push(subscriber);
+
+        console.log(`Subscribing for updates | Total ${subscribers.length} subscribers`);
     }
 
     unsubscribe(subscriber) {
-        remove_from_list(this.subscribers, subscriber);
+        var subscribers = this.subscribers;
+        remove_from_list(subscribers, subscriber);
+
+        console.log(`Unsubscribing from updates | Total ${subscribers.length} subscribers left`)
     }
 }

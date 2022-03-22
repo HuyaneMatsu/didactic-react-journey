@@ -17,8 +17,15 @@ export class LoaderAPISubscription {
     }
 
     trigger(route) {
+        var to_log;
+        if (route === null) {
+            to_log = `Triggered subscription update`;
+        } else {
+            to_log = `Triggered subscription update | Redirecting to ${route}`;
+        }
+        console.log(to_log);
+
         if (route !== null) {
-            console.log('Navigating to', route);
             this.navigator(route);
         }
         /* When we call `set_change_counter` with a new value, react will reload the element */
