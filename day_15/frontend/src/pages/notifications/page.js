@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {LOGIN_STATE} from './../../core';
 import {API_BASE_URL} from './../../constants';
 import {create_subscription, get_loaded_page_api, LoaderAPI} from './../../utils';
-import {create_loader, Header, create_content} from './../../components';
+import {create_loader, Header, Content} from './../../components';
 
 
 async function save_notification_settings(loaded_page_api, set_is_saving) {
@@ -144,7 +144,7 @@ export function NotificationsPage() {
     return (
         <>
             <Header clicked={ 'notifications' } />
-            { create_content(content_element) }
+            <Content content={ content_element } />
         </>
 
     );

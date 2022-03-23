@@ -1,6 +1,6 @@
 import {LOGIN_STATE} from './../../core';
 import {choice} from './../../utils';
-import {create_content, Header} from './../../components';
+import {Content, Header} from './../../components';
 import {BACKEND_URL} from './../../constants';
 
 
@@ -57,7 +57,7 @@ export function MainPage() {
     return (
         <>
             <Header clicked={ null } />
-            { create_content(content_element) }
+            <Content content={ content_element } />
         </>
     );
 }

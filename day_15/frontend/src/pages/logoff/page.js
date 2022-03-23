@@ -2,7 +2,7 @@ import {createElement as create_element, Fragment} from 'react';
 import {Navigate, useNavigate as get_navigator} from 'react-router-dom';
 
 import {LOGIN_STATE} from './../../core';
-import {Header, create_content} from './../../components';
+import {Header, Content} from './../../components';
 
 
 function execute_logoff(navigator) {
@@ -55,7 +55,7 @@ export function LogoffPage() {
     return (
         <>
             <Header clicked={ null } />
-            { create_content(content_element) }
+            <Content content={ content_element } />
         </>
     );
 }

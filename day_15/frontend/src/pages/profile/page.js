@@ -2,7 +2,7 @@ import {createElement as create_element, Fragment} from 'react';
 
 import {LOGIN_STATE} from './../../core';
 import {to_string, format_date} from './../../utils';
-import {Header, create_content} from './../../components';
+import {Header, Content} from './../../components';
 
 
 export function ProfilePage() {
@@ -22,7 +22,7 @@ export function ProfilePage() {
     return (
         <>
             <Header clicked={ 'profile' } />
-            { create_content(content_element) }
+            <Content content={ content_element } />
         </>
     );
 }

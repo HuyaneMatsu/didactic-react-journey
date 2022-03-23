@@ -3,7 +3,7 @@ import {Route, Routes, Link, Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import {LOGIN_STATE} from './../../core';
-import {Header, create_content, create_loader} from './../../components';
+import {Header, Content, create_loader} from './../../components';
 import {
     to_string, get_from_dict, int_field_validator, get_loaded_page_api, get_handler, set_handler, create_subscription
 } from './../../utils';
@@ -199,7 +199,7 @@ export function StatsPage() {
     return (
         <>
             <Header clicked={'stats'} />
-            { create_content(content_element) }
+            <Content content={ content_element } />
         </>
     );
 }

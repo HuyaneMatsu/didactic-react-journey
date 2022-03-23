@@ -28,7 +28,7 @@ export class User {
     get_avatar_url_as(ext, size) {
         var icon_type = this.avatar_type;
 
-        if (icon_type == ICON_TYPE_NONE) {
+        if (icon_type === ICON_TYPE_NONE) {
             return this.get_default_avatar_url();
         }
 
@@ -41,7 +41,7 @@ export class User {
 
         var prefix;
         if (ext === null) {
-            if (icon_type == ICON_TYPE_STATIC) {
+            if (icon_type === ICON_TYPE_STATIC) {
                 prefix = '';
                 ext = 'png';
             } else {
@@ -49,7 +49,7 @@ export class User {
                 ext = 'gif';
             }
         } else {
-            if (icon_type == ICON_TYPE_STATIC) {
+            if (icon_type === ICON_TYPE_STATIC) {
                 prefix = '';
             } else {
                 prefix = 'a_';

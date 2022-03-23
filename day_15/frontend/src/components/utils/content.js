@@ -1,9 +1,7 @@
-import {createElement as create_element} from 'react';
-
-export function create_content(content_element) {
+export function Content({content}) {
     return (
         <div className='content'>
-            { content_element }
+            { content }
         </div>
-    )
+    );
 }

@@ -1,5 +1,5 @@
 import {create_loader} from './loader';
-import {create_content} from './content';
+import {Content} from './content';
 
 
 export function create_loading_page(title) {
@@ -11,7 +11,7 @@ export function create_loading_page(title) {
                 </div>
             </nav>
 
-            { create_content(create_loader()) }
+            <Content content={ create_loader() } />
         </>
-    )
+    );
 }
