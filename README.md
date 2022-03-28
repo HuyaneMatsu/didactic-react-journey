@@ -30,18 +30,38 @@ Each day of development is separated into it's own folder.
 - [Youtube | react router v5 -> v6](https://www.youtube.com/watch?v=zEQiNFAwDGo&ab_channel=Academind)
     Migrating from router v5 to v6.
 
+- [Youtube | react testing](https://www.youtube.com/watch?v=7dTTFW7yACQ)
+    React testing library.
 
-### Roadmap
+### Backend
+- Index endpoint
+- Profile endpoint
+- Stats endpoint
+- Notification settings | get endpoint
+- Notification settings | edit endpoint
+- Oauth2 login
+- Locking every endpoint behind authorization
+- Improved token handling
+- Sell streak endpoint
 
-- day 1: Class based components | state
-- day 2: props
-- day 3: Functional components | useState
-- day 4: Custom hooks | useRef
-- day 5: Dynamic components (based on user input)
-- day 6: login (oauth2)
-- day 7: logoff (locking components)
-- day 8: Routing
-- day 9: Separate app for back & front-end
-- day 10: Components with cleanup | UseEffect
-- day 11: Improve user login system
-- day 12: Type checking & Form Handling
+### Frontend
+- Template
+- Pretty good css
+- Button to load profile
+- Button to load stats
+- Button to load notifications
+- Use functional components
+- Synchronize requests
+- Popup when notifications settings are changed.
+- Actually save notification settings.
+- Oauth2 login
+- Handle being unauthorised
+- Logoff
+- Routing
+- Separate frontend application
+- JSX
+- Subscription based API for cached content
+- Auto authorization from local storage
+- Submitting form
+- Handling form submit response
+- Regroup code
