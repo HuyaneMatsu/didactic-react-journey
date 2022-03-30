@@ -4,9 +4,12 @@ import PropTypes from 'prop-types';
 
 import {LOGIN_STATE} from './../../core';
 
+export var HEADER_NAVIGATOR_TEST_ID = 'navigator_button';
 
 export function HeaderButton({system_name, to, display_name, clicked}) {
-    var element_attributes = {};
+    var element_attributes = {
+        'data-testid': HEADER_NAVIGATOR_TEST_ID,
+    };
     var element_type;
 
     if (LOGIN_STATE.is_logged_in) {

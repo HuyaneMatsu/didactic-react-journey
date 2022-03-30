@@ -2,7 +2,6 @@ import {to_string, left_fill, to_string_base_16} from './../../utils';
 
 import {ICON_TYPE_NONE, ICON_TYPE_STATIC, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
 
-
 export class User {
     constructor(data) {
         this.id = BigInt(data['id']);

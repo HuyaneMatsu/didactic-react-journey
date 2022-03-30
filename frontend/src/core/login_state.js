@@ -97,6 +97,23 @@ export class LoginState  extends SubscriptionAPIBase {
         this.clear_locale_storage();
     }
 
+    /* This method is used when testing to log in a random user */
+    set_random() {
+        this.logging_in = false;
+        this.user = new User({
+            'id': '420691337',
+            'created_at': '2022-03-29T21:57:54.977000+00:00',
+            'name': 'nue',
+            'avatar_hash': '0',
+            'avatar_type': 0,
+            'discriminator': 0,
+        });
+        this.token = 'a.a.aa';
+        this.was_logged_in = false;
+        this.is_logged_in = true;
+        this.un_authorized = false;
+    }
+
     un_authorize() {
         LOGIN_STATE.was_logged_in = true;
         LOGIN_STATE.is_logged_in = false;

@@ -7,7 +7,6 @@ import {LoginButton} from './login_button';
 export function Header({clicked}) {
     return (
         <nav className='header'>
-
             <div className='left'>
                 <HeaderButton
                     system_name={ 'profile'}
