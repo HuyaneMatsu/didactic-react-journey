@@ -1,4 +1,4 @@
-import {int_field_validator, get_loaded_page_api, set_handler} from './../../../utils';
+import {int_field_validator, get_page_loader_api, set_handler} from './../../../utils';
 import {API_BASE_URL} from './../../../constants';
 import {LOGIN_STATE} from './../../../core';
 
@@ -47,8 +47,8 @@ async function submit_sell_daily_streak(handler, input_value) {
         var status = response.status;
         if (status === 200) {
             var data = await response.json();
-            var loaded_page_api = get_loaded_page_api('/stats')
-            loaded_page_api.data = data;
+            var page_loader_api = get_page_loader_api('/stats')
+            page_loader_api.data = data;
 
             display_route = '/stats';
 

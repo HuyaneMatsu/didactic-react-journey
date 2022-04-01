@@ -1,6 +1,6 @@
 import {render_in_router, logged_in_test, logged_off_test} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
-import {HeaderButton, HEADER_NAVIGATOR_TEST_ID} from './../header_button';
+import {HeaderButton, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../header_button';
 import {LOGIN_STATE} from './../../../core';
 
 
@@ -16,7 +16,7 @@ test(
             />
         );
 
-        var header_button = screen.getByTestId(HEADER_NAVIGATOR_TEST_ID);
+        var header_button = screen.getByTestId(TEST_ID_HEADER_NAVIGATOR_BUTTON);
         expect(header_button).toBeVisible();
     }
 )
@@ -53,7 +53,7 @@ logged_off_test(
             />
         );
 
-        var header_button = screen.getByTestId(HEADER_NAVIGATOR_TEST_ID);
+        var header_button = screen.getByTestId(TEST_ID_HEADER_NAVIGATOR_BUTTON);
         expect(header_button).toHaveClass('disabled');
         expect(header_button).not.toHaveClass('clicked');
     }
@@ -72,7 +72,7 @@ logged_off_test(
             />
         );
 
-        var header_button = screen.getByTestId(HEADER_NAVIGATOR_TEST_ID);
+        var header_button = screen.getByTestId(TEST_ID_HEADER_NAVIGATOR_BUTTON);
         expect(header_button).toHaveClass('disabled');
         expect(header_button).not.toHaveClass('clicked');
     }
@@ -90,7 +90,7 @@ logged_in_test(
             />
         );
 
-        var header_button = screen.getByTestId(HEADER_NAVIGATOR_TEST_ID);
+        var header_button = screen.getByTestId(TEST_ID_HEADER_NAVIGATOR_BUTTON);
         expect(header_button).not.toHaveClass('disabled');
         expect(header_button).not.toHaveClass('clicked');
     }
@@ -108,7 +108,7 @@ logged_in_test(
             />
         );
 
-        var header_button = screen.getByTestId(HEADER_NAVIGATOR_TEST_ID);
+        var header_button = screen.getByTestId(TEST_ID_HEADER_NAVIGATOR_BUTTON);
         expect(header_button).not.toHaveClass('disabled');
         expect(header_button).toHaveClass('clicked');
     }

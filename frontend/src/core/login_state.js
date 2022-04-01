@@ -98,7 +98,7 @@ export class LoginState  extends SubscriptionAPIBase {
     }
 
     /* This method is used when testing to log in a random user */
-    set_random() {
+    test_set_random() {
         this.logging_in = false;
         this.user = new User({
             'id': '420691337',
@@ -112,6 +112,40 @@ export class LoginState  extends SubscriptionAPIBase {
         this.was_logged_in = false;
         this.is_logged_in = true;
         this.un_authorized = false;
+    }
+
+    /* sets specific attributes of the login state */
+    test_set_specific(keyword_parameters) {
+        var logged_in = keyword_parameters['logged_in'];
+        if (logged_in !== undefined) {
+            this.logged_in = logged_in;
+        }
+
+        var user = keyword_parameters['user'];
+        if (user !== undefined) {
+            this.user = user;
+        }
+
+        var token = keyword_parameters['token'];
+        if (token !== undefined) {
+            this.token = token;
+        }
+
+        var was_logged_in = keyword_parameters['was_logged_in'];
+        if (was_logged_in !== undefined) {
+            this.was_logged_in = was_logged_in;
+        }
+
+        var is_logged_in = keyword_parameters['is_logged_in'];
+        if (is_logged_in !== undefined) {
+            this.is_logged_in = is_logged_in;
+        }
+
+        var un_authorized = keyword_parameters['un_authorized'];
+        if (un_authorized !== undefined) {
+            this.un_authorized = un_authorized;
+        }
+
     }
 
     un_authorize() {

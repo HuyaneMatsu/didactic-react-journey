@@ -1,21 +1,21 @@
 import {useEffect as use_effect} from 'react';
 import {Route, Routes} from 'react-router-dom';
 
-import {Header, Content, create_loader} from './../../components';
-import {get_loaded_page_api, create_subscription} from './../../utils';
+import {Header, Content, SpinningCircle} from './../../components';
+import {get_page_loader_api, create_subscription} from './../../utils';
 
 import {StatsPageSellDaily, StatsPageMain} from './pages';
 
 
 export function StatsPage() {
     var subscription = create_subscription();
-    var loaded_page_api = get_loaded_page_api('/stats')
+    var page_loader_api = get_page_loader_api('/stats')
 
-    use_effect(subscription.get_subscriber_callback(loaded_page_api), [])
+    use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 
     var content_element;
-    if (loaded_page_api.is_loaded) {
-        var data = loaded_page_api.data;
+    if (page_loader_api.is_loaded) {
+        var data = page_loader_api.data;
 
         content_element = (
             <div className="stats">
@@ -26,7 +26,7 @@ export function StatsPage() {
             </div>
         );
     } else {
-        content_element = create_loader();
+        content_element = <SpinningCircle />;
     }
 
     return (

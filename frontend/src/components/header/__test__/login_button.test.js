@@ -1,6 +1,6 @@
 import {render_in_router, logged_in_test, logged_off_test} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
-import {LoginButton, HEADER_LOGIN_TEST_ID} from './../login_button';
+import {LoginButton, TEST_ID_HEADER_LOGIN} from './../login_button';
 import {LOGIN_STATE} from './../../../core';
 
 test(
@@ -10,7 +10,7 @@ test(
             <LoginButton />
         );
 
-        var login_button = screen.getByTestId(HEADER_LOGIN_TEST_ID);
+        var login_button = screen.getByTestId(TEST_ID_HEADER_LOGIN);
         expect(login_button).toBeVisible();
     }
 )
@@ -22,7 +22,7 @@ logged_off_test(
             <LoginButton />
         );
 
-        var login_button = screen.getByTestId(HEADER_LOGIN_TEST_ID);
+        var login_button = screen.getByTestId(TEST_ID_HEADER_LOGIN);
         expect(login_button).toHaveTextContent('Login');
     }
 )
@@ -34,7 +34,7 @@ logged_in_test(
             <LoginButton />
         );
 
-        var login_button = screen.getByTestId(HEADER_LOGIN_TEST_ID);
+        var login_button = screen.getByTestId(TEST_ID_HEADER_LOGIN);
         expect(login_button).toHaveTextContent(LOGIN_STATE.user.get_full_name());
     }
 )

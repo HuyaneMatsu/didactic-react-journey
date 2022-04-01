@@ -5,7 +5,7 @@ import {useNavigate as get_navigator} from 'react-router-dom';
 function placeholder_function(){}
 
 
-export class LoaderAPISubscription {
+export class Subscription {
     constructor(change_counter, set_change_counter, navigator) {
         this.change_counter = change_counter;
         this.set_change_counter = set_change_counter;
@@ -56,5 +56,5 @@ export function create_subscription() {
     var [change_counter, set_change_counter] = state_hook(0);
     var navigator = get_navigator();
 
-    return new LoaderAPISubscription(change_counter, set_change_counter, navigator);
+    return new Subscription(change_counter, set_change_counter, navigator);
 }

@@ -7,7 +7,7 @@ import {SubscriptionAPIBase} from './subscription_base';
 var LOADER_APIS = {};
 
 
-export class LoaderAPI extends SubscriptionAPIBase {
+export class PageLoaderAPI extends SubscriptionAPIBase {
     constructor(endpoint) {
         super()
 
@@ -171,16 +171,16 @@ export class LoaderAPI extends SubscriptionAPIBase {
 }
 
 
-export function get_loaded_page_api(endpoint) {
-    var loaded_page_api = LOADER_APIS[endpoint];
+export function get_page_loader_api(endpoint) {
+    var page_loader_api = LOADER_APIS[endpoint];
 
-    if (loaded_page_api === undefined) {
-        loaded_page_api = new LoaderAPI(endpoint);
-        LOADER_APIS[endpoint] = loaded_page_api;
+    if (page_loader_api === undefined) {
+        page_loader_api = new PageLoaderAPI(endpoint);
+        LOADER_APIS[endpoint] = page_loader_api;
 
     } else {
-       loaded_page_api.check_reload();
+       page_loader_api.check_reload();
     }
 
-    return loaded_page_api;
+    return page_loader_api;
 }

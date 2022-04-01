@@ -1,17 +1,37 @@
-import {create_loader} from './loader';
+import PropTypes from 'prop-types';
+
 import {Content} from './../content';
 
+import {SpinningCircle} from './spinning_circle';
 
-export function create_loading_page(title) {
+
+export var TEST_ID_LOADING_PAGE_HEADER = 'loading_page';
+
+export function LoadingPage({title}) {
+
+    var header_content;
+    if (title === null) {
+        header_content = '';
+    } else {
+        header_content = (
+            <div className='middle'>
+                { title }
+            </div>
+        )
+    }
+
+
     return (
         <>
-            <nav className='header'>
-                <div className='middle'>
-                    { title }
-                </div>
+            <nav className='header' data-testid={ TEST_ID_LOADING_PAGE_HEADER }>
+                { header_content }
             </nav>
 
-            <Content content={ create_loader() } />
+            <Content content={ <SpinningCircle /> } />
         </>
     );
 }
+
+LoadingPage.propTypes = {
+    'title': PropTypes.oneOfType([PropTypes.string.isRequired]),
+};

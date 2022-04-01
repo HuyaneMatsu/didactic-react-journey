@@ -4,7 +4,7 @@ import {Route, Routes, Navigate} from 'react-router-dom';
 import {LOGIN_STATE} from './core';
 import {MainPage, ProfilePage, NotificationsPage, LogoffPage, StatsPage, AuthPage} from './pages';
 import {create_subscription} from './utils';
-import {create_loading_page} from './components';
+import {LoadingPage} from './components';
 
 
 export function App() {
@@ -13,7 +13,7 @@ export function App() {
 
     var element;
     if (LOGIN_STATE.logging_in) {
-        element = create_loading_page('Logging in');
+        element = <LoadingPage title={ 'Logging in' } />;
     } else {
         element = (
             <Routes>

@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 
-export var CONTENT_TEST_ID = 'content';
+export var TEST_ID_CONTENT = 'content';
 
 export function Content({content}) {
     return (
-        <div className='content' data-testid={ CONTENT_TEST_ID }>
+        <div className='content' data-testid={ TEST_ID_CONTENT }>
             { content }
         </div>
     );

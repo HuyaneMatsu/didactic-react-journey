@@ -1,15 +1,15 @@
 import {createElement as create_element, useState as state_hook} from 'react';
 import PropTypes from 'prop-types';
 
-import {LoaderAPI} from './../../utils';
+import {PageLoaderAPI} from './../../utils';
 
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
 
 
-export function SaveNotificationsField({loaded_page_api}) {
+export function SaveNotificationsField({page_loader_api}) {
     var [is_saving, set_is_saving] = state_hook(false);
 
-    if (loaded_page_api.data_changes === null) {
+    if (page_loader_api.data_changes === null) {
         return '';
     }
 
@@ -23,8 +23,8 @@ export function SaveNotificationsField({loaded_page_api}) {
         save_parameters['className'] = 'save_execute_enabled';
         cancel_parameters['className'] = 'save_cancel_enabled';
 
-        save_parameters['onClick'] = create_save_notification_settings_callback(loaded_page_api, set_is_saving);
-        cancel_parameters['onClick'] = create_revert_changes_callback(loaded_page_api);
+        save_parameters['onClick'] = create_save_notification_settings_callback(page_loader_api, set_is_saving);
+        cancel_parameters['onClick'] = create_revert_changes_callback(page_loader_api);
     }
 
     return (
@@ -43,5 +43,5 @@ export function SaveNotificationsField({loaded_page_api}) {
 }
 
 SaveNotificationsField.propTypes = {
-    'loaded_page_api': PropTypes.instanceOf(LoaderAPI).isRequired,
+    'page_loader_api': PropTypes.instanceOf(PageLoaderAPI).isRequired,
 }

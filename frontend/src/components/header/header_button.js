@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 
 import {LOGIN_STATE} from './../../core';
 
-export var HEADER_NAVIGATOR_TEST_ID = 'navigator_button';
+export var TEST_ID_HEADER_NAVIGATOR_BUTTON = 'navigator_button';
 
 export function HeaderButton({system_name, to, display_name, clicked}) {
     var element_attributes = {
-        'data-testid': HEADER_NAVIGATOR_TEST_ID,
+        'data-testid': TEST_ID_HEADER_NAVIGATOR_BUTTON,
     };
     var element_type;
 

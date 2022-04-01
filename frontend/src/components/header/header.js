@@ -4,9 +4,12 @@ import {HeaderButton} from './header_button';
 import {LoginButton} from './login_button';
 
 
+export var TEST_ID_HEADER = 'navigator';
+
+
 export function Header({clicked}) {
     return (
-        <nav className='header'>
+        <nav className='header' data-testid={ TEST_ID_HEADER }>
             <div className='left'>
                 <HeaderButton
                     system_name={ 'profile'}

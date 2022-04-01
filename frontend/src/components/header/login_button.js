@@ -4,7 +4,7 @@ import {LOGIN_STATE} from './../../core';
 import {BACKEND_URL} from './../../constants';
 
 
-export var HEADER_LOGIN_TEST_ID = 'login_button';
+export var TEST_ID_HEADER_LOGIN = 'login_button';
 
 
 export function LoginButton() {
@@ -12,7 +12,7 @@ export function LoginButton() {
 
     var shared_attributes = {
         'className': 'login',
-        'data-testid': HEADER_LOGIN_TEST_ID,
+        'data-testid': TEST_ID_HEADER_LOGIN,
     };
 
     if (LOGIN_STATE.is_logged_in) {
