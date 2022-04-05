@@ -7,8 +7,11 @@ import {LoadingPage} from './../../components';
 import {create_authorization_callback} from './callbacks';
 
 
+export var TEST_ID_AUTH_PAGE = 'auth_page';
+
 export function AuthPage() {
     var navigator = get_navigator();
+
     var query = get_query();
 
     var code = query.get('code');
@@ -19,14 +22,14 @@ export function AuthPage() {
         [code],
     );
 
-    if (code === undefined) {
+    if (code === null) {
         title = 'Redirecting';
 
     } else {
-        title = 'Authorizing | Redirecting'
+        title = 'Authorizing | Redirecting';
     }
 
-    return <LoadingPage title={ title } />;
+    return <LoadingPage data-testid={ TEST_ID_AUTH_PAGE } title={ title } />;
 }
 
 AuthPage.propTypes = {};

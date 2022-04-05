@@ -1,23 +1,12 @@
 import {render_in_router, logged_in_test, logged_off_test} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
-import {LogoffPage, TEST_ID_LOGOFF_PAGE} from './../page';
+import {LogoffPage} from './../page';
 import {TEST_ID_HEADER_NAVIGATOR_BUTTON, TEST_ID_HEADER_LOGIN} from './../../../components';
 
 
 var QUESTIONING_RP = new RegExp('.*you sure.*');
 var APPROVE_RP = new RegExp('Yeah');
 var REJECT_RP = new RegExp('Nah');
-
-
-logged_in_test(
-    'whether we are not redirecting when logged in',
-    function () {
-        render_in_router( <LogoffPage /> );
-
-        var redirect_element = screen.queryByTestId(TEST_ID_LOGOFF_PAGE_REDIRECT_TO_MAIN);
-        expect(redirect_element).toEqual(null)
-    }
-);
 
 
 logged_in_test(
@@ -77,4 +66,3 @@ logged_in_test(
         expect(login_button).toBeVisible();
     }
 );
-

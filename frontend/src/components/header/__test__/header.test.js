@@ -76,7 +76,7 @@ logged_in_test(
 )
 
 logged_in_test(
-    'Whether other buttons are disabled if one is clicked',
+    'Whether other buttons are not clicked if one is clicked',
     function() {
         render_in_router(
             <Header clicked={ 'notifications' } />

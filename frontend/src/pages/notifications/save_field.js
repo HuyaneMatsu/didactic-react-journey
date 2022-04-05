@@ -1,10 +1,12 @@
 import {createElement as create_element, useState as state_hook} from 'react';
-import PropTypes from 'prop-types';
+import {PropTypes} from 'prop-types';
 
 import {PageLoaderAPI} from './../../utils';
 
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
 
+
+export var TEST_ID_SAVE_NOTIFICATIONS_FIELD = 'notifications_page.save_field';
 
 export function SaveNotificationsField({page_loader_api}) {
     var [is_saving, set_is_saving] = state_hook(false);
@@ -28,7 +30,7 @@ export function SaveNotificationsField({page_loader_api}) {
     }
 
     return (
-        <div className='save'>
+        <div className='save' data-testid={ TEST_ID_SAVE_NOTIFICATIONS_FIELD }>
             <div className='left'>
                 { 'Remember to save your changes' }
             </div>

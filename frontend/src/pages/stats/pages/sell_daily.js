@@ -7,6 +7,8 @@ import {STATS_DATA_STRUCTURE, SUBMIT_SELL_DAILY_CUSTOM_ID} from './constants';
 import {create_submit_event_handler, create_change_handler_callback} from './callbacks';
 
 
+export var TEST_ID_STATS_PAGE_SELL_DAILY_INPUT = 'stats_page.sell_daily_page.input';
+
 export function StatsPageSellDaily({data}) {
     var subscription = create_subscription();
     var handler = get_handler(SUBMIT_SELL_DAILY_CUSTOM_ID);
@@ -26,12 +28,6 @@ export function StatsPageSellDaily({data}) {
         submit_button_parameters['className'] = 'disabled';
     }
 
-    var submit_button = create_element(
-        'button',
-        submit_button_parameters,
-        'Lets do it!',
-    );
-
     var submit_event_handler = create_submit_event_handler(handler, input_value, subscription);
 
     var change_handler = create_change_handler_callback(handler, set_input_value, input_value, streak);
@@ -40,14 +36,17 @@ export function StatsPageSellDaily({data}) {
     return (
         <>
             <form onSubmit={ submit_event_handler }>
-                <label>{ 'How much streak to sell?' } </label>
+                <label>{ 'How much streak to sell?' }</label>
                 <input
                     required={ true }
                     type="text"
                     value={ input_value }
                     onChange={ change_handler }
+                    data-testid={ TEST_ID_STATS_PAGE_SELL_DAILY_INPUT }
                 />
-                { submit_button }
+                <button {...submit_button_parameters} >
+                    { 'Lets do it!' }
+                </button>
             </form>
 
             <Link to="..">

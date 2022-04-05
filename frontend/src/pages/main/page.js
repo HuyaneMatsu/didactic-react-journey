@@ -3,6 +3,7 @@ import {choice} from './../../utils';
 import {Content, Header} from './../../components';
 import {BACKEND_URL} from './../../constants';
 
+var TEST_ID_MAIN_PAGE = 'main_page';
 
 var WELCOME_MESSAGES = [
     'Isn\'t it a great day?',

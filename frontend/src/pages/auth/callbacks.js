@@ -6,7 +6,7 @@ export function create_authorization_callback(code, navigator) {
 }
 
 async function authorize(code, navigator) {
-    if (code !== undefined) {
+    if (code !== null) {
         var response = await fetch(
             API_BASE_URL + '/auth',
             {

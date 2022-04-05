@@ -1,7 +1,7 @@
 import {useEffect as use_effect} from 'react';
 import {Route, Routes} from 'react-router-dom';
 
-import {Header, Content, SpinningCircle} from './../../components';
+import {Page, SpinningCircle} from './../../components';
 import {get_page_loader_api, create_subscription} from './../../utils';
 
 import {StatsPageSellDaily, StatsPageMain} from './pages';
@@ -30,10 +30,7 @@ export function StatsPage() {
     }
 
     return (
-        <>
-            <Header clicked={'stats'} />
-            <Content content={ content_element } />
-        </>
+        <Page clicked={'stats'} content={ content_element } />
     );
 }
 

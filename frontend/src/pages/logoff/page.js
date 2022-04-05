@@ -7,8 +7,6 @@ import {Page} from './../../components';
 import {create_cancel_logoff_callback, create_execute_logoff_callback} from './callbacks';
 
 
-export var TEST_ID_LOGOFF_PAGE = 'logoff_page';
-
 
 export function LogoffPage() {
     var navigator = get_navigator();
@@ -31,7 +29,7 @@ export function LogoffPage() {
     );
 
     return (
-        <Page data-testid={TEST_ID_LOGOFF_PAGE} clicked={ null } content={ content_element } />
+        <Page clicked={ null } content={ content_element } />
     );
 }
 

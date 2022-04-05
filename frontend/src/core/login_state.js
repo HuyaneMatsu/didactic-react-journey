@@ -1,10 +1,10 @@
+import {SubscriptionAPIBase} from './../utils/subscription_base';
 import {API_BASE_URL} from './../constants';
-import {SubscriptionAPIBase} from './../utils';
 
 import {User} from './entities';
 
 
-export class LoginState  extends SubscriptionAPIBase {
+export class LoginState extends SubscriptionAPIBase {
     constructor() {
         super();
         this.set_default_attributes();

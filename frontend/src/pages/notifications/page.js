@@ -1,8 +1,6 @@
-import {Fragment, useEffect as use_effect} from 'react';
-
+import {useEffect as use_effect} from 'react';
 import {create_subscription, get_page_loader_api} from './../../utils';
-import {SpinningCircle, Header, Content} from './../../components';
-
+import {SpinningCircle, Page} from './../../components';
 import {SaveNotificationsField} from './save_field';
 import {NotificationOption} from './option';
 
@@ -38,11 +36,7 @@ export function NotificationsPage() {
     }
 
     return (
-        <>
-            <Header clicked={ 'notifications' } />
-            <Content content={ content_element } />
-        </>
-
+        <Page clicked={ 'notifications' } content={ content_element } />
     );
 }
 

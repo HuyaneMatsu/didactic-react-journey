@@ -57,20 +57,18 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
                 },
             },
         ).then(
-            (request) => this.update_from_payload(request)
+            (response) => this.update_from_response(response)
         );
     }
 
-    async update_from_payload(request) {
-        var status = request.status;
+    async update_from_response(response) {
+        var status = response.status;
         if (status === 200) {
-            var data = await request.json();
+            var data = await response.json();
 
             LOGIN_STATE.un_authorized = false;
 
-            this.data = data;
-            this.is_loaded = true;
-            this.is_loading = false;
+            this.set_data(data);
 
             this.display();
         } else {
@@ -85,7 +83,11 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         }
     }
 
-
+    set_data(data) {
+        this.data = data;
+        this.is_loaded = true;
+        this.is_loading = false;
+    }
 
     change_data(field_name, field_value, default_value, display_after) {
         var data = this.data;
@@ -183,4 +185,9 @@ export function get_page_loader_api(endpoint) {
     }
 
     return page_loader_api;
+}
+
+
+export function remove_page_loader_api(endpoint) {
+    delete LOADER_APIS[endpoint]
 }

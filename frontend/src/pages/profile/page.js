@@ -1,6 +1,6 @@
 import {LOGIN_STATE} from './../../core';
 import {to_string, format_date} from './../../utils';
-import {Header, Content} from './../../components';
+import {Page} from './../../components';
 
 
 export function ProfilePage() {
@@ -18,10 +18,7 @@ export function ProfilePage() {
     );
 
     return (
-        <>
-            <Header clicked={ 'profile' } />
-            <Content content={ content_element } />
-        </>
+        <Page clicked={ 'profile' } content={ content_element } />
     );
 }
 
