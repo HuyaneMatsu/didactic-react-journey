@@ -15,6 +15,7 @@ export function create_save_notification_settings_callback(page_loader_api, set_
     return () => save_notification_settings(page_loader_api, set_is_saving);
 }
 
+
 async function save_notification_settings(page_loader_api, set_is_saving) {
     set_is_saving(true);
     var changes = page_loader_api.copy_changes();

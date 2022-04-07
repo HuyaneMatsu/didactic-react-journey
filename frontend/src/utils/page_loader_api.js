@@ -8,7 +8,7 @@ var LOADER_APIS = {};
 
 
 export class PageLoaderAPI extends SubscriptionAPIBase {
-    constructor(endpoint) {
+    constructor(endpoint, data) {
         super()
 
         this.endpoint = endpoint;
@@ -20,8 +20,11 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         this.data = null;
         this.data_changes = null;
 
-        this.load();
-
+        if (data === null) {
+            this.load();
+        } else {
+            this.set_data(data);
+        }
     }
 
     check_reload() {
@@ -173,11 +176,15 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
 }
 
 
-export function get_page_loader_api(endpoint) {
+export function get_page_loader_api(endpoint, data) {
+    if (data === undefined) {
+        data = null;
+    }
+
     var page_loader_api = LOADER_APIS[endpoint];
 
     if (page_loader_api === undefined) {
-        page_loader_api = new PageLoaderAPI(endpoint);
+        page_loader_api = new PageLoaderAPI(endpoint, data);
         LOADER_APIS[endpoint] = page_loader_api;
 
     } else {

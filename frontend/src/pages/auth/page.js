@@ -7,8 +7,6 @@ import {LoadingPage} from './../../components';
 import {create_authorization_callback} from './callbacks';
 
 
-export var TEST_ID_AUTH_PAGE = 'auth_page';
-
 export function AuthPage() {
     var navigator = get_navigator();
 
@@ -29,7 +27,7 @@ export function AuthPage() {
         title = 'Authorizing | Redirecting';
     }
 
-    return <LoadingPage data-testid={ TEST_ID_AUTH_PAGE } title={ title } />;
+    return <LoadingPage title={ title } />;
 }
 
 AuthPage.propTypes = {};

@@ -5,6 +5,8 @@ import {PageLoaderAPI} from './../../utils';
 import {create_change_notification_option_callback} from './callbacks';
 
 
+export var TEST_ID_NOTIFICATION_OPTION = 'notification_page.option';
+
 export function NotificationOption({page_loader_api, system_name, display_name}) {
     var old_value = page_loader_api.data[system_name];
     if (old_value === undefined) {
@@ -33,6 +35,7 @@ export function NotificationOption({page_loader_api, system_name, display_name})
                     type='checkbox'
                     checked={ value }
                     onChange={ create_change_notification_option_callback(page_loader_api, system_name) }
+                    data-testid={ TEST_ID_NOTIFICATION_OPTION }
                 />
                 <span></span>
             </label>

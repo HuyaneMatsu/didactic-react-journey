@@ -27,8 +27,7 @@ function login() {
 }
 
 function get_loader_api_and_set_data(endpoint, data, changes) {
-    var page_loader_api = get_page_loader_api(endpoint);
-    page_loader_api.set_data(data)
+    var page_loader_api = get_page_loader_api(endpoint, data);
 
     if (changes !== null) {
         page_loader_api.data_changes = changes;
@@ -125,4 +124,10 @@ export function get_redirect() {
 
 export function escape_regex(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function sleep(seconds) {
+    return new Promise(
+        resolve => setTimeout(resolve, seconds * 1000.0)
+    )
 }

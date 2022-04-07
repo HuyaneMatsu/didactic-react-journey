@@ -4,7 +4,7 @@ import {LOGIN_STATE} from './../../../core';
 
 export function create_submit_event_handler(handler, input_value, subscription) {
     var submit_event_handler;
-    if (handler.is_set()) {
+    if (handler.is_set() || (input_value === '') || (input_value === '0')) {
         submit_event_handler = (event) => submit_sell_daily_streak_placeholder_callback(event);
     } else {
         submit_event_handler = (event) => submit_sell_daily_streak_callback(event, input_value, handler, subscription);

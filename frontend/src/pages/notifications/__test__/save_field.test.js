@@ -1,7 +1,7 @@
-import {screen} from '@testing-library/react';
+import {screen, fireEvent as fire_event} from '@testing-library/react';
 import {SubscriptionAPIBase} from './../../../utils';
 import {SaveNotificationsField} from './../save_field';
-import {render_in_router, logged_in_test} from './../../../test_utils';
+import {render_in_router, logged_in_test, sleep} from './../../../test_utils';
 import {get_page_loader_api} from './../../../utils';
 
 
@@ -18,7 +18,7 @@ logged_in_test(
     {
         'loader_api_endpoint': '/notification_settings',
         'loader_api_data': {},
-        'loader_api_data_changes': {'daily': true},
+        'loader_api_data_changes': {'daily': false},
     },
 )
 
@@ -36,6 +36,67 @@ logged_in_test(
     {
         'loader_api_endpoint': '/notification_settings',
         'loader_api_data': {},
-        'loader_api_data_changes': {'daily': true},
+        'loader_api_data_changes': {'daily': false},
+    },
+)
+
+/* Integration tests */
+
+logged_in_test(
+    'Tests whether data is correctly unassigned when cancelled',
+    function () {
+        var page_loader_api = get_page_loader_api('/notification_settings')
+
+        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+
+        var element = screen.getByText('cancel');
+
+        fire_event.click(element, {});
+        expect(page_loader_api.data_changes).toEqual(null);
+    },
+    {
+        'loader_api_endpoint': '/notification_settings',
+        'loader_api_data': {},
+        'loader_api_data_changes': {'daily': false},
+    },
+)
+
+
+function fetch_function_json() {
+    return Promise.resolve(
+        {}
+    )
+}
+
+function fetch_function() {
+    return Promise.resolve(
+        {
+            'status': 201,
+            'json': fetch_function_json,
+        }
+    )
+}
+
+global.fetch = fetch_function;
+
+logged_in_test(
+    'Tests whether data is being saved when unassigned when approved',
+    async function () {
+        var page_loader_api = get_page_loader_api('/notification_settings')
+
+        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+
+        var element = screen.getByText('save');
+        fire_event.click(element, {});
+        
+        await sleep(0.0);
+
+        expect(page_loader_api.data).toEqual({'daily': false});
+        expect(page_loader_api.data_changes).toEqual(null);
+    },
+    {
+        'loader_api_endpoint': '/notification_settings',
+        'loader_api_data': {},
+        'loader_api_data_changes': {'daily': false},
     },
 )

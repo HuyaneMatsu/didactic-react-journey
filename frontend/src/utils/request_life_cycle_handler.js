@@ -41,7 +41,7 @@ export class RequestLifeCycleHandler extends SubscriptionAPIBase {
 
 
 export function get_handler(custom_id) {
-    var handler = HANDLERS[custom_id]
+    var handler = HANDLERS[custom_id];
     if (handler === undefined) {
         handler = new RequestLifeCycleHandler(custom_id);
     }

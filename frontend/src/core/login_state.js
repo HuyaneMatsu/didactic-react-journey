@@ -16,7 +16,7 @@ export class LoginState extends SubscriptionAPIBase {
         var state_found, token, expires_at;
 
         while (1) {
-            token = localStorage.getItem('token')
+            token = localStorage.getItem('token');
             expires_at = localStorage.getItem('expires_at');
 
             if (token === null) {
@@ -61,6 +61,7 @@ export class LoginState extends SubscriptionAPIBase {
             was_logged_in = false;
         }
 
+        this.expires_at = expires_at
         this.user = null;
         this.token = token;
         this.was_logged_in = was_logged_in;
@@ -84,6 +85,7 @@ export class LoginState extends SubscriptionAPIBase {
     }
 
     set_default_attributes() {
+        this.expires_at = null;
         this.logging_in = false;
         this.user = null;
         this.token = null;
@@ -112,6 +114,10 @@ export class LoginState extends SubscriptionAPIBase {
         this.was_logged_in = false;
         this.is_logged_in = true;
         this.un_authorized = false;
+        this.expires_at = new Date('2062-03-29T21:57:54.977000+00:00');
+
+        localStorage.setItem('token', 'a.a.aa');
+        localStorage.setItem('expires_at', '2062-03-29T21:57:54.977000+00:00');
     }
 
     /* sets specific attributes of the login state */

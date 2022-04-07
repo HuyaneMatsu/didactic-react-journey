@@ -13,14 +13,6 @@ export class Subscription {
     }
 
     trigger(route) {
-        var to_log;
-        if (route === null) {
-            to_log = `Triggered subscription update`;
-        } else {
-            to_log = `Triggered subscription update | Redirecting to ${route}`;
-        }
-        console.log(to_log);
-
         if (route !== null) {
             this.navigator(route);
         }

@@ -8,6 +8,8 @@ import {create_submit_event_handler, create_change_handler_callback} from './cal
 
 
 export var TEST_ID_STATS_PAGE_SELL_DAILY_INPUT = 'stats_page.sell_daily_page.input';
+export var TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT = 'stats_page.sell_daily_page.submit';
+
 
 export function StatsPageSellDaily({data}) {
     var subscription = create_subscription();
@@ -44,7 +46,7 @@ export function StatsPageSellDaily({data}) {
                     onChange={ change_handler }
                     data-testid={ TEST_ID_STATS_PAGE_SELL_DAILY_INPUT }
                 />
-                <button {...submit_button_parameters} >
+                <button {...submit_button_parameters} data-testid={ TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT} >
                     { 'Lets do it!' }
                 </button>
             </form>

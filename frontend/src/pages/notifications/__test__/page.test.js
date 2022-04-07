@@ -1,4 +1,4 @@
-import {render_in_router, logged_in_test} from './../../../test_utils';
+import {render_in_router, logged_in_test, sleep} from './../../../test_utils';
 import {screen} from '@testing-library/react';
 import {NotificationsPage} from './../page';
 import {TEST_ID_SPINNING_CIRCLE, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../../../components';
@@ -46,7 +46,7 @@ logged_in_test(
     {
         'loader_api_endpoint': '/notification_settings',
         'loader_api_data': {},
-        'loader_api_data_changes': {'daily': true},
+        'loader_api_data_changes': {'daily': false},
     },
 )
 
@@ -102,5 +102,61 @@ logged_in_test(
     {
         'loader_api_endpoint': '/notification_settings',
         'loader_api_data': {},
+    },
+)
+
+
+/* Integration tests */
+
+
+function fetch_function_json() {
+    return Promise.resolve(
+        {
+            'daily': false,
+        }
+    )
+}
+
+function fetch_function() {
+    return Promise.resolve(
+        {
+            'status': 200,
+            'json': fetch_function_json,
+        }
+    )
+}
+
+global.fetch = fetch_function;
+
+logged_in_test(
+    'Whether the spinning circle goes away when data is loaded.',
+    async function() {
+        render_in_router(<NotificationsPage />);
+
+        await sleep(0.0);
+
+        var element = screen.queryByTestId(TEST_ID_SPINNING_CIRCLE);
+        expect(element).toEqual(null);
+    },
+    {
+        'loader_api_endpoint': '/notification_settings',
+    },
+)
+
+logged_in_test(
+    'Whether the options are shown when data is loaded.',
+    async function() {
+        render_in_router(<NotificationsPage />);
+
+        await sleep(0.0);
+
+        var key, element;
+        for (key of ['Daily', 'Proposal']) {
+            element = screen.getByText(key);
+            expect(element).toBeVisible();
+        }
+    },
+    {
+        'loader_api_endpoint': '/notification_settings',
     },
 )
