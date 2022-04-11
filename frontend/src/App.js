@@ -22,7 +22,7 @@ export function App() {
                 <Route path='/stats/*' element={ redirect_if_not_logged_in(StatsPage) } />
                 <Route path='/notifications' element={ redirect_if_not_logged_in(NotificationsPage) } />
                 <Route path='/logoff' element={ redirect_if_not_logged_in(LogoffPage) } />
-                <Route path='/auth' element={ <AuthPage /> } />
+                <Route path='/auth/*' element={ <AuthPage /> } />
             </ Routes>
         );
     }
