@@ -2,7 +2,6 @@
 
 Me learning react writing a simple app.
 
-Each day of development is separated into it's own folder.
 
 ### Docs
 
@@ -32,6 +31,8 @@ Each day of development is separated into it's own folder.
 
 - [Youtube | react testing](https://www.youtube.com/watch?v=7dTTFW7yACQ)
     React testing library.
+
+> More docs coming
 
 ### Backend
 - Index endpoint
