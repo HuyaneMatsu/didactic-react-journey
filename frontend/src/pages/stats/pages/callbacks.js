@@ -1,6 +1,10 @@
-import {int_field_validator, get_page_loader_api, set_handler} from './../../../utils';
+import {
+    int_field_validator, get_page_loader_api, set_handler, build_exception_message_from_response
+} from './../../../utils';
 import {API_BASE_URL} from './../../../constants';
 import {LOGIN_STATE} from './../../../core';
+import {SELL_DAILY_EXCEPTION_MESSAGE_HOLDER} from './constants';
+
 
 export function create_submit_event_handler(handler, input_value, subscription) {
     var submit_event_handler;
@@ -47,16 +51,18 @@ async function submit_sell_daily_streak(handler, input_value) {
         var status = response.status;
         if (status === 200) {
             var data = await response.json();
-            var page_loader_api = get_page_loader_api('/stats')
+            var page_loader_api = get_page_loader_api('/stats');
             page_loader_api.data = data;
 
             display_route = '/stats';
+            SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.clear();
 
+        } else if (status === 401) {
+            LOGIN_STATE.un_authorize();
+            display_route = '/';
+            SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.clear();
         } else {
-            if (status === 401) {
-                LOGIN_STATE.un_authorize();
-                display_route = '/';
-            }
+            SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.set(build_exception_message_from_response(response));
         }
 
     } finally {

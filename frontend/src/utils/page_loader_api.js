@@ -3,9 +3,12 @@ import {API_BASE_URL} from './../constants';
 
 import {get_from_nullable_dict} from './helpers';
 import {SubscriptionAPIBase} from './subscription_base';
+import {get_unix_time} from './time';
+import {build_exception_message_from_response} from './exception_message_builder';
+
 
 var LOADER_APIS = {};
-
+var RELOAD_DIFFERENCE = 600.0;
 
 export class PageLoaderAPI extends SubscriptionAPIBase {
     constructor(endpoint, data) {
@@ -20,6 +23,8 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         this.data = null;
         this.data_changes = null;
 
+        this.reset_exception_message();
+
         if (data === null) {
             this.load();
         } else {
@@ -27,13 +32,37 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         }
     }
 
+    reset_exception_message() {
+        this.exception_message = null;
+        this.errored_at = 0.0;
+    }
+    
+    set_exception_message(exception_message) {
+        this.exception_message = exception_message;
+        this.errored_at = get_unix_time();
+
+    }
+    
     check_reload() {
-        var token = LOGIN_STATE.token;
-        if (this.token === token) {
-            return;
+        var should_reload_errored;
+        if ((this.exception_message !== null) && (this.errored_at + RELOAD_DIFFERENCE < get_unix_time())) {
+            should_reload_errored = true;
+        } else {
+            should_reload_errored = false;
         }
 
-        this.token = token;
+        var should_reload_token_change;
+        var token = LOGIN_STATE.token;
+        if (this.token === token) {
+            should_reload_token_change = false;
+        } else {
+            should_reload_token_change = true;
+            this.token = token;
+        }
+
+        if (!(should_reload_token_change || should_reload_errored)) {
+            return
+        }
 
         this.is_loaded = false;
         this.is_loading = false;
@@ -72,6 +101,7 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
             LOGIN_STATE.un_authorized = false;
 
             this.set_data(data);
+            this.reset_exception_message();
 
             this.display();
         } else {
@@ -79,9 +109,14 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
 
             if (status === 401) {
                 LOGIN_STATE.un_authorize();
+                this.reset_exception_message();
+
                 /* `.display()` wont do anything, because it will run ur own element only, which wont redirect, */
                 /* because redirect is checked one stack above it */
+
                 this.display('/');
+            } else {
+                this.set_exception_message(build_exception_message_from_response(response));
             }
         }
     }

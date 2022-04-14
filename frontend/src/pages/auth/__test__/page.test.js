@@ -52,13 +52,26 @@ function fetch_function_json() {
     )
 }
 
-function fetch_function() {
-    return Promise.resolve(
-        {
-            'status': 200,
-            'json': fetch_function_json,
-        }
-    )
+function fetch_function(endpoint, {method, headers, body}) {
+    var json = JSON.parse(body);
+    var code = json['code'];
+
+    if (code == 'pudding') {
+        return Promise.resolve(
+            {
+                'status': 200,
+                'json': fetch_function_json,
+            }
+        );
+
+    } else if (code == 'server_error') {
+        return Promise.resolve(
+            {
+                'status': 500,
+                'statusText': 'Server Error',
+            }
+        );
+    }
 }
 
 global.fetch = fetch_function;
@@ -93,6 +106,24 @@ logged_off_test(
     {
         'query': {
             'code': 'pudding',
+        },
+    },
+)
+
+
+logged_off_test(
+    'Tests whether auth page shows error if request goes wrong',
+    async function () {
+        render_in_router(<AuthPage />);
+
+        await sleep(0);
+
+        var element = screen.getByText('Something went wrong');
+        expect(element).toBeVisible();
+    },
+    {
+        'query': {
+            'code': 'server_error',
         },
     },
 )

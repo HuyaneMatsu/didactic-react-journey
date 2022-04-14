@@ -1,6 +1,6 @@
 import {LOGIN_STATE} from './../../core';
 import {API_BASE_URL} from './../../constants';
-import {to_string} from './../../utils';
+import {build_exception_message_from_response} from './../../utils';
 
 import {AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER} from './constants';
 
@@ -27,7 +27,7 @@ async function authorize(handler, code, navigator) {
             )
 
             var status = response.status;
-            
+
             if (status === 200) {
                 var data = await response.json();
 
@@ -40,20 +40,7 @@ async function authorize(handler, code, navigator) {
                 display_route = '/';
 
             } else {
-                var exception_message_parts = [];
-
-                exception_message_parts.push('Response: ');
-                exception_message_parts.push(to_string(status));
-
-                var status_message = response.statusText;
-                if (status_message) {
-                    exception_message_parts.push(' ');
-                    exception_message_parts.push(status_message)
-                }
-
-                var exception_message = exception_message_parts.join('');
-
-                AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER.set(exception_message)
+                AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER.set(build_exception_message_from_response(response))
 
             }
         }

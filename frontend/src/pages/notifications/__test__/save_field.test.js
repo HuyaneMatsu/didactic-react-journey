@@ -68,13 +68,28 @@ function fetch_function_json() {
     )
 }
 
-function fetch_function() {
-    return Promise.resolve(
-        {
-            'status': 201,
-            'json': fetch_function_json,
-        }
-    )
+function fetch_function(endpoint, {method, headers, body}) {
+    var json = JSON.parse(body);
+    var server_error = json['server_error'];
+    if (server_error === undefined) {
+        server_error = false;
+    }
+
+    if (server_error) {
+        return (
+            {
+                'status': 500,
+                'statusText': 'server error',
+            }
+        )
+    } else {
+        return (
+            {
+                'status': 201,
+                'json': fetch_function_json,
+            }
+        )
+    }
 }
 
 global.fetch = fetch_function;
@@ -98,5 +113,27 @@ logged_in_test(
         'loader_api_endpoint': '/notification_settings',
         'loader_api_data': {},
         'loader_api_data_changes': {'daily': false},
+    },
+)
+
+logged_in_test(
+    'Tests whether error message shows up',
+    async function () {
+        var page_loader_api = get_page_loader_api('/notification_settings')
+
+        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+
+        var element = screen.getByText('save');
+        fire_event.click(element, {});
+
+        await sleep(0.0);
+
+        var element = screen.getByText(new RegExp('Something went wrong.*'));
+        expect(element).toBeVisible();
+    },
+    {
+        'loader_api_endpoint': '/notification_settings',
+        'loader_api_data': {},
+        'loader_api_data_changes': {'daily': false, 'server_error': true},
     },
 )

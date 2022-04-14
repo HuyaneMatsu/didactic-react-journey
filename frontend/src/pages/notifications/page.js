@@ -1,6 +1,6 @@
 import {useEffect as use_effect} from 'react';
 import {create_subscription, get_page_loader_api} from './../../utils';
-import {SpinningCircle, Page} from './../../components';
+import {SpinningCircle, Page, ExceptionPageContent} from './../../components';
 import {SaveNotificationsField} from './save_field';
 import {NotificationOption} from './option';
 
@@ -12,7 +12,12 @@ export function NotificationsPage() {
     use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 
     var content_element;
-    if (page_loader_api.is_loaded) {
+    if (page_loader_api.errored_at) {
+        content_element = (
+            <ExceptionPageContent message={ page_loader_api.exception_message } redirect_to={ '/' } />
+        );
+
+    } else if (page_loader_api.is_loaded) {
         content_element = (
             <div className="notifications">
                 <div className="listing">

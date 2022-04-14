@@ -149,6 +149,12 @@ a {
     cursor: pointer;
 }
 
+b {
+    color: var(--color-red);
+    font-weight: inherit;
+    font-family: inherit;
+}
+
 .header {
     padding-left: var(--size-header-spacing-side);
     padding-top: var(--size-header-spacing-inner);

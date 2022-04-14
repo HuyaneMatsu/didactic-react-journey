@@ -90,13 +90,24 @@ function fetch_function_json() {
     )
 }
 
-function fetch_function() {
-    return Promise.resolve(
-        {
-            'status': 200,
-            'json': fetch_function_json,
-        }
-    )
+function fetch_function(endpoint, {method, headers, body}) {
+    var json = JSON.parse(body);
+    var amount = json['amount'];
+    if (amount === '500') {
+        return Promise.resolve(
+            {
+                'status': 500,
+                'statusText': 'Server error',
+            }
+        );
+    } else {
+        return Promise.resolve(
+            {
+                'status': 200,
+                'json': fetch_function_json,
+            }
+        );
+    }
 }
 
 global.fetch = fetch_function;
@@ -262,3 +273,25 @@ logged_in_test(
     },
 )
 
+
+logged_in_test(
+    'Tests whether error message shows up',
+    async function () {
+        render_in_router(<StatsPageSellDaily data={ {'streak': 600} }/>);
+
+        var element = screen.getByTestId(TEST_ID_STATS_PAGE_SELL_DAILY_INPUT);
+        fire_event.change(element, {'target': {'value': '500'}})
+
+        var submit_element = screen.getByTestId(TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT);
+        fire_event.click(submit_element)
+
+        await sleep(0.0);
+
+        var element = screen.getByText(new RegExp('Something went wrong.*'));
+        expect(element).toBeVisible();
+    },
+    {
+        'loader_api_endpoint': '/stats',
+        'loader_api_data': {'streak': 600},
+    },
+)

@@ -1,38 +1,54 @@
-import {createElement as create_element, useState as state_hook} from 'react';
+import {createElement as create_element, useState as state_hook, useEffect as use_effect} from 'react';
 import {PropTypes} from 'prop-types';
 
-import {PageLoaderAPI} from './../../utils';
+import {PageLoaderAPI, create_subscription, get_handler} from './../../utils';
 
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
+import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER, NOTIFICATION_SAVE_CUSTOM_ID} from './constants';
 
 
 export var TEST_ID_SAVE_NOTIFICATIONS_FIELD = 'notifications_page.save_field';
 
 export function SaveNotificationsField({page_loader_api}) {
-    var [is_saving, set_is_saving] = state_hook(false);
+    var subscription = create_subscription();
+    var handler = get_handler(NOTIFICATION_SAVE_CUSTOM_ID);
+    var exception_message = NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.get();
+    use_effect(subscription.get_subscriber_callback(handler), []);
 
     if (page_loader_api.data_changes === null) {
         return '';
     }
 
+
     var save_parameters = {};
     var cancel_parameters = {};
 
-    if (is_saving) {
+    if (handler.is_set()) {
         save_parameters['className'] = 'save_execute_disabled';
         cancel_parameters['className'] = 'save_cancel_disabled';
     } else {
         save_parameters['className'] = 'save_execute_enabled';
         cancel_parameters['className'] = 'save_cancel_enabled';
 
-        save_parameters['onClick'] = create_save_notification_settings_callback(page_loader_api, set_is_saving);
+        save_parameters['onClick'] = create_save_notification_settings_callback(page_loader_api, handler);
         cancel_parameters['onClick'] = create_revert_changes_callback(page_loader_api);
+    }
+
+    var title;
+    if (exception_message === null) {
+        title = 'Remember to save your changes';
+    } else {
+        title = (
+            <b>
+                { 'Something went wrong |' + exception_message }
+            </b>
+        );
     }
 
     return (
         <div className='save' data-testid={ TEST_ID_SAVE_NOTIFICATIONS_FIELD }>
             <div className='left'>
-                { 'Remember to save your changes' }
+                { title }
             </div>
 
             <div className='right'>
