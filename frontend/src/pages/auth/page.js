@@ -1,7 +1,7 @@
 import {useEffect as use_effect} from 'react';
 
 import {get_query} from './../../utils/get_query';
-import {get_handler, create_subscription} from './../../utils';
+import {get_handler, create_subscription, set_title} from './../../utils';
 import {LoadingPage, ExceptionPage} from './../../components';
 
 import {create_authorization_callback} from './callbacks';
@@ -28,6 +28,7 @@ export function AuthPage() {
         [code, exception_message],
     );
 
+    set_title('authenticate');
 
     var page;
     if (exception_message === null) {

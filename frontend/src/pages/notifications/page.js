@@ -1,5 +1,5 @@
 import {useEffect as use_effect} from 'react';
-import {create_subscription, get_page_loader_api} from './../../utils';
+import {create_subscription, get_page_loader_api, set_title} from './../../utils';
 import {SpinningCircle, Page, ExceptionPageContent} from './../../components';
 import {SaveNotificationsField} from './save_field';
 import {NotificationOption} from './option';
@@ -39,6 +39,8 @@ export function NotificationsPage() {
     } else {
         content_element = <SpinningCircle />;
     }
+
+    set_title('notifications');
 
     return (
         <Page clicked={ 'notifications' } content={ content_element } />

@@ -15,6 +15,7 @@ export function HeaderButton({system_name, to, display_name, clicked}) {
     if (LOGIN_STATE.is_logged_in) {
         if (system_name === clicked) {
             element_attributes['className'] = 'clicked';
+            element_attributes['tabIndex'] = '0';
             element_type = 'a'
         } else {
             element_attributes['to'] = to;
@@ -23,6 +24,7 @@ export function HeaderButton({system_name, to, display_name, clicked}) {
 
     } else {
         element_attributes['className'] = 'disabled';
+        element_attributes['tabIndex'] = '0';
         element_type = 'a'
     }
 

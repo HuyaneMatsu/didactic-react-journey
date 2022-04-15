@@ -1,3 +1,6 @@
+import {BASE_TITLE} from './../constants';
+
+
 export function get_from_nullable_dict(dictionary, key, default_value) {
     if (dictionary === null) {
         return default_value;
@@ -88,4 +91,13 @@ export function int_field_validator(value, default_value, max_value) {
     }
 
     return matched_value;
+}
+
+
+export function set_title(title) {
+    if (title !== null) {
+        title = [BASE_TITLE, ' ', title].join('');
+    }
+
+    document.title = title;
 }

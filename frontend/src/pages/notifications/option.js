@@ -27,12 +27,19 @@ export function NotificationOption({page_loader_api, system_name, display_name})
         }
     }
 
+    var element_id = 'switch_' + system_name;
+
     return (
         <div>
             <p>{ display_name }</p>
-            <label className='switch'>
+            <label
+                className='switch'
+                htmlFor={ element_id }
+            >
                 <input
                     type='checkbox'
+                    name={ display_name }
+                    id={ element_id }
                     checked={ value }
                     onChange={ create_change_notification_option_callback(page_loader_api, system_name) }
                     data-testid={ TEST_ID_NOTIFICATION_OPTION }

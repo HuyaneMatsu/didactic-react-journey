@@ -3,6 +3,7 @@ import {to_string} from './helpers';
 export function build_exception_message_from_response(response) {
     var exception_message_parts = [];
 
+    var status = response.status;
     exception_message_parts.push('Response: ');
     exception_message_parts.push(to_string(status));
 

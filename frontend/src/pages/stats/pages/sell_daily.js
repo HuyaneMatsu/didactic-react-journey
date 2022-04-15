@@ -1,7 +1,7 @@
-import {useEffect as use_effect, useState as state_hook, createElement as create_element} from 'react';
+import {useEffect as use_effect, useState as state_hook} from 'react';
 import {Link, Navigate} from 'react-router-dom';
 
-import {get_from_dict, get_handler, create_subscription, to_string} from './../../../utils';
+import {get_from_dict, get_handler, create_subscription, to_string, set_title} from './../../../utils';
 
 import {STATS_DATA_STRUCTURE, SUBMIT_SELL_DAILY_CUSTOM_ID, SELL_DAILY_EXCEPTION_MESSAGE_HOLDER} from './constants';
 import {create_submit_event_handler, create_change_handler_callback} from './callbacks';
@@ -9,6 +9,8 @@ import {create_submit_event_handler, create_change_handler_callback} from './cal
 
 export var TEST_ID_STATS_PAGE_SELL_DAILY_INPUT = 'stats_page.sell_daily_page.input';
 export var TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT = 'stats_page.sell_daily_page.submit';
+
+var ID_STATS_PAGE_SELL_DAILY_INPUT = 'sell_daily';
 
 
 export function StatsPageSellDaily({data}) {
@@ -43,14 +45,24 @@ export function StatsPageSellDaily({data}) {
     if (exception_message === null) {
         notification = '';
     } else {
-        notification = 'Something went wrong | ' + exception_message;
+        notification = (
+            <b>
+                'Something went wrong | ' + exception_message
+            </b>
+        );
     }
+
+    set_title('sell daily');
 
     return (
         <>
             <form onSubmit={ submit_event_handler }>
-                <label>{ 'How much streak to sell?' }</label>
+                <label htmlFor={ ID_STATS_PAGE_SELL_DAILY_INPUT }>
+                    { 'How much streak to sell?' }
+                </label>
                 <input
+                    id={ ID_STATS_PAGE_SELL_DAILY_INPUT }
+                    name="How much daily to sell?"
                     required={ true }
                     type="text"
                     value={ input_value }
@@ -61,9 +73,7 @@ export function StatsPageSellDaily({data}) {
                     { 'Lets do it!' }
                 </button>
             </form>
-            <b>
-                { notification }
-            </b>
+            { notification }
             <Link to="..">
                 { 'Back to safety' }
             </Link>

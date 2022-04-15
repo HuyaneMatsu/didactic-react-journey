@@ -1,5 +1,5 @@
 import {LOGIN_STATE} from './../../core';
-import {to_string, format_date} from './../../utils';
+import {to_string, format_date, set_title} from './../../utils';
 import {Page} from './../../components';
 
 
@@ -16,6 +16,8 @@ export function ProfilePage() {
             </div>
         </div>
     );
+
+    set_title('profile');
 
     return (
         <Page clicked={ 'profile' } content={ content_element } />

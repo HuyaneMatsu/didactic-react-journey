@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 
-import {to_string, get_from_dict} from './../../../utils';
+import {to_string, get_from_dict, set_title} from './../../../utils';
 
 import {STATS_DATA_STRUCTURE} from './constants';
 
@@ -18,6 +18,8 @@ export function StatsPageMain({data}) {
     } else {
         sell_streak_element = '';
     }
+
+    set_title('stats');
 
     return (
         <>

@@ -13,10 +13,6 @@ input {
 }
 
 
-input:focus-visible, button:focus-visible {
-    outline: inherit;
-}
-
 :root {
     /* Body */
     --color-body-background: rgb(54 57 63);
@@ -128,6 +124,12 @@ input:focus-visible, button:focus-visible {
 
     --size-notifications-border-inner: 0.75rem;
     --size-notifications-border-radius: 0.75rem;
+
+    /* Highlight */
+    --color-focus-primary: rgb(0 175 244);
+    --size-focus-width: 1px;
+    --size-focus-shadow: 3px;
+    --shadow-focus: 0px 0px var(--size-focus-shadow) var(--size-focus-shadow) rgb(0 175 244);
 }
 
 body {
@@ -404,6 +406,7 @@ b {
     display: inline-block;
     width: calc(22 * var(--scale-notifications-switch));
     height: calc(12 * var(--scale-notifications-switch));
+    border-radius: calc(12 * var(--scale-notifications-switch));
 }
 
 .content .notifications .switch input {
@@ -577,4 +580,12 @@ b {
 
 .content .welcome .message .left {
     margin-right: var(--size-welcome-logoff-spacing);
+}
+
+:focus-visible, .content .notifications .switch:focus-within {
+    outline-color: var(--color-focus-primary);
+    outline-style: solid;
+    box-shadow: var(--shadow-focus);
+    outline-width: var(--size-focus-width);
+    outline-offset: 0px;
 }
