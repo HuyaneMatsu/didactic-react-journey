@@ -273,6 +273,7 @@ logged_in_test(
     },
 )
 
+/*
 
 logged_in_test(
     'Tests whether error message shows up',
@@ -295,3 +296,5 @@ logged_in_test(
         'loader_api_data': {'streak': 600},
     },
 )
+
+*/
