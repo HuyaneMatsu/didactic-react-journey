@@ -27,7 +27,7 @@ export class Subscription {
     }
 
     get_subscriber_callback(api: null | string) {
-        var callback;
+        var callback: object;
         if (api === null) {
             callback = placeholder_function;
         } else {

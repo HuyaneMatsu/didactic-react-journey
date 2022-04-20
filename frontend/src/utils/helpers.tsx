@@ -59,7 +59,7 @@ export function format_date(date: Date) {
 
 export function remove_from_list(list_: array, to_remove: any) {
     var index = list_.indexOf(to_remove);
-    var removed;
+    var removed: bool;
 
     if (index > -1) {
         list_.splice(index, 1);

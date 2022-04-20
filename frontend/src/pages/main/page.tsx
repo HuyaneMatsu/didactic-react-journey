@@ -12,17 +12,17 @@ var WELCOME_MESSAGES = [
 ];
 
 export function MainPage() {
-    var content_element;
+    var content_element: object | string;
 
     if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
-        var welcome_text;
+        var welcome_text: string;
         if (LOGIN_STATE.un_authorized) {
             welcome_text = 'Something went wrong';
         } else {
             welcome_text = 'Welcome ' + LOGIN_STATE.user.name;
         }
 
-        var notify_expired_login_element;
+        var notify_expired_login_element: object | string;
 
         if (LOGIN_STATE.is_logged_in) {
             notify_expired_login_element = choice(WELCOME_MESSAGES);

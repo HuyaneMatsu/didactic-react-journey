@@ -7,11 +7,11 @@ import {create_subscription} from './utils';
 import {LoadingPage} from './components';
 
 
-export function App() {
+export function App(): ReactElement<{}, null> {
     var subscription = create_subscription();
     use_effect(subscription.get_subscriber_callback(LOGIN_STATE), [])
 
-    var element;
+    var element: object | string;
     if (LOGIN_STATE.logging_in) {
         element = <LoadingPage title={ 'Logging in' } />;
     } else {
@@ -32,7 +32,7 @@ export function App() {
 
 
 function redirect_if_not_logged_in(component_type: object) {
-    var parameters;
+    var parameters: null | Record<str, any>;
     if (LOGIN_STATE.is_logged_in) {
         parameters = null;
     } else {

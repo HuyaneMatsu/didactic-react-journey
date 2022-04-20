@@ -10,7 +10,7 @@ export function HeaderButton({system_name, to, display_name, clicked}) {
     var element_attributes = {
         'data-testid': TEST_ID_HEADER_NAVIGATOR_BUTTON,
     };
-    var element_type;
+    var element_type: object | string;
 
     if (LOGIN_STATE.is_logged_in) {
         if (system_name === clicked) {

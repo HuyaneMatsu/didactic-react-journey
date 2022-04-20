@@ -11,7 +11,7 @@ export function NotificationsPage() {
 
     use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 
-    var content_element;
+    var content_element: object | string;
     if (page_loader_api.errored_at) {
         content_element = (
             <ExceptionPageContent message={ page_loader_api.exception_message } redirect_to={ '/' } />

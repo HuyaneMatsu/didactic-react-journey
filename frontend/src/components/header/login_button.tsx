@@ -8,7 +8,7 @@ export var TEST_ID_HEADER_LOGIN = 'login_button';
 
 
 export function LoginButton() {
-    var element;
+    var element: object | string;
 
     var shared_attributes = {
         'className': 'login',

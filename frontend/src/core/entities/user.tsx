@@ -3,12 +3,12 @@ import {to_string, left_fill, to_string_base_16} from './../../utils';
 import {ICON_TYPE_NONE, ICON_TYPE_STATIC, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
 
 interface UserData {
-    id: string,
-    created_at: string,
-    name : string,
-    avatar_hash: string,
-    avatar_type: number,
-    discriminator: number,
+    id: string;
+    created_at: string;
+    name : string;
+    avatar_hash: string;
+    avatar_type: number;
+    discriminator: number;
 }
 
 export class User {
@@ -47,14 +47,14 @@ export class User {
             return this.get_default_avatar_url();
         }
 
-        var end;
+        var end: string;
         if (size === null) {
             end = '';
         } else {
             end = '?size=' + to_string(size);
         }
 
-        var prefix;
+        var prefix: string;
         if (ext === null) {
             if (icon_type === ICON_TYPE_STATIC) {
                 prefix = '';

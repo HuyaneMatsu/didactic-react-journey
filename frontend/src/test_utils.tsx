@@ -10,7 +10,7 @@ export function render_in_router(component: object) {
 }
 
 interface RoutedProps {
-    component: string | object,
+    component: string | object;
 }
 
 function Routed({component}: RoutedProps) {
@@ -39,7 +39,7 @@ function get_loader_api_and_set_data(endpoint: string, data: null | undefined | 
 }
 
 function apply_keyword_parameters(keyword_parameters: object) {
-    var applied;
+    var applied: object | null;
 
     if (
         (keyword_parameters !== undefined) &&

@@ -13,7 +13,6 @@ export var AUTHORIZATION_CUSTOM_ID = 'authorization';
 export function AuthPage() {
     var query = get_query();
     var code = query.get('code');
-    var title;
 
     var exception_message = AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER.get();
     var subscription = create_subscription();
@@ -32,6 +31,7 @@ export function AuthPage() {
 
     var page;
     if (exception_message === null) {
+        var title: string;
         if (code === null) {
             title = 'Redirecting';
 

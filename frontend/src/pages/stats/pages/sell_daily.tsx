@@ -13,7 +13,7 @@ export var TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT = 'stats_page.sell_daily_page.su
 var ID_STATS_PAGE_SELL_DAILY_INPUT = 'sell_daily';
 
 interface StatsPageSellDailyProps {
-    data: Record<string, any>
+    data: Record<string, any>;
 }
 
 export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
@@ -44,7 +44,7 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
 
     var change_handler = create_change_handler_callback(handler, set_input_value, input_value, streak);
 
-    var notification;
+    var notification: object | string;
     if (exception_message === null) {
         notification = '';
     } else {

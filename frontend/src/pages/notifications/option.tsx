@@ -6,18 +6,18 @@ import {create_change_notification_option_callback} from './callbacks';
 export var TEST_ID_NOTIFICATION_OPTION = 'notification_page.option';
 
 interface NotificationOptionProps {
-    page_loader_api: PageLoaderAPI,
-    system_name: string,
-    display_name: string,
+    page_loader_api: PageLoaderAPI;
+    system_name: string;
+    display_name: string;
 }
 
 export function NotificationOption({page_loader_api, system_name, display_name}: NotificationOptionProps) {
-    var old_value = page_loader_api.data[system_name];
+    var old_value: undefined | boolean = page_loader_api.data[system_name];
     if (old_value === undefined) {
         old_value = true;
     }
 
-    var value;
+    var value: boolean;
 
     var data_changes = page_loader_api.data_changes;
     if (data_changes === null) {

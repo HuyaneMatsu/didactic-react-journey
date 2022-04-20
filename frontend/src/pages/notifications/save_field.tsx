@@ -10,7 +10,7 @@ export var TEST_ID_SAVE_NOTIFICATIONS_FIELD = 'notifications_page.save_field';
 
 
 interface SaveNotificationFieldProps {
-    page_loader_api: PageLoaderAPI,
+    page_loader_api: PageLoaderAPI;
 }
 
 
@@ -44,11 +44,11 @@ export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldP
         cancel_parameters['onKeyPress'] = create_enter_press_callback(cancel_callback);
     }
 
-    var title;
+    var title_element: object | string;
     if (exception_message === null) {
-        title = 'Remember to save your changes';
+        title_element = 'Remember to save your changes';
     } else {
-        title = (
+        title_element = (
             <b>
                 { 'Something went wrong |' + exception_message }
             </b>
@@ -58,7 +58,7 @@ export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldP
     return (
         <div className='save' data-testid={ TEST_ID_SAVE_NOTIFICATIONS_FIELD }>
             <div className='left'>
-                { title }
+                { title_element }
             </div>
 
             <div className='right'>

@@ -12,7 +12,7 @@ export function create_submit_event_handler(
     input_value: string,
     subscription: Subscription
 ) {
-    var submit_event_handler;
+    var submit_event_handler: object;
     if (handler.is_set() || (input_value === '') || (input_value === '0')) {
         submit_event_handler = (event) => submit_sell_daily_streak_placeholder_callback(event);
     } else {
@@ -88,7 +88,7 @@ export function create_change_handler_callback(
     input_value: string,
     streak: number,
 ) {
-    var change_handler;
+    var change_handler: object;
     if (handler.is_set()) {
         change_handler = (event) => re_set_daily_streak(set_input_value, input_value);
     } else {

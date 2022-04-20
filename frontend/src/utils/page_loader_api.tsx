@@ -53,14 +53,14 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
     }
     
     check_reload() {
-        var should_reload_errored;
+        var should_reload_errored: boolean;
         if ((this.exception_message !== null) && (this.errored_at + RELOAD_DIFFERENCE < get_unix_time())) {
             should_reload_errored = true;
         } else {
             should_reload_errored = false;
         }
 
-        var should_reload_token_change;
+        var should_reload_token_change: boolean;
         var token = LOGIN_STATE.token;
         if (this.token === token) {
             should_reload_token_change = false;
@@ -142,7 +142,7 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
 
         var value_from_data = data[field_name];
 
-        var should_add;
+        var should_add: boolean;
 
         if (value_from_data === undefined) {
             if (field_value === default_value) {

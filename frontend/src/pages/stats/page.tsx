@@ -13,7 +13,7 @@ export function StatsPage() {
 
     use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 
-    var content_element;
+    var content_element: object | string;
     if (page_loader_api.is_loaded) {
         var data = page_loader_api.data;
 

@@ -4,13 +4,13 @@ import {to_string, get_from_dict, set_title} from './../../../utils';
 
 
 interface StatsPageMainProps {
-    data: Record<string, any>
+    data: Record<string, any>;
 }
 
 export function StatsPageMain({data}: StatsPageMainProps) {
     var streak = get_from_dict(data, 'streak', 0);
 
-    var sell_streak_element;
+    var sell_streak_element: object | string;
     if (streak > 0) {
         sell_streak_element = (
             <Link className='hey_mister' to='./sell_streak'>

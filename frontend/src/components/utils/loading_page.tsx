@@ -13,7 +13,7 @@ interface LoadingPageProps {
 
 
 export function LoadingPage({title}: LoadingPageProps) {
-    var header_content;
+    var header_content: object | string;
     if (title === null) {
         header_content = '';
     } else {

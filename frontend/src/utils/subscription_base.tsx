@@ -15,7 +15,7 @@ export class SubscriptionAPIBase {
 
         var subscribers = this.subscribers;
 
-        var subscriber;
+        var subscriber: Subscription;
         for (subscriber of subscribers) {
             subscriber.trigger(route);
         }
