@@ -10,16 +10,16 @@ interface TestSetSpecificKeywordParameters {
     was_logged_in?: boolean;
     is_logged_in?: boolean;
     un_authorized?: boolean;
-
 }
 
 export class LoginState extends SubscriptionAPIBase {
-    expires_at: null | Date;
-    user: null | User;
-    token: null | string;
-    was_logged_in: boolean;
-    is_logged_in: boolean;
-    un_authorized: boolean;
+    expires_at!: null | Date;
+    user!: null | User;
+    token!: null | string;
+    was_logged_in!: boolean;
+    is_logged_in!: boolean;
+    is_logging_in!: boolean;
+    un_authorized!: boolean;
 
     constructor() {
         super();
@@ -28,44 +28,43 @@ export class LoginState extends SubscriptionAPIBase {
         this.maybe_login();
     }
 
-    try_load_from_locale_storage() {
-        var state_found, token, expires_at;
+    try_load_from_locale_storage(): void {
+        var state_found: boolean = false;
+        var token: null | string = null;
+        var expires_at: null | Date = null;
 
         while (1) {
-            token = localStorage.getItem('token');
-            expires_at = localStorage.getItem('expires_at');
+            var raw_token: null | string = localStorage.getItem('token');
+            var raw_expires_at: null | string = localStorage.getItem('expires_at');
 
-            if (token === null) {
-                state_found = false;
+            if (raw_token === null) {
                 break;
             }
 
-            if (expires_at === null) {
-                state_found = false;
+            if (raw_expires_at === null) {
                 break;
             }
 
             try {
-                expires_at = new Date(expires_at);
+                expires_at = new Date(raw_expires_at);
             } catch {
-                state_found = false;
                 break;
             }
+
+            token = raw_token;
 
             state_found = true;
             break;
         }
 
         if (! state_found) {
-            token = null;
-            expires_at = null
             this.clear_locale_storage();
         }
 
         var is_logged_in, was_logged_in;
 
         if (state_found) {
-            if (expires_at < (new Date())) {
+            if ((expires_at as Date) < (new Date())) {
                 was_logged_in = true;
                 is_logged_in = false;
             } else {
@@ -77,7 +76,7 @@ export class LoginState extends SubscriptionAPIBase {
             was_logged_in = false;
         }
 
-        this.expires_at = expires_at
+        this.expires_at = expires_at;
         this.user = null;
         this.token = token;
         this.was_logged_in = was_logged_in;
@@ -85,7 +84,7 @@ export class LoginState extends SubscriptionAPIBase {
         this.un_authorized = false;
     }
 
-    _update_user(data: UserData) {
+    _update_user(data: UserData): void {
         var user = this.user;
         if (user === null) {
             user = new User(data);
@@ -95,14 +94,14 @@ export class LoginState extends SubscriptionAPIBase {
         }
     }
 
-    clear_locale_storage() {
+    clear_locale_storage(): void {
         localStorage.removeItem('token');
         localStorage.removeItem('expires_at');
     }
 
-    set_default_attributes() {
+    set_default_attributes(): void {
         this.expires_at = null;
-        this.logging_in = false;
+        this.is_logging_in = false;
         this.user = null;
         this.token = null;
         this.was_logged_in = false;
@@ -110,14 +109,14 @@ export class LoginState extends SubscriptionAPIBase {
         this.un_authorized = false;
     }
 
-    clear() {
+    clear(): void {
         this.set_default_attributes();
         this.clear_locale_storage();
     }
 
     /* This method is used when testing to log in a random user */
-    test_set_random() {
-        this.logging_in = false;
+    test_set_random(): void {
+        this.is_logging_in = false;
         this.user = new User({
             'id': '420691337',
             'created_at': '2022-03-29T21:57:54.977000+00:00',
@@ -137,10 +136,10 @@ export class LoginState extends SubscriptionAPIBase {
     }
 
     /* sets specific attributes of the login state */
-    test_set_specific(keyword_parameters: TestSetSpecificKeywordParameters) {
+    test_set_specific(keyword_parameters: TestSetSpecificKeywordParameters): void {
         var logged_in = keyword_parameters['logged_in'];
         if (logged_in !== undefined) {
-            this.logged_in = logged_in;
+            this.is_logged_in = logged_in;
         }
 
         var user = keyword_parameters['user'];
@@ -148,7 +147,7 @@ export class LoginState extends SubscriptionAPIBase {
             this.user = user;
         }
 
-        var token = keyword_parameters['token'];
+        var token: undefined | null | string = keyword_parameters['token'];
         if (token !== undefined) {
             this.token = token;
         }
@@ -170,7 +169,7 @@ export class LoginState extends SubscriptionAPIBase {
 
     }
 
-    un_authorize() {
+    un_authorize(): void {
         LOGIN_STATE.was_logged_in = true;
         LOGIN_STATE.is_logged_in = false;
         LOGIN_STATE.un_authorized = true;
@@ -178,7 +177,7 @@ export class LoginState extends SubscriptionAPIBase {
         this.clear_locale_storage();
     }
 
-    maybe_login() {
+    maybe_login(): void {
         if (window.location.pathname === '/path') {
             return;
         }
@@ -191,13 +190,19 @@ export class LoginState extends SubscriptionAPIBase {
         this.try_login();
     }
 
-    try_login() {
-        this.logging_in = true;
+    try_login(): void {
+        var token: null | string = this.token;
+        if (token === null) {
+            return
+        }
+
+        this.is_logging_in = true;
+
         fetch(
             API_BASE_URL + '/user/@me',
             {
                 'headers': {
-                    'Authorization': this.token,
+                    'Authorization': token,
                 },
             },
         ).then(
@@ -205,10 +210,10 @@ export class LoginState extends SubscriptionAPIBase {
         );
     }
 
-    async _user_request_callback(request: Request) {
+    async _user_request_callback(request: Response): Promise<void> {
         var status = request.status;
 
-        this.logging_in = false;
+        this.is_logging_in = false;
         if (status === 200) {
             var data = await request.json();
 
@@ -221,9 +226,9 @@ export class LoginState extends SubscriptionAPIBase {
             }
         }
 
-        this.display();
+        this.display(null);
     }
 }
 
 
-export var LOGIN_STATE = new LoginState();
+export var LOGIN_STATE: LoginState = new LoginState();

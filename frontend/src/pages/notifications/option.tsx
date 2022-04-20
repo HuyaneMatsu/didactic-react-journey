@@ -1,9 +1,10 @@
 import {PageLoaderAPI} from './../../utils';
-
+import {ReactElement} from 'react';
 import {create_change_notification_option_callback} from './callbacks';
+import React from 'react';
 
 
-export var TEST_ID_NOTIFICATION_OPTION = 'notification_page.option';
+export var TEST_ID_NOTIFICATION_OPTION: string = 'notification_page.option';
 
 interface NotificationOptionProps {
     page_loader_api: PageLoaderAPI;
@@ -11,8 +12,16 @@ interface NotificationOptionProps {
     display_name: string;
 }
 
-export function NotificationOption({page_loader_api, system_name, display_name}: NotificationOptionProps) {
-    var old_value: undefined | boolean = page_loader_api.data[system_name];
+export function NotificationOption(
+    {page_loader_api, system_name, display_name}: NotificationOptionProps
+): ReactElement {
+    var data: null | Record<string, any> = page_loader_api.data;
+    var old_value: undefined | boolean;
+    if (data === null) {
+        old_value = undefined;
+    } else {
+        old_value = data[system_name];
+    }
     if (old_value === undefined) {
         old_value = true;
     }
@@ -31,7 +40,7 @@ export function NotificationOption({page_loader_api, system_name, display_name}:
         }
     }
 
-    var element_id = 'switch_' + system_name;
+    var element_id: string = 'switch_' + system_name;
 
     return (
         <div>

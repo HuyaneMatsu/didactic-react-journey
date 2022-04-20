@@ -2,7 +2,7 @@ import {to_string, left_fill, to_string_base_16} from './../../utils';
 
 import {ICON_TYPE_NONE, ICON_TYPE_STATIC, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
 
-interface UserData {
+export interface UserData {
     id: string;
     created_at: string;
     name : string;
@@ -12,12 +12,12 @@ interface UserData {
 }
 
 export class User {
-    id: BigInt;
+    id: bigint;
     created_at: Date;
-    name: string;
-    avatar_hash: BigInt;
-    avatar_type: number;
-    discriminator: number;
+    name!: string;
+    avatar_hash!: bigint;
+    avatar_type!: number;
+    discriminator!: number;
 
     constructor(data: UserData) {
         this.id = BigInt(data['id']);

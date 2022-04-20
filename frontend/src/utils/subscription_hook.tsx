@@ -1,5 +1,6 @@
 import {useState as state_hook} from 'react';
 import {useNavigate as get_navigator} from 'react-router-dom';
+import {SubscriptionAPIBase} from './subscription_base';
 
 
 function placeholder_function(){}
@@ -7,10 +8,14 @@ function placeholder_function(){}
 
 export class Subscription {
     change_counter : number;
-    set_change_counter : object;
-    navigator: object;
+    set_change_counter : (value: number) => void;
+    navigator: (value: string) => void;
     
-    constructor(change_counter, set_change_counter, navigator) {
+    constructor(
+        change_counter: number,
+        set_change_counter: (value: number) => void,
+        navigator: (value: string) => void,
+    ) {
         this.change_counter = change_counter;
         this.set_change_counter = set_change_counter;
         this.navigator = navigator;
@@ -26,8 +31,8 @@ export class Subscription {
         this.set_change_counter(change_counter);
     }
 
-    get_subscriber_callback(api: null | string) {
-        var callback: object;
+    get_subscriber_callback(api: null | SubscriptionAPIBase): () => void {
+        var callback: () => void;
         if (api === null) {
             callback = placeholder_function;
         } else {
@@ -37,20 +42,24 @@ export class Subscription {
         return callback;
     }
 
-    _subscribe(api: string) {
+    _subscribe(api: SubscriptionAPIBase): () => void {
         api.subscribe(this);
         return () => this._unsubscribe(api);
     }
 
-    _unsubscribe(api: string) {
+    _unsubscribe(api: SubscriptionAPIBase): void {
         api.unsubscribe(this);
     }
 }
 
 
-export function create_subscription() {
-    var [change_counter, set_change_counter] = state_hook(0);
-    var navigator = get_navigator();
+export function create_subscription(): Subscription {
+    var change_counter: number;
+    var set_change_counter: (value: number) => void;
+    var navigator: (value: string) => void;
+
+    [change_counter, set_change_counter] = state_hook(0);
+    navigator = get_navigator();
 
     return new Subscription(change_counter, set_change_counter, navigator);
 }

@@ -1,14 +1,14 @@
 import {remove_from_list} from './helpers';
-import {Subscription} from './subscription_hooks';
+import {Subscription} from './subscription_hook';
 
 export class SubscriptionAPIBase {
-    subscribers: array<Subscription>;
+    subscribers: Array<Subscription>;
 
     constructor() {
         this.subscribers = [];
     }
 
-    display(route: undefined | null | string) {
+    display(route: null | string): void {
         if (route === undefined) {
             route = null;
         }
@@ -21,12 +21,12 @@ export class SubscriptionAPIBase {
         }
     }
 
-    subscribe(subscriber: Subscription) {
+    subscribe(subscriber: Subscription): void {
         var subscribers = this.subscribers;
         subscribers.push(subscriber);
     }
 
-    unsubscribe(subscriber: Subscription) {
+    unsubscribe(subscriber: Subscription): void {
         var subscribers = this.subscribers;
         remove_from_list(subscribers, subscriber);
     }

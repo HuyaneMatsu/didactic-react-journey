@@ -1,25 +1,28 @@
 import {Link} from 'react-router-dom';
-
-import {LOGIN_STATE} from './../../core';
+import {ReactElement} from 'react';
+import {LOGIN_STATE, User} from './../../core';
 import {BACKEND_URL} from './../../constants';
+import React from 'react';
 
 
-export var TEST_ID_HEADER_LOGIN = 'login_button';
+export var TEST_ID_HEADER_LOGIN: string = 'login_button';
 
 
-export function LoginButton() {
-    var element: object | string;
+export function LoginButton(): ReactElement {
+    var element: ReactElement;
 
-    var shared_attributes = {
+    var shared_attributes: Record<string, any> = {
         'className': 'login',
         'data-testid': TEST_ID_HEADER_LOGIN,
     };
 
     if (LOGIN_STATE.is_logged_in) {
+        var user: User = LOGIN_STATE.user as User;
+
         element = (
             <Link to='/logoff' { ...shared_attributes }>
-                <img alt="avatar" src={ LOGIN_STATE.user.get_avatar_url_as(null, 32) }/>
-                <p>{ LOGIN_STATE.user.get_full_name() }</p>
+                <img alt="avatar" src={ user.get_avatar_url_as(null, 32) }/>
+                <p>{ user.get_full_name() }</p>
             </Link>
         );
 

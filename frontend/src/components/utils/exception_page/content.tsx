@@ -1,8 +1,13 @@
-import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
+import React, {ReactElement} from 'react';
 
-export function ExceptionPageContent({message, redirect_to}) {
-    var message_element;
+interface ExceptionPageContentProps {
+    message : null | string;
+    redirect_to: string;
+}
+
+export function ExceptionPageContent({message, redirect_to}: ExceptionPageContentProps): ReactElement {
+    var message_element: ReactElement | string;
     if (message === null) {
         message_element = '';
     } else {
@@ -23,8 +28,3 @@ export function ExceptionPageContent({message, redirect_to}) {
         </div>
     );
 }
-
-ExceptionPageContent.propTypes = {
-    'message': PropTypes.oneOfType([PropTypes.string.isRequired]),
-    'redirect_to': PropTypes.string.isRequired,
-};

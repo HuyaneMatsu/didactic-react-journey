@@ -1,21 +1,21 @@
-import {useEffect as use_effect} from 'react';
+import {useEffect as use_effect, ReactElement} from 'react';
 import {Route, Routes} from 'react-router-dom';
-
+import React from 'react';
 import {Page, SpinningCircle} from './../../components';
 import {get_page_loader_api, create_subscription} from './../../utils';
 
 import {StatsPageSellDaily, StatsPageMain} from './pages';
 
 
-export function StatsPage() {
+export function StatsPage(): ReactElement {
     var subscription = create_subscription();
-    var page_loader_api = get_page_loader_api('/stats')
+    var page_loader_api = get_page_loader_api('/stats');
 
     use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 
-    var content_element: object | string;
+    var content_element: ReactElement | string;
     if (page_loader_api.is_loaded) {
-        var data = page_loader_api.data;
+        var data = page_loader_api.data as Record<string, any>;
 
         content_element = (
             <div className="stats">

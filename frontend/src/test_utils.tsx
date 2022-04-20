@@ -1,19 +1,21 @@
+import React from 'react'
 import {BrowserRouter as Router} from 'react-router-dom';
-import {render} from '@testing-library/react';
+import {ReactElement} from 'react';
+import {render, RenderResult} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {LOGIN_STATE} from './core';
 import {to_string, set_query, clear_query, get_page_loader_api, remove_page_loader_api} from './utils';
 
 
-export function render_in_router(component: object) {
+export function render_in_router(component: string): RenderResult {
     return render( <Routed component={ component } /> );
 }
 
 interface RoutedProps {
-    component: string | object;
+    component: string | ReactElement;
 }
 
-function Routed({component}: RoutedProps) {
+function Routed({component}: RoutedProps): ReactElement {
     return (
         <Router>
             { component }
@@ -22,15 +24,19 @@ function Routed({component}: RoutedProps) {
 }
 
 
-function logoff() {
+function logoff(): void {
     LOGIN_STATE.clear();
 }
 
-function login() {
+function login(): void {
     LOGIN_STATE.test_set_random();
 }
 
-function get_loader_api_and_set_data(endpoint: string, data: null | undefined | object, changes: null | object) {
+function get_loader_api_and_set_data(
+    endpoint: string,
+    data: null | undefined | Record<string, any>,
+    changes: null | Record<string, any>,
+): void {
     var page_loader_api = get_page_loader_api(endpoint, data);
 
     if (changes !== null) {
@@ -38,7 +44,7 @@ function get_loader_api_and_set_data(endpoint: string, data: null | undefined | 
     }
 }
 
-function apply_keyword_parameters(keyword_parameters: object) {
+function apply_keyword_parameters(keyword_parameters: undefined | null | Record<string, any>): null | any {
     var applied: object | null;
 
     if (
@@ -84,53 +90,61 @@ function apply_keyword_parameters(keyword_parameters: object) {
 }
 
 
-export function logged_off_test(description: string, function_: object, keyword_parameters: undefined | object) {
+export function logged_off_test(
+    description: string,
+    function_: () => any,
+    keyword_parameters?: undefined | null | Record<string, any>
+): null | any {
     return describe(
         'logged off',
-        function () {
+        function (): void {
             beforeAll(logoff);
             beforeAll(clear_redirect);
             apply_keyword_parameters(keyword_parameters);
             afterAll(logoff);
             test(description, function_);
-        }
-    )
+        },
+    );
 }
 
-export function logged_in_test(description: string, function_: object, keyword_parameters: undefined | object) {
+export function logged_in_test(
+    description: string,
+    function_: () => any,
+    keyword_parameters?: undefined | null | Record<string, any>
+): null | any {
     return describe(
         'logged in',
-        function () {
+        function (): void {
             beforeAll(login);
             beforeAll(clear_redirect);
             apply_keyword_parameters(keyword_parameters);
             afterAll(logoff);
             test(description, function_);
-        }
-    )
+        },
+    );
 }
 
 
-var REDIRECT = null;
+var REDIRECT: null | string = null;
 
-export function set_redirect(redirect: string) {
+export function set_redirect(redirect: string): void {
     REDIRECT = redirect;
 }
 
-export function clear_redirect() {
+export function clear_redirect(): void {
     REDIRECT = null;
 }
 
-export function get_redirect() {
+export function get_redirect(): null | string {
     return REDIRECT;
 }
 
 
-export function escape_regex(string: string) {
+export function escape_regex(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-export function sleep(seconds: number) {
+export function sleep(seconds: number): Promise<void> {
     return new Promise(
         resolve => setTimeout(resolve, seconds * 1000.0)
     )

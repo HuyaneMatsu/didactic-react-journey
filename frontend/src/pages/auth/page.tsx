@@ -1,5 +1,5 @@
-import {useEffect as use_effect} from 'react';
-
+import {useEffect as use_effect, ReactElement} from 'react';
+import React from 'react';
 import {get_query} from './../../utils/get_query';
 import {get_handler, create_subscription, set_title} from './../../utils';
 import {LoadingPage, ExceptionPage} from './../../components';
@@ -10,7 +10,7 @@ import {AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER} from './constants';
 export var AUTHORIZATION_CUSTOM_ID = 'authorization';
 
 
-export function AuthPage() {
+export function AuthPage(): ReactElement {
     var query = get_query();
     var code = query.get('code');
 
@@ -29,7 +29,7 @@ export function AuthPage() {
 
     set_title('authenticate');
 
-    var page;
+    var page: ReactElement;
     if (exception_message === null) {
         var title: string;
         if (code === null) {

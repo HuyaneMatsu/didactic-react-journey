@@ -7,7 +7,7 @@ import {get_unix_time} from './time';
 import {build_exception_message_from_response} from './exception_message_builder';
 
 
-var LOADER_APIS = {};
+var LOADER_APIS: Record<string, PageLoaderAPI> = {};
 var RELOAD_DIFFERENCE = 600.0;
 
 export class PageLoaderAPI extends SubscriptionAPIBase {
@@ -15,13 +15,13 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
     token: null | string;
     is_loaded: boolean;
     is_loading: boolean;
-    data: null | object;
-    data_changes: null | object;
-    exception_message: null | string;
-    errored_at: number;
+    data: null | Record<string, any>;
+    data_changes: null | Record<string, any>;
+    exception_message!: null | string;
+    errored_at!: number;
 
-    constructor(endpoint: string, data: null | object) {
-        super()
+    constructor(endpoint: string, data: null | Record<string, any>) {
+        super();
 
         this.endpoint = endpoint;
         this.token = LOGIN_STATE.token;
@@ -41,18 +41,18 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         }
     }
 
-    reset_exception_message() {
+    reset_exception_message(): void {
         this.exception_message = null;
         this.errored_at = 0.0;
     }
     
-    set_exception_message(exception_message: string) {
+    set_exception_message(exception_message: string): void {
         this.exception_message = exception_message;
         this.errored_at = get_unix_time();
 
     }
     
-    check_reload() {
+    check_reload(): void {
         var should_reload_errored: boolean;
         if ((this.exception_message !== null) && (this.errored_at + RELOAD_DIFFERENCE < get_unix_time())) {
             should_reload_errored = true;
@@ -80,11 +80,16 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         this.data_changes = null;
 
         this.load();
-        this.display()
+        this.display(null);
     }
 
-    load () {
+    load(): void {
         if (this.is_loading) {
+            return;
+        }
+
+        var token: null | string = this.token;
+        if (token === null) {
             return;
         }
 
@@ -94,7 +99,7 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
             API_BASE_URL + this.endpoint,
             {
                 'headers': {
-                    'Authorization': this.token,
+                    'Authorization': token,
                 },
             },
         ).then(
@@ -102,7 +107,7 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         );
     }
 
-    async update_from_response(response: Response) {
+    async update_from_response(response: Response): Promise<void> {
         var status = response.status;
         if (status === 200) {
             var data = await response.json();
@@ -112,7 +117,7 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
             this.set_data(data);
             this.reset_exception_message();
 
-            this.display();
+            this.display(null);
         } else {
             this.is_loading = false;
 
@@ -130,17 +135,22 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         }
     }
 
-    set_data(data: Record<string, any>) {
+    set_data(data: Record<string, any>): void {
         this.data = data;
         this.is_loaded = true;
         this.is_loading = false;
     }
 
-    change_data(field_name: string, field_value: any, default_value: any, display_after: boolean) {
+    change_data(field_name: string, field_value: any, default_value: any, display_after: boolean): void {
         var data = this.data;
         var data_changes = this.data_changes;
+        var value_from_data: undefined | any;
 
-        var value_from_data = data[field_name];
+        if (data === null) {
+            value_from_data = undefined;
+        } else {
+            value_from_data = data[field_name];
+        }
 
         var should_add: boolean;
 
@@ -176,20 +186,20 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         }
 
         if (display_after) {
-            this.display();
+            this.display(null);
         }
     }
 
-    revert_changes() {
+    revert_changes(): void {
         this.data_changes = null;
-        this.display();
+        this.display(null);
     }
 
-    copy_changes() {
+    copy_changes(): Record<string, any> {
         return {...this.data_changes}
     }
 
-    apply_changes(changes: any, default_value_map: null | Record<string, any>, default_default_value: any) {
+    apply_changes(changes: any, default_value_map: null | Record<string, any>, default_default_value: any): void {
         var data = this.data;
         var old_changes = this.copy_changes();
 
@@ -198,8 +208,14 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
         for ([field_name, field_value] of Object.entries(changes)) {
             default_value = get_from_nullable_dict(default_value_map, field_name, default_default_value);
             if (field_value === default_value) {
-                delete data[field_name];
+                if (data !== null) {
+                    delete data[field_name];
+                }
             } else {
+                if (data === null) {
+                    data = {};
+                    this.data = data;
+                }
                 data[field_name] = field_value;
             }
         }
@@ -215,12 +231,12 @@ export class PageLoaderAPI extends SubscriptionAPIBase {
             }
         }
 
-        this.display();
+        this.display(null);
     }
 }
 
 
-export function get_page_loader_api(endpoint: string, data: undefined | null | Record<string, any>) {
+export function get_page_loader_api(endpoint: string, data?: undefined | null | Record<string, any>): PageLoaderAPI {
     if (data === undefined) {
         data = null;
     }
@@ -239,6 +255,6 @@ export function get_page_loader_api(endpoint: string, data: undefined | null | R
 }
 
 
-export function remove_page_loader_api(endpoint: string) {
-    delete LOADER_APIS[endpoint]
+export function remove_page_loader_api(endpoint: string): void {
+    delete LOADER_APIS[endpoint];
 }

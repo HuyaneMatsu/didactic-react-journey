@@ -1,11 +1,14 @@
-export var TEST_ID_CONTENT = 'content';
+import {ReactElement} from 'react';
+import React from 'react';
+
+export var TEST_ID_CONTENT: string = 'content';
 
 interface ContentProps {
-    content: object | string;
+    content: ReactElement | string;
 };
 
 
-export function Content({content}: ContentProps) {
+export function Content({content}: ContentProps): ReactElement {
     return (
         <div className='content' data-testid={ TEST_ID_CONTENT }>
             { content }

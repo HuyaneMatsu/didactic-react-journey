@@ -1,7 +1,8 @@
+import React from 'react';
 import {useEffect as use_effect, useState as state_hook} from 'react';
 import {Link, Navigate} from 'react-router-dom';
 
-import {get_from_dict, get_handler, create_subscription, to_string, set_title, Subscription} from './../../../utils';
+import {get_from_dict, get_handler, create_subscription, to_string, set_title} from './../../../utils';
 
 import {SUBMIT_SELL_DAILY_CUSTOM_ID, SELL_DAILY_EXCEPTION_MESSAGE_HOLDER} from './constants';
 import {create_submit_event_handler, create_change_handler_callback} from './callbacks';
@@ -35,7 +36,7 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
         input_value = to_string(streak);
     }
 
-    var submit_button_parameters = {};
+    var submit_button_parameters: Record<string, any> = {};
     if (handler.is_set()) {
         submit_button_parameters['className'] = 'disabled';
     }

@@ -1,12 +1,12 @@
-import {createElement as create_element, useEffect as use_effect} from 'react';
-
+import {createElement as create_element, useEffect as use_effect, ReactElement} from 'react';
+import React from 'react';
 import {PageLoaderAPI, create_subscription, get_handler, create_enter_press_callback} from './../../utils';
 
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
 import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER, NOTIFICATION_SAVE_CUSTOM_ID} from './constants';
 
 
-export var TEST_ID_SAVE_NOTIFICATIONS_FIELD = 'notifications_page.save_field';
+export var TEST_ID_SAVE_NOTIFICATIONS_FIELD: string = 'notifications_page.save_field';
 
 
 interface SaveNotificationFieldProps {
@@ -14,19 +14,19 @@ interface SaveNotificationFieldProps {
 }
 
 
-export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldProps) {
+export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldProps): ReactElement {
     var subscription = create_subscription();
     var handler = get_handler(NOTIFICATION_SAVE_CUSTOM_ID);
     var exception_message = NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.get();
     use_effect(subscription.get_subscriber_callback(handler), []);
 
     if (page_loader_api.data_changes === null) {
-        return '';
+        return <></>;
     }
 
 
-    var save_parameters = {'tabIndex' : '0'};
-    var cancel_parameters = {'tabIndex' : '0'};
+    var save_parameters: Record<string, any> = {'tabIndex' : '0'};
+    var cancel_parameters: Record<string, any> = {'tabIndex' : '0'};
 
     if (handler.is_set()) {
         save_parameters['className'] = 'save_execute_disabled';
@@ -44,7 +44,7 @@ export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldP
         cancel_parameters['onKeyPress'] = create_enter_press_callback(cancel_callback);
     }
 
-    var title_element: object | string;
+    var title_element: ReactElement | string;
     if (exception_message === null) {
         title_element = 'Remember to save your changes';
     } else {

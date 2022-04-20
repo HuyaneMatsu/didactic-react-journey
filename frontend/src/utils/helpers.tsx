@@ -1,7 +1,7 @@
 import {BASE_TITLE} from './../constants';
 
 
-export function get_from_nullable_dict(dictionary: null | object, key: any, default_value: any) {
+export function get_from_nullable_dict(dictionary: null | Record<string, any>, key: string, default_value: any): any {
     if (dictionary === null) {
         return default_value;
     }
@@ -9,7 +9,7 @@ export function get_from_nullable_dict(dictionary: null | object, key: any, defa
     return get_from_dict(dictionary, key, default_value);
 }
 
-export function get_from_dict(dictionary: object, key: any, default_value: any) {
+export function get_from_dict(dictionary: Record<string, any>, key: string, default_value: any): any {
     var value = dictionary[key];
     if (value === undefined) {
         return default_value;
@@ -18,29 +18,29 @@ export function get_from_dict(dictionary: object, key: any, default_value: any) 
     return value;
 }
 
-export function choice(list_: array) {
+export function choice(list_: Array<any>): any {
     return list_[Math.floor(Math.random() * list_.length)]
 }
 
 
-export function to_string(value: any) {
+export function to_string(value: any): string {
     return value.toString();
 }
 
-export function to_string_base_16(value: BigInt) {
+export function to_string_base_16(value: bigint): string {
     return value.toString(16);
 }
 
-export function left_fill(string: string, fill_till: number, fill_with: string) {
+export function left_fill(string: string, fill_till: number, fill_with: string): string {
     return string.padStart(fill_till, fill_with);
 }
 
 
-export function format_timestamp(timestamp: string) {
+export function format_timestamp(timestamp: string): string {
     return format_date(new Date(timestamp));
 }
 
-export function format_date(date: Date) {
+export function format_date(date: Date): string {
     return [
         left_fill(to_string(date.getUTCFullYear()), 4, '0'),
         '-',
@@ -57,9 +57,9 @@ export function format_date(date: Date) {
 }
 
 
-export function remove_from_list(list_: array, to_remove: any) {
+export function remove_from_list(list_: Array<any>, to_remove: any): boolean {
     var index = list_.indexOf(to_remove);
-    var removed: bool;
+    var removed: boolean;
 
     if (index > -1) {
         list_.splice(index, 1);
@@ -74,7 +74,7 @@ export function remove_from_list(list_: array, to_remove: any) {
 
 var INT_REGEX = new RegExp('0*([0-9]+)');
 
-export function int_field_validator(value: string, default_value: string, max_value: number) {
+export function int_field_validator(value: string, default_value: string, max_value: number): string {
     if (! value) {
         return value;
     }
@@ -94,8 +94,10 @@ export function int_field_validator(value: string, default_value: string, max_va
 }
 
 
-export function set_title(title: null | string) {
-    if (title !== null) {
+export function set_title(title: null | string): void {
+    if (title === null) {
+        title = BASE_TITLE;
+    } else {
         title = [BASE_TITLE, ' ', title].join('');
     }
 

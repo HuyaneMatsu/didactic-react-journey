@@ -18,5 +18,5 @@ render(
             ),
         ),
     ),
-    null,
+    document.getElementById('root'),
 );

@@ -1,7 +1,6 @@
-import {Fragment} from 'react';
-import {Navigate, useNavigate as get_navigator} from 'react-router-dom';
-
-import {LOGIN_STATE} from './../../core';
+import {ReactElement} from 'react';
+import {useNavigate as get_navigator} from 'react-router-dom';
+import React from 'react';
 import {create_enter_press_callback, set_title} from './../../utils';
 import {Page} from './../../components';
 
@@ -9,7 +8,7 @@ import {create_cancel_logoff_callback, create_execute_logoff_callback} from './c
 
 
 
-export function LogoffPage() {
+export function LogoffPage(): ReactElement {
     var navigator = get_navigator();
 
     var execute_logoff_callback = create_execute_logoff_callback(navigator);
@@ -26,22 +25,22 @@ export function LogoffPage() {
                 { 'Are you sure to logoff?' }
             </div>
             <div className="message">
-                <a
+                <button
                     className="left"
                     tabIndex={ 0 }
                     onClick={ execute_logoff_callback }
                     onKeyPress={ execute_logoff_key_callback }
                 >
                     { 'Yeah' }
-                </a>
-                <a
+                </button>
+                <button
                     className="right"
                     tabIndex={ 0 }
                     onClick={ cancel_logoff_callback }
                     onKeyPress={ cancel_logoff_key_callback }
                 >
                     { 'Nah' }
-                </a>
+                </button>
             </div>
 
         </div>

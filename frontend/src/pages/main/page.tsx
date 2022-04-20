@@ -1,8 +1,9 @@
-import {LOGIN_STATE} from './../../core';
+import {LOGIN_STATE, User} from './../../core';
 import {choice, set_title} from './../../utils';
 import {Page} from './../../components';
 import {BACKEND_URL} from './../../constants';
-
+import {ReactElement} from 'react';
+import React from 'react';
 
 var WELCOME_MESSAGES = [
     'Isn\'t it a great day?',
@@ -11,18 +12,19 @@ var WELCOME_MESSAGES = [
     'The creature',
 ];
 
-export function MainPage() {
-    var content_element: object | string;
+export function MainPage(): ReactElement {
+    var content_element: ReactElement | string;
 
     if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
         var welcome_text: string;
         if (LOGIN_STATE.un_authorized) {
             welcome_text = 'Something went wrong';
         } else {
-            welcome_text = 'Welcome ' + LOGIN_STATE.user.name;
+            var user = LOGIN_STATE.user as User;
+            welcome_text = 'Welcome ' + user.name;
         }
 
-        var notify_expired_login_element: object | string;
+        var notify_expired_login_element: ReactElement | string;
 
         if (LOGIN_STATE.is_logged_in) {
             notify_expired_login_element = choice(WELCOME_MESSAGES);

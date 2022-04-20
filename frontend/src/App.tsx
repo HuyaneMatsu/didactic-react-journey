@@ -1,4 +1,6 @@
-import {createElement as create_element, useEffect as use_effect} from 'react';
+import React, {
+    createElement as create_element, useEffect as use_effect, ReactElement, JSXElementConstructor
+} from 'react';
 import {Route, Routes, Navigate} from 'react-router-dom';
 
 import {LOGIN_STATE} from './core';
@@ -7,12 +9,12 @@ import {create_subscription} from './utils';
 import {LoadingPage} from './components';
 
 
-export function App(): ReactElement<{}, null> {
+export function App(): ReactElement {
     var subscription = create_subscription();
-    use_effect(subscription.get_subscriber_callback(LOGIN_STATE), [])
+    use_effect(subscription.get_subscriber_callback(LOGIN_STATE), []);
 
-    var element: object | string;
-    if (LOGIN_STATE.logging_in) {
+    var element: ReactElement | string;
+    if (LOGIN_STATE.is_logging_in) {
         element = <LoadingPage title={ 'Logging in' } />;
     } else {
         element = (
@@ -31,8 +33,8 @@ export function App(): ReactElement<{}, null> {
 }
 
 
-function redirect_if_not_logged_in(component_type: object) {
-    var parameters: null | Record<str, any>;
+function redirect_if_not_logged_in(component_type: JSXElementConstructor<any>): ReactElement {
+    var parameters: null | Record<string, any>;
     if (LOGIN_STATE.is_logged_in) {
         parameters = null;
     } else {

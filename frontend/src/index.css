@@ -192,7 +192,7 @@ b {
     float: right;
 }
 
-.header .left a {
+.header .left a, .header .left button {
     margin-right: var(--size-button-spacing);
     background-color: var(--color-rose);
 }
@@ -200,12 +200,12 @@ b {
     margin-right: 0rem;
 }
 
-.header .right a {
+.header .right a, .header .right button {
     background-color: var(--color-green);
     cursor: pointer;
 }
 
-.header .right a img {
+.header .right a img, .header .right button img {
     height: var(--size-button-icon);
     width: var(--size-button-icon);
     border-radius: 50%;
@@ -215,7 +215,7 @@ b {
     position: absolute;
 }
 
-.header a, .save .right a, .content .welcome a {
+.header a, .save .right a, .content .welcome a, .header button, .save .right button, .content .welcome button {
     padding-left: var(--size-button-border);
     padding-right: var(--size-button-border);
     padding-top: var(--size-button-border);
@@ -232,7 +232,7 @@ b {
     color: var(--font-body-color);
 }
 
-.header a p {
+.header a p, .header button p {
     margin-left: calc(var(--size-button-icon-spacing) + var(--size-button-icon));
     display: initial;
 }
@@ -331,7 +331,7 @@ b {
     margin-top: var(--size-stats-spacing);
 }
 
-.content .stats a {
+.content .stats a, .content .stats button {
     margin-top: var(--size-hey-mister-spacing);
     display: block;
     text-decoration: initial;
@@ -477,11 +477,11 @@ b {
     float: right;
 }
 
-.content .notifications .save .right a {
+.content .notifications .save .right a, .content .notifications .save .right button {
     margin-right: var(--size-button-spacing);
 }
 
-.content .notifications .save .right a:last-child {
+.content .notifications .save .right a:last-child, .content .notifications .save .right button:last-child {
     margin-right: 0px;
 }
 
@@ -566,7 +566,7 @@ b {
     width: max-content;
 }
 
-.content .welcome .message a {
+.content .welcome .message a, .content .welcome .message button {
     background-color: var(--color-red);
 }
 
@@ -574,7 +574,7 @@ b {
     margin-left: var(--size-welcome-logoff-spacing);
 }
 
-.content .welcome .message a.right {
+.content .welcome .message a.right, .content .welcome .message button.right {
     background-color: var(--color-blue);
 }
 
