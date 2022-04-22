@@ -1,6 +1,6 @@
 import {to_string, left_fill, to_string_base_16} from './../../utils';
 import {UserData} from './../../structures';
-import {ICON_TYPE_NONE, ICON_TYPE_STATIC, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
+import {ICON_TYPE, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
 
 
 export class User {
@@ -8,7 +8,7 @@ export class User {
     created_at: Date;
     name!: string;
     avatar_hash!: bigint;
-    avatar_type!: number;
+    avatar_type!: ICON_TYPE;
     discriminator!: number;
 
     constructor(data: UserData) {
@@ -37,7 +37,7 @@ export class User {
         var end: string;
         var prefix: string;
 
-        if (icon_type === ICON_TYPE_NONE) {
+        if (icon_type === ICON_TYPE.NONE) {
             return this.get_default_avatar_url();
         }
 
@@ -48,7 +48,7 @@ export class User {
         }
 
         if (ext === null) {
-            if (icon_type === ICON_TYPE_STATIC) {
+            if (icon_type === ICON_TYPE.STATIC) {
                 prefix = '';
                 ext = 'png';
             } else {
@@ -56,7 +56,7 @@ export class User {
                 ext = 'gif';
             }
         } else {
-            if (icon_type === ICON_TYPE_STATIC) {
+            if (icon_type === ICON_TYPE.STATIC) {
                 prefix = '';
             } else {
                 prefix = 'a_';
