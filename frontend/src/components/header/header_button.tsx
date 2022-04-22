@@ -1,23 +1,16 @@
 import {Link} from 'react-router-dom';
-import React, {createElement as create_element, ReactElement, JSXElementConstructor} from 'react';
-import PropTypes from 'prop-types';
+import React, {createElement as create_element, ReactElement} from 'react';
 import {LOGIN_STATE} from './../../core';
-
+import {HeaderButtonProps, ElementType} from './../../structures';
 
 export var TEST_ID_HEADER_NAVIGATOR_BUTTON: string = 'navigator_button';
 
-interface HeaderButtonProps {
-    system_name : string;
-    to: string;
-    display_name: string;
-    clicked: null | string;
-}
 
 export function HeaderButton({system_name, to, display_name, clicked}: HeaderButtonProps): ReactElement {
     var element_attributes: Record<string, any> = {
         'data-testid': TEST_ID_HEADER_NAVIGATOR_BUTTON,
     };
-    var element_type: JSXElementConstructor<any> | string;
+    var element_type: ElementType;
 
     if (LOGIN_STATE.is_logged_in) {
         if (system_name === clicked) {
@@ -41,10 +34,3 @@ export function HeaderButton({system_name, to, display_name, clicked}: HeaderBut
         display_name,
     );
 }
-
-HeaderButton.propTypes = {
-    'system_name': PropTypes.string.isRequired,
-    'to': PropTypes.string.isRequired,
-    'display_name': PropTypes.string.isRequired,
-    'clicked': PropTypes.oneOfType([PropTypes.string.isRequired]),
-};

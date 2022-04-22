@@ -1,6 +1,7 @@
 import {useState as state_hook} from 'react';
 import {useNavigate as get_navigator} from 'react-router-dom';
 import {SubscriptionAPIBase} from './subscription_base';
+import {Navigator, NumberSetter, NumberHook} from './../structures';
 
 
 function placeholder_function(){}
@@ -8,13 +9,13 @@ function placeholder_function(){}
 
 export class Subscription {
     change_counter : number;
-    set_change_counter : (value: number) => void;
-    navigator: (value: string) => void;
+    set_change_counter : NumberSetter;
+    navigator: Navigator;
     
     constructor(
         change_counter: number,
-        set_change_counter: (value: number) => void,
-        navigator: (value: string) => void,
+        set_change_counter: NumberSetter,
+        navigator: Navigator,
     ) {
         this.change_counter = change_counter;
         this.set_change_counter = set_change_counter;
@@ -54,12 +55,8 @@ export class Subscription {
 
 
 export function create_subscription(): Subscription {
-    var change_counter: number;
-    var set_change_counter: (value: number) => void;
-    var navigator: (value: string) => void;
-
-    [change_counter, set_change_counter] = state_hook(0);
-    navigator = get_navigator();
+    var navigator: Navigator = get_navigator();
+    var [change_counter, set_change_counter]: NumberHook = state_hook(0);
 
     return new Subscription(change_counter, set_change_counter, navigator);
 }

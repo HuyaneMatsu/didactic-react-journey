@@ -1,5 +1,5 @@
 import {useEffect as use_effect, ReactElement} from 'react';
-import {create_subscription, get_page_loader_api, set_title} from './../../utils';
+import {create_subscription, get_page_loader_api, set_title, Subscription, PageLoaderAPI} from './../../utils';
 import {SpinningCircle, Page, ExceptionPageContent} from './../../components';
 import {SaveNotificationsField} from './save_field';
 import {NotificationOption} from './option';
@@ -7,12 +7,12 @@ import React from 'react';
 
 
 export function NotificationsPage(): ReactElement {
-    var subscription = create_subscription();
-    var page_loader_api = get_page_loader_api('/notification_settings');
+    var subscription: Subscription = create_subscription();
+    var page_loader_api: PageLoaderAPI = get_page_loader_api('/notification_settings');
 
     use_effect(subscription.get_subscriber_callback(page_loader_api), []);
 
-    var content_element: ReactElement | string;
+    var content_element: ReactElement;
     if (page_loader_api.errored_at) {
         content_element = (
             <ExceptionPageContent message={ page_loader_api.exception_message } redirect_to={ '/' } />

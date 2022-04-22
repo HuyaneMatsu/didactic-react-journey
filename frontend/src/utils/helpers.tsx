@@ -1,7 +1,9 @@
 import {BASE_TITLE} from './../constants';
 
 
-export function get_from_nullable_dict(dictionary: null | Record<string, any>, key: string, default_value: any): any {
+export function get_from_nullable_dict<DictionaryValueType, DefaultType>(
+    dictionary: null | Record<string, DictionaryValueType>, key: string, default_value: DefaultType
+): DictionaryValueType | DefaultType{
     if (dictionary === null) {
         return default_value;
     }
@@ -9,7 +11,9 @@ export function get_from_nullable_dict(dictionary: null | Record<string, any>, k
     return get_from_dict(dictionary, key, default_value);
 }
 
-export function get_from_dict(dictionary: Record<string, any>, key: string, default_value: any): any {
+export function get_from_dict<DictionaryValueType, DefaultType>(
+    dictionary: Record<string, DictionaryValueType>, key: string, default_value: DefaultType
+): DictionaryValueType | DefaultType {
     var value = dictionary[key];
     if (value === undefined) {
         return default_value;
@@ -18,7 +22,7 @@ export function get_from_dict(dictionary: Record<string, any>, key: string, defa
     return value;
 }
 
-export function choice(list_: Array<any>): any {
+export function choice<ElementType>(list_: Array<ElementType>): ElementType {
     return list_[Math.floor(Math.random() * list_.length)]
 }
 
@@ -57,7 +61,7 @@ export function format_date(date: Date): string {
 }
 
 
-export function remove_from_list(list_: Array<any>, to_remove: any): boolean {
+export function remove_from_list<ElementType>(list_: Array<ElementType>, to_remove: ElementType): boolean {
     var index = list_.indexOf(to_remove);
     var removed: boolean;
 
@@ -72,7 +76,8 @@ export function remove_from_list(list_: Array<any>, to_remove: any): boolean {
 }
 
 
-var INT_REGEX = new RegExp('0*([0-9]+)');
+var INT_REGEX: RegExp = new RegExp('0*([0-9]+)');
+
 
 export function int_field_validator(value: string, default_value: string, max_value: number): string {
     if (! value) {

@@ -1,35 +1,33 @@
-import React from 'react';
-import {useEffect as use_effect, useState as state_hook} from 'react';
+import React, {useEffect as use_effect, useState as state_hook, ReactElement} from 'react';
 import {Link, Navigate} from 'react-router-dom';
-
-import {get_from_dict, get_handler, create_subscription, to_string, set_title} from './../../../utils';
-
-import {SUBMIT_SELL_DAILY_CUSTOM_ID, SELL_DAILY_EXCEPTION_MESSAGE_HOLDER} from './constants';
+import {StatsPageSubProps, StringHook} from './../../../structures';
+import {
+    get_from_dict, get_handler, create_subscription, to_string, set_title, Subscription, RequestLifeCycleHandler
+} from './../../../utils';
+import {
+    SUBMIT_SELL_DAILY_CUSTOM_ID, SELL_DAILY_EXCEPTION_MESSAGE_HOLDER, TEST_ID_STATS_PAGE_SELL_DAILY_INPUT,
+    TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT, ELEMENT_ID_STATS_PAGE_SELL_DAILY_INPUT
+} from './constants';
 import {create_submit_event_handler, create_change_handler_callback} from './callbacks';
 
-
-export var TEST_ID_STATS_PAGE_SELL_DAILY_INPUT = 'stats_page.sell_daily_page.input';
-export var TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT = 'stats_page.sell_daily_page.submit';
-
-var ID_STATS_PAGE_SELL_DAILY_INPUT = 'sell_daily';
 
 interface StatsPageSellDailyProps {
     data: Record<string, any>;
 }
 
-export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
-    var subscription = create_subscription();
-    var handler = get_handler(SUBMIT_SELL_DAILY_CUSTOM_ID);
-    var exception_message = SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.get();
+export function StatsPageSellDaily({data}: StatsPageSellDailyProps): ReactElement {
+    var subscription: Subscription = create_subscription();
+    var handler: RequestLifeCycleHandler = get_handler(SUBMIT_SELL_DAILY_CUSTOM_ID);
+    var exception_message: null | string = SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.get();
     use_effect(subscription.get_subscriber_callback(handler), []);
+    var [input_value, set_input_value]: StringHook = state_hook('');
 
-    var streak = get_from_dict(data, 'streak', 0);
+    var streak: number = get_from_dict(data, 'streak', 0);
 
     if (streak <= 0) {
         return <Navigate to=".." />
     }
 
-    var [input_value, set_input_value] = state_hook('');
 
     /* Can happen after selling streak */
     if (parseInt(input_value) > streak) {
@@ -45,7 +43,7 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
 
     var change_handler = create_change_handler_callback(handler, set_input_value, input_value, streak);
 
-    var notification: object | string;
+    var notification: ReactElement | string;
     if (exception_message === null) {
         notification = '';
     } else {
@@ -61,11 +59,11 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps) {
     return (
         <>
             <form onSubmit={ submit_event_handler }>
-                <label htmlFor={ ID_STATS_PAGE_SELL_DAILY_INPUT }>
+                <label htmlFor={ ELEMENT_ID_STATS_PAGE_SELL_DAILY_INPUT }>
                     { 'How much streak to sell?' }
                 </label>
                 <input
-                    id={ ID_STATS_PAGE_SELL_DAILY_INPUT }
+                    id={ ELEMENT_ID_STATS_PAGE_SELL_DAILY_INPUT }
                     name="How much daily to sell?"
                     required={ true }
                     type="text"

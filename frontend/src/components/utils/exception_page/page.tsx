@@ -1,11 +1,8 @@
 import {Content} from './../../content';
 import {ExceptionPageContent} from './content';
 import React, {ReactElement} from 'react';
+import {ExceptionPageProps} from './../../../structures';
 
-interface ExceptionPageProps {
-    message: null | string;
-    redirect_to: string;
-}
 
 export function ExceptionPage({message, redirect_to}: ExceptionPageProps): ReactElement {
     var content_element: ReactElement = (

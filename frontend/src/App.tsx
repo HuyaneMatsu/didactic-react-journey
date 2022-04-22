@@ -2,18 +2,17 @@ import React, {
     createElement as create_element, useEffect as use_effect, ReactElement, JSXElementConstructor
 } from 'react';
 import {Route, Routes, Navigate} from 'react-router-dom';
-
 import {LOGIN_STATE} from './core';
 import {MainPage, ProfilePage, NotificationsPage, LogoffPage, StatsPage, AuthPage} from './pages';
-import {create_subscription} from './utils';
+import {create_subscription, Subscription} from './utils';
 import {LoadingPage} from './components';
 
 
 export function App(): ReactElement {
-    var subscription = create_subscription();
+    var subscription: Subscription = create_subscription();
     use_effect(subscription.get_subscriber_callback(LOGIN_STATE), []);
 
-    var element: ReactElement | string;
+    var element: ReactElement;
     if (LOGIN_STATE.is_logging_in) {
         element = <LoadingPage title={ 'Logging in' } />;
     } else {

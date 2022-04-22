@@ -1,7 +1,8 @@
-import {createElement as create_element, useEffect as use_effect, ReactElement} from 'react';
-import React from 'react';
-import {PageLoaderAPI, create_subscription, get_handler, create_enter_press_callback} from './../../utils';
-
+import React, {createElement as create_element, useEffect as use_effect, ReactElement} from 'react';
+import {
+    PageLoaderAPI, create_subscription, get_handler, create_enter_press_callback, Subscription, RequestLifeCycleHandler
+} from './../../utils';
+import {SaveNotificationFieldProps, Callback} from './../../structures';
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
 import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER, NOTIFICATION_SAVE_CUSTOM_ID} from './constants';
 
@@ -9,21 +10,15 @@ import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER, NOTIFICATION_SAVE_CUSTOM_ID}
 export var TEST_ID_SAVE_NOTIFICATIONS_FIELD: string = 'notifications_page.save_field';
 
 
-interface SaveNotificationFieldProps {
-    page_loader_api: PageLoaderAPI;
-}
-
-
 export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldProps): ReactElement {
-    var subscription = create_subscription();
-    var handler = get_handler(NOTIFICATION_SAVE_CUSTOM_ID);
-    var exception_message = NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.get();
+    var subscription: Subscription = create_subscription();
+    var handler: RequestLifeCycleHandler = get_handler(NOTIFICATION_SAVE_CUSTOM_ID);
+    var exception_message: string | null = NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.get();
     use_effect(subscription.get_subscriber_callback(handler), []);
 
     if (page_loader_api.data_changes === null) {
         return <></>;
     }
-
 
     var save_parameters: Record<string, any> = {'tabIndex' : '0'};
     var cancel_parameters: Record<string, any> = {'tabIndex' : '0'};
@@ -35,11 +30,11 @@ export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldP
         save_parameters['className'] = 'save_execute_enabled';
         cancel_parameters['className'] = 'save_cancel_enabled';
 
-        var save_callback = create_save_notification_settings_callback(page_loader_api, handler);
+        var save_callback: Callback = create_save_notification_settings_callback(page_loader_api, handler);
         save_parameters['onClick'] = save_callback;
         save_parameters['onKeyPress'] = create_enter_press_callback(save_callback);
 
-        var cancel_callback = create_revert_changes_callback(page_loader_api);
+        var cancel_callback: Callback = create_revert_changes_callback(page_loader_api);
         cancel_parameters['onClick'] = cancel_callback;
         cancel_parameters['onKeyPress'] = create_enter_press_callback(cancel_callback);
     }

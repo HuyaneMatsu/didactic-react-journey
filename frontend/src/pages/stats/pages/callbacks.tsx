@@ -6,22 +6,25 @@ import {API_BASE_URL} from './../../../constants';
 import {LOGIN_STATE} from './../../../core';
 import {SELL_DAILY_EXCEPTION_MESSAGE_HOLDER} from './constants';
 import {ChangeEvent, FormEvent} from 'react';
+import {
+    FormSubmitEvent, FormSubmitEventCallback, InputChangeEventCallback, InputChangeEvent, StringSetter
+} from './../../../structures';
 
 
 export function create_submit_event_handler(
     handler: RequestLifeCycleHandler,
     input_value: string,
     subscription: Subscription
-): (event: FormEvent<HTMLFormElement>) => void {
-    var submit_event_handler: (event: FormEvent<HTMLFormElement>) => void;
+): FormSubmitEventCallback {
+    var submit_event_handler: FormSubmitEventCallback;
     if (handler.is_set() || (input_value === '') || (input_value === '0')) {
         submit_event_handler = (
-            (event: FormEvent<HTMLFormElement>) => submit_sell_daily_streak_placeholder_callback(event)
+            (event: FormSubmitEvent) => submit_sell_daily_streak_placeholder_callback(event)
         )
     } else {
         submit_event_handler = (
             (
-                event: FormEvent<HTMLFormElement>
+                event: FormSubmitEvent
             ) => (
                 submit_sell_daily_streak_callback(event, input_value, handler, subscription)
             )
@@ -32,7 +35,7 @@ export function create_submit_event_handler(
 
 
 function submit_sell_daily_streak_callback(
-    event: FormEvent<HTMLFormElement>,
+    event: FormSubmitEvent,
     input_value: string,
     handler: RequestLifeCycleHandler,
     subscription: Subscription,
@@ -46,7 +49,7 @@ function submit_sell_daily_streak_callback(
     );
 }
 
-function submit_sell_daily_streak_placeholder_callback(event: FormEvent<HTMLFormElement>): void {
+function submit_sell_daily_streak_placeholder_callback(event: FormSubmitEvent): void {
     event.preventDefault();
 }
 
@@ -100,17 +103,17 @@ async function submit_sell_daily_streak(handler: RequestLifeCycleHandler, input_
 
 export function create_change_handler_callback(
     handler: RequestLifeCycleHandler,
-    set_input_value: (value: string) => void,
+    set_input_value: StringSetter,
     input_value: string,
     streak: number,
-): (event: ChangeEvent<HTMLInputElement>) => void {
-    var change_handler: (event: ChangeEvent<HTMLInputElement>) => void;
+): InputChangeEventCallback {
+    var change_handler: InputChangeEventCallback;
     if (handler.is_set()) {
-        change_handler = (event: ChangeEvent<HTMLInputElement>) => re_set_daily_streak(set_input_value, input_value);
+        change_handler = (event: InputChangeEvent) => re_set_daily_streak(set_input_value, input_value);
     } else {
         change_handler = (
             (
-                event: ChangeEvent<HTMLInputElement>
+                event: InputChangeEvent
             ) => (
                 validate_and_re_set_daily_streak(event, set_input_value, input_value, streak)
             )
@@ -120,8 +123,8 @@ export function create_change_handler_callback(
 }
 
 function validate_and_re_set_daily_streak(
-    event: ChangeEvent<HTMLInputElement>,
-    setter: (value: string) => void,
+    event: InputChangeEvent,
+    setter: StringSetter,
     default_value: string,
     max_value: number,
 ): void {
@@ -130,6 +133,6 @@ function validate_and_re_set_daily_streak(
     setter(value);
 }
 
-function re_set_daily_streak(setter: (value: string) => void, default_value: string): void {
+function re_set_daily_streak(setter: StringSetter, default_value: string): void {
     setter(default_value);
 }

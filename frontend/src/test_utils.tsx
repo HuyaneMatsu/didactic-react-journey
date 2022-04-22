@@ -11,8 +11,8 @@ export function render_in_router(component: string): RenderResult {
     return render( <Routed component={ component } /> );
 }
 
-interface RoutedProps {
-    component: string | ReactElement;
+type RoutedProps = {
+    component: string | ReactElement,
 }
 
 function Routed({component}: RoutedProps): ReactElement {
@@ -110,7 +110,7 @@ export function logged_off_test(
 export function logged_in_test(
     description: string,
     function_: () => any,
-    keyword_parameters?: undefined | null | Record<string, any>
+    keyword_parameters?: undefined | null | Record<string, any>,
 ): null | any {
     return describe(
         'logged in',

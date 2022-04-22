@@ -1,12 +1,9 @@
 import {Link} from 'react-router-dom';
 import React, {ReactElement} from 'react';
+import {ExceptionPageProps} from './../../../structures';
 
-interface ExceptionPageContentProps {
-    message : null | string;
-    redirect_to: string;
-}
 
-export function ExceptionPageContent({message, redirect_to}: ExceptionPageContentProps): ReactElement {
+export function ExceptionPageContent({message, redirect_to}: ExceptionPageProps): ReactElement {
     var message_element: ReactElement | string;
     if (message === null) {
         message_element = '';

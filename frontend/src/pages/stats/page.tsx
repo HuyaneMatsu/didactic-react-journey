@@ -1,15 +1,13 @@
-import {useEffect as use_effect, ReactElement} from 'react';
+import React, {useEffect as use_effect, ReactElement} from 'react';
 import {Route, Routes} from 'react-router-dom';
-import React from 'react';
 import {Page, SpinningCircle} from './../../components';
-import {get_page_loader_api, create_subscription} from './../../utils';
-
+import {get_page_loader_api, create_subscription, Subscription, PageLoaderAPI} from './../../utils';
 import {StatsPageSellDaily, StatsPageMain} from './pages';
 
 
 export function StatsPage(): ReactElement {
-    var subscription = create_subscription();
-    var page_loader_api = get_page_loader_api('/stats');
+    var subscription: Subscription = create_subscription();
+    var page_loader_api: PageLoaderAPI = get_page_loader_api('/stats');
 
     use_effect(subscription.get_subscriber_callback(page_loader_api), [])
 

@@ -1,9 +1,7 @@
 import {Link} from 'react-router-dom';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {LOGIN_STATE, User} from './../../core';
 import {BACKEND_URL} from './../../constants';
-import React from 'react';
-
 
 export var TEST_ID_HEADER_LOGIN: string = 'login_button';
 

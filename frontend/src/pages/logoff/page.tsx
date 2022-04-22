@@ -1,25 +1,24 @@
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {useNavigate as get_navigator} from 'react-router-dom';
-import React from 'react';
 import {create_enter_press_callback, set_title} from './../../utils';
 import {Page} from './../../components';
-
+import {Navigator, Callback, ButtonKeyEventCallback} from './../../structures';
 import {create_cancel_logoff_callback, create_execute_logoff_callback} from './callbacks';
 
 
 
 export function LogoffPage(): ReactElement {
-    var navigator = get_navigator();
+    var navigator: Navigator = get_navigator();
 
-    var execute_logoff_callback = create_execute_logoff_callback(navigator);
-    var execute_logoff_key_callback = create_enter_press_callback(execute_logoff_callback);
+    var execute_logoff_callback: Callback = create_execute_logoff_callback(navigator);
+    var execute_logoff_key_callback: ButtonKeyEventCallback = create_enter_press_callback(execute_logoff_callback);
 
-    var cancel_logoff_callback = create_cancel_logoff_callback(navigator);
-    var cancel_logoff_key_callback = create_enter_press_callback(cancel_logoff_callback);
+    var cancel_logoff_callback: Callback = create_cancel_logoff_callback(navigator);
+    var cancel_logoff_key_callback: ButtonKeyEventCallback = create_enter_press_callback(cancel_logoff_callback);
 
     set_title('logoff');
 
-    var content_element = (
+    var content_element: ReactElement = (
         <div className="welcome">
             <div className="user">
                 { 'Are you sure to logoff?' }

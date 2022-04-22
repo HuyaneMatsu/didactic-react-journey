@@ -1,14 +1,10 @@
 import {Link} from 'react-router-dom';
-import React from 'react';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {to_string, get_from_dict, set_title} from './../../../utils';
+import {StatsPageSubProps} from './../../../structures';
 
 
-interface StatsPageMainProps {
-    data: Record<string, any>;
-}
-
-export function StatsPageMain({data}: StatsPageMainProps): ReactElement {
+export function StatsPageMain({data}: StatsPageSubProps): ReactElement {
     var streak: number = get_from_dict(data, 'streak', 0);
 
     var sell_streak_element: string | ReactElement;

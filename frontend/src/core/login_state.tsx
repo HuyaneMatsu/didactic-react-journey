@@ -1,16 +1,8 @@
 import {SubscriptionAPIBase} from './../utils/subscription_base';
 import {API_BASE_URL} from './../constants';
+import {UserData, TestSetSpecificKeywordParameters} from './../structures';
+import {User} from './entities';
 
-import {User, UserData} from './entities';
-
-interface TestSetSpecificKeywordParameters {
-    logged_in?: boolean;
-    user?: null | User;
-    token?: null | string;
-    was_logged_in?: boolean;
-    is_logged_in?: boolean;
-    un_authorized?: boolean;
-}
 
 export class LoginState extends SubscriptionAPIBase {
     expires_at!: null | Date;

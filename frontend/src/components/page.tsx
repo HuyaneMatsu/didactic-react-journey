@@ -1,13 +1,7 @@
 import {Content} from './content';
 import {Header} from './header';
-import {ReactElement} from 'react';
-import React from 'react';
-
-
-interface PageProps {
-    clicked: null | string;
-    content: ReactElement | string;
-};
+import React, {ReactElement} from 'react';
+import {PageProps} from './../structures';
 
 
 export function Page({clicked, content}: PageProps): ReactElement {

@@ -1,20 +1,21 @@
 import {LOGIN_STATE} from './../../core';
 import {API_BASE_URL} from './../../constants';
 import {build_exception_message_from_response, RequestLifeCycleHandler} from './../../utils';
-
+import {Callback} from './../../structures';
 import {AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER} from './constants';
+
 
 export function create_authorization_callback(
     handler: RequestLifeCycleHandler,
     code: null | string,
     exception_message: null | string
-) {
+): Callback {
     return () => invoke_authorization(handler, code, exception_message);
 }
 
 
-async function authorize(handler: RequestLifeCycleHandler, code: null | string) {
-    var display_route = null;
+async function authorize(handler: RequestLifeCycleHandler, code: null | string): Promise<void> {
+    var display_route: null | string = null;
     AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER.clear();
 
     try {

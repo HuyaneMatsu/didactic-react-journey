@@ -1,14 +1,9 @@
 import {HeaderButton} from './header_button';
 import {LoginButton} from './login_button';
-import {ReactElement} from 'react';
-import React from 'react';
+import React, {ReactElement} from 'react';
+import {HeaderProps} from './../../structures';
 
-export var TEST_ID_HEADER = 'navigator';
-
-interface HeaderProps {
-    clicked: null | string;
-};
-
+export var TEST_ID_HEADER: string = 'navigator';
 
 export function Header({clicked}: HeaderProps): ReactElement {
     return (

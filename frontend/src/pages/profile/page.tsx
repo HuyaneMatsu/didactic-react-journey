@@ -1,11 +1,11 @@
 import {LOGIN_STATE, User} from './../../core';
 import {to_string, format_date, set_title} from './../../utils';
 import {Page} from './../../components';
-import {ReactElement} from 'react';
-import React from 'react';
+import React, {ReactElement} from 'react';
+
 
 export function ProfilePage(): ReactElement {
-    var user = LOGIN_STATE.user as User;
+    var user: User = LOGIN_STATE.user as User;
 
     var content_element: ReactElement = (
         <div className='profile'>

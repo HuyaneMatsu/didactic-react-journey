@@ -1,16 +1,10 @@
 import {PageLoaderAPI} from './../../utils';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {create_change_notification_option_callback} from './callbacks';
-import React from 'react';
+import {NotificationOptionProps} from './../../structures';
 
 
 export var TEST_ID_NOTIFICATION_OPTION: string = 'notification_page.option';
-
-interface NotificationOptionProps {
-    page_loader_api: PageLoaderAPI;
-    system_name: string;
-    display_name: string;
-}
 
 export function NotificationOption(
     {page_loader_api, system_name, display_name}: NotificationOptionProps
@@ -28,7 +22,7 @@ export function NotificationOption(
 
     var value: boolean;
 
-    var data_changes = page_loader_api.data_changes;
+    var data_changes: null | Record<string, any> = page_loader_api.data_changes;
     if (data_changes === null) {
         value = old_value;
     } else {

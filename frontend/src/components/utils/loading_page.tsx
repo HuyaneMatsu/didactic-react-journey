@@ -1,16 +1,10 @@
 import {Content} from './../content';
-import {ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {SpinningCircle} from './spinning_circle';
-import React from 'react';
+import {LoadingPageProps} from './../../structures';
 
 
 export var TEST_ID_LOADING_PAGE_HEADER: string = 'loading_page';
-
-
-interface LoadingPageProps {
-    title: null | string;
-};
-
 
 
 export function LoadingPage({title}: LoadingPageProps): ReactElement {

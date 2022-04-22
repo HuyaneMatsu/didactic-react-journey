@@ -1,11 +1,8 @@
-import {ReactElement} from 'react';
-import React from 'react';
+import React, {ReactElement} from 'react';
+import {ContentProps} from './../structures';
+
 
 export var TEST_ID_CONTENT: string = 'content';
-
-interface ContentProps {
-    content: ReactElement | string;
-};
 
 
 export function Content({content}: ContentProps): ReactElement {

@@ -2,10 +2,10 @@ import {LOGIN_STATE, User} from './../../core';
 import {choice, set_title} from './../../utils';
 import {Page} from './../../components';
 import {BACKEND_URL} from './../../constants';
-import {ReactElement} from 'react';
-import React from 'react';
+import React, {ReactElement} from 'react';
+import {} from './../../structures';
 
-var WELCOME_MESSAGES = [
+var WELCOME_MESSAGES: Array<string> = [
     'Isn\'t it a great day?',
     'What a great Day!',
     'Good to see you again darling.',
@@ -13,7 +13,7 @@ var WELCOME_MESSAGES = [
 ];
 
 export function MainPage(): ReactElement {
-    var content_element: ReactElement | string;
+    var content_element: ReactElement;
 
     if (LOGIN_STATE.is_logged_in || LOGIN_STATE.was_logged_in) {
         var welcome_text: string;

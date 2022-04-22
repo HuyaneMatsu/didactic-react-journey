@@ -1,10 +1,8 @@
 import {render_in_router, logged_in_test, escape_regex, sleep} from './../../../../test_utils';
 import {screen, fireEvent as fire_event} from '@testing-library/react';
-import {
-    StatsPageSellDaily, TEST_ID_STATS_PAGE_SELL_DAILY_INPUT, TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT
-} from './../sell_daily';
+import {StatsPageSellDaily} from './../sell_daily';
 import {to_string, format_date, get_page_loader_api} from './../../../../utils';
-
+import {TEST_ID_STATS_PAGE_SELL_DAILY_INPUT, TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT} from './../constants';
 
 logged_in_test(
     'Tests whether question is shown',

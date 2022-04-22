@@ -1,15 +1,7 @@
 import {to_string, left_fill, to_string_base_16} from './../../utils';
-
+import {UserData} from './../../structures';
 import {ICON_TYPE_NONE, ICON_TYPE_STATIC, DISCORD_CDN_ENDPOINT, DEFAULT_AVATAR_COUNT} from './constants';
 
-export interface UserData {
-    id: string;
-    created_at: string;
-    name : string;
-    avatar_hash: string;
-    avatar_type: number;
-    discriminator: number;
-}
 
 export class User {
     id: bigint;
@@ -25,14 +17,14 @@ export class User {
         this._update_attributes(data);
     }
 
-    _update_attributes(data: UserData) {
+    _update_attributes(data: UserData): void {
         this.name = data['name'];
         this.avatar_hash = BigInt(data['avatar_hash']);
         this.avatar_type = data['avatar_type'];
         this.discriminator = data['discriminator'];
     }
 
-    get_full_name() {
+    get_full_name(): string {
         return [
             this.name,
             '#',
@@ -40,21 +32,21 @@ export class User {
         ].join('');
     }
 
-    get_avatar_url_as(ext: null | string, size: null | number) {
+    get_avatar_url_as(ext: null | string, size: null | number): string {
         var icon_type = this.avatar_type;
+        var end: string;
+        var prefix: string;
 
         if (icon_type === ICON_TYPE_NONE) {
             return this.get_default_avatar_url();
         }
 
-        var end: string;
         if (size === null) {
             end = '';
         } else {
             end = '?size=' + to_string(size);
         }
 
-        var prefix: string;
         if (ext === null) {
             if (icon_type === ICON_TYPE_STATIC) {
                 prefix = '';
@@ -84,8 +76,8 @@ export class User {
         ].join('');
     }
 
-    get_default_avatar_url() {
-        var default_avatar_value = this.id % DEFAULT_AVATAR_COUNT;
+    get_default_avatar_url(): string {
+        var default_avatar_value: bigint = this.id % DEFAULT_AVATAR_COUNT;
 
         return [
             DISCORD_CDN_ENDPOINT,

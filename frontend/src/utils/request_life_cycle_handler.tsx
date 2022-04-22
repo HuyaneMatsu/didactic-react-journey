@@ -1,7 +1,9 @@
 import {SubscriptionAPIBase} from './subscription_base';
 import {Subscription} from './subscription_hook';
 
+
 var HANDLERS: Record<string, RequestLifeCycleHandler> = {};
+
 
 export class RequestLifeCycleHandler extends SubscriptionAPIBase {
     custom_id : string;
@@ -54,11 +56,11 @@ export function get_handler(custom_id: string): RequestLifeCycleHandler {
 };
 
 
-export function set_handler(
+export function set_handler<CallbackReturnType>(
     handler: RequestLifeCycleHandler,
-    callback: (handler: RequestLifeCycleHandler) => void,
+    callback: (handler: RequestLifeCycleHandler) => CallbackReturnType,
     subscription: Subscription,
-): any {
+): CallbackReturnType {
     handler.set();
     subscription.trigger(null);
     return callback(handler);
