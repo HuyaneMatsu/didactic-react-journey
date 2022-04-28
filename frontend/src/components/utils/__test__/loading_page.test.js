@@ -2,7 +2,7 @@ import {} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
 import {LoadingPage, TEST_ID_LOADING_PAGE_HEADER} from './../loading_page';
 import {TEST_ID_SPINNING_CIRCLE} from './../spinning_circle';
-
+import React from 'react';
 
 test(
     'Tests whether the loading page is displayed',

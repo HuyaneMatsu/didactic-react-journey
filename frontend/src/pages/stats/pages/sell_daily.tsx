@@ -1,6 +1,8 @@
 import React, {useEffect as use_effect, useState as state_hook, ReactElement} from 'react';
 import {Link, Navigate} from 'react-router-dom';
-import {StatsPageSubProps, StringHook} from './../../../structures';
+import {
+    StatsPageSellDailyProps, StringHook, FormSubmitEventCallback, InputChangeEventCallback
+} from './../../../structures';
 import {
     get_from_dict, get_handler, create_subscription, to_string, set_title, Subscription, RequestLifeCycleHandler
 } from './../../../utils';
@@ -8,14 +10,10 @@ import {
     SUBMIT_SELL_DAILY_CUSTOM_ID, SELL_DAILY_EXCEPTION_MESSAGE_HOLDER, TEST_ID_STATS_PAGE_SELL_DAILY_INPUT,
     TEST_ID_STATS_PAGE_SELL_DAILY_SUBMIT, ELEMENT_ID_STATS_PAGE_SELL_DAILY_INPUT
 } from './constants';
-import {create_submit_event_handler, create_change_handler_callback} from './callbacks';
+import {create_submit_event_handler_callback, create_change_handler_callback} from './callbacks';
 
 
-interface StatsPageSellDailyProps {
-    data: Record<string, any>;
-}
-
-export function StatsPageSellDaily({data}: StatsPageSellDailyProps): ReactElement {
+export function StatsPageSellDaily({data, stat_holder}: StatsPageSellDailyProps): ReactElement {
     var subscription: Subscription = create_subscription();
     var handler: RequestLifeCycleHandler = get_handler(SUBMIT_SELL_DAILY_CUSTOM_ID);
     var exception_message: null | string = SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.get();
@@ -39,9 +37,13 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps): ReactElemen
         submit_button_parameters['className'] = 'disabled';
     }
 
-    var submit_event_handler = create_submit_event_handler(handler, input_value, subscription);
+    var submit_event_handler: FormSubmitEventCallback = create_submit_event_handler_callback(
+        handler, input_value, subscription, stat_holder
+    );
 
-    var change_handler = create_change_handler_callback(handler, set_input_value, input_value, streak);
+    var change_handler: InputChangeEventCallback = create_change_handler_callback(
+        handler, set_input_value, input_value, streak
+    );
 
     var notification: ReactElement | string;
     if (exception_message === null) {
@@ -76,7 +78,7 @@ export function StatsPageSellDaily({data}: StatsPageSellDailyProps): ReactElemen
                 </button>
             </form>
             { notification }
-            <Link to="..">
+            <Link className="back" to="..">
                 { 'Back to safety' }
             </Link>
        </>

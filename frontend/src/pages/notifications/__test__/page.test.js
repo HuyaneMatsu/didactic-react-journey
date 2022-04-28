@@ -3,6 +3,8 @@ import {screen} from '@testing-library/react';
 import {NotificationsPage} from './../page';
 import {TEST_ID_SPINNING_CIRCLE, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../../../components';
 import {TEST_ID_SAVE_NOTIFICATIONS_FIELD} from './../save_field';
+import React from 'react';
+import {NotificationHolder} from './../types';
 
 
 logged_in_test(
@@ -14,7 +16,7 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/notification_settings',
+        'handler_custom_id': '/notification_settings',
     },
 )
 
@@ -30,8 +32,8 @@ logged_in_test(
         }
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}),
     },
 )
 
@@ -44,9 +46,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )
 
@@ -59,8 +60,8 @@ logged_in_test(
         expect(element).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}),
     },
 )
 
@@ -75,8 +76,8 @@ logged_in_test(
         expect(header_button).toHaveClass('clicked');
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}),
     },
 )
 
@@ -100,8 +101,8 @@ logged_in_test(
         }
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}),
     },
 )
 
@@ -139,7 +140,7 @@ logged_in_test(
         expect(element).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/notification_settings',
+        'handler_custom_id': '/notification_settings',
     },
 )
 
@@ -157,6 +158,6 @@ logged_in_test(
         }
     },
     {
-        'loader_api_endpoint': '/notification_settings',
+        'handler_custom_id': '/notification_settings',
     },
 )

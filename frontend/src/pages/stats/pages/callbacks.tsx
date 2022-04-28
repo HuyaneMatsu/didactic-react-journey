@@ -1,5 +1,5 @@
 import {
-    int_field_validator, get_page_loader_api, set_handler, build_exception_message_from_response,
+    int_field_validator, get_handler, set_handler, build_exception_message_from_response,
     RequestLifeCycleHandler, Subscription
 } from './../../../utils';
 import {API_BASE_URL} from './../../../constants';
@@ -9,12 +9,14 @@ import {ChangeEvent, FormEvent} from 'react';
 import {
     FormSubmitEvent, FormSubmitEventCallback, InputChangeEventCallback, InputChangeEvent, StringSetter
 } from './../../../structures';
+import {StatHolder} from './../types';
 
 
-export function create_submit_event_handler(
+export function create_submit_event_handler_callback(
     handler: RequestLifeCycleHandler,
     input_value: string,
-    subscription: Subscription
+    subscription: Subscription,
+    stat_holder: null | StatHolder,
 ): FormSubmitEventCallback {
     var submit_event_handler: FormSubmitEventCallback;
     if (handler.is_set() || (input_value === '') || (input_value === '0')) {
@@ -26,7 +28,7 @@ export function create_submit_event_handler(
             (
                 event: FormSubmitEvent
             ) => (
-                submit_sell_daily_streak_callback(event, input_value, handler, subscription)
+                submit_sell_daily_streak_callback(event, input_value, handler, subscription, stat_holder)
             )
         )
     }
@@ -39,12 +41,13 @@ function submit_sell_daily_streak_callback(
     input_value: string,
     handler: RequestLifeCycleHandler,
     subscription: Subscription,
+    stat_holder: null | StatHolder,
 ): void {
     event.preventDefault();
 
     set_handler(
         handler,
-        (handler) => submit_sell_daily_streak(handler, input_value),
+        (handler) => submit_sell_daily_streak(handler, input_value, stat_holder),
         subscription,
     );
 }
@@ -54,10 +57,16 @@ function submit_sell_daily_streak_placeholder_callback(event: FormSubmitEvent): 
 }
 
 
-async function submit_sell_daily_streak(handler: RequestLifeCycleHandler, input_value: string): Promise<void> {
+async function submit_sell_daily_streak(
+    handler: RequestLifeCycleHandler,
+    input_value: string,
+    stat_holder: null | StatHolder,
+): Promise<void> {
     var display_route = null;
 
     try {
+        handler.set();
+
         var token: null | string = LOGIN_STATE.token;
 
         if (token === null) {
@@ -80,8 +89,9 @@ async function submit_sell_daily_streak(handler: RequestLifeCycleHandler, input_
             var status = response.status;
             if (status === 200) {
                 var data = await response.json();
-                var page_loader_api = get_page_loader_api('/stats');
-                page_loader_api.data = data;
+                if (stat_holder !== null) {
+                    stat_holder.set_data(data);
+                }
 
                 display_route = '/stats';
                 SELL_DAILY_EXCEPTION_MESSAGE_HOLDER.clear();

@@ -3,6 +3,7 @@ import {render, screen, fireEvent as fire_event} from '@testing-library/react';
 import {LogoffPage} from './../page';
 import {TEST_ID_HEADER_NAVIGATOR_BUTTON, TEST_ID_HEADER_LOGIN} from './../../../components';
 import {LOGIN_STATE} from './../../../core';
+import React from 'react';
 
 
 var QUESTIONING_RP = new RegExp('.*you sure.*');

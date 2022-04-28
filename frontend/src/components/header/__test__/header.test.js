@@ -3,7 +3,7 @@ import {render, screen} from '@testing-library/react';
 import {Header, TEST_ID_HEADER} from './../header';
 import {TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../header_button';
 import {TEST_ID_HEADER_LOGIN} from './../login_button';
-
+import React from 'react';
 
 test(
     'Test whether the header is shown',

@@ -2,6 +2,8 @@ import {render_in_router, logged_in_test, sleep} from './../../../test_utils';
 import {screen} from '@testing-library/react';
 import {StatsPage} from './../page';
 import {TEST_ID_SPINNING_CIRCLE, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../../../components';
+import React from 'react';
+import {StatHolder} from './../types';
 
 
 logged_in_test(
@@ -13,7 +15,7 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
+        'handler_custom_id': '/stats',
     },
 )
 
@@ -26,8 +28,8 @@ logged_in_test(
         expect(element).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': new StatHolder().set_data({}),
     },
 )
 
@@ -42,8 +44,8 @@ logged_in_test(
         expect(header_button).toHaveClass('clicked');
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': new StatHolder().set_data({}),
     },
 )
 
@@ -67,8 +69,8 @@ logged_in_test(
         }
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': new StatHolder().set_data({}),
     },
 )
 
@@ -86,11 +88,11 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {
+        'handler_custom_id': '/stats',
+        'handler_result': new StatHolder().set_data({
             'total_love': 100,
             'streak': 100,
-        }
+        })
     },
 )
 
@@ -131,6 +133,6 @@ logged_in_test(
         expect(element).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/stats',
+        'handler_custom_id': '/stats',
     },
 )

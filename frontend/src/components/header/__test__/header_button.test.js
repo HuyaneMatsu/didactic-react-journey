@@ -2,6 +2,7 @@ import {render_in_router, logged_in_test, logged_off_test} from './../../../test
 import {render, screen} from '@testing-library/react';
 import {HeaderButton, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../header_button';
 import {LOGIN_STATE} from './../../../core';
+import React from 'react';
 
 
 test(

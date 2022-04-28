@@ -2,6 +2,7 @@ import {render_in_router, logged_in_test, logged_off_test, get_redirect, sleep} 
 import {render, screen} from '@testing-library/react';
 import {AuthPage} from './../page';
 import {LOGIN_STATE} from './../../../core';
+import React from 'react';
 
 
 logged_off_test(

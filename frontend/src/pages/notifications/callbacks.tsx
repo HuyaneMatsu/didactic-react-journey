@@ -1,44 +1,56 @@
 import {LOGIN_STATE} from './../../core';
 import {API_BASE_URL} from './../../constants';
-import {build_exception_message_from_response, PageLoaderAPI, RequestLifeCycleHandler}  from './../../utils';
+import {build_exception_message_from_response, RequestLifeCycleHandler}  from './../../utils';
 import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER} from './constants'
 import {ChangeEvent} from 'react';
-import {InputChangeEvent, InputChangeEventCallback, Callback} from './../../structures';
+import {
+    InputChangeEvent, InputChangeEventCallback, Callback, NotificationData
+} from './../../structures';
+import {NotificationHolder} from './types';
+import {ENDPOINT_NOTIFICATIONS} from './constants';
 
 
 export function create_change_notification_option_callback(
-    page_loader_api: PageLoaderAPI, system_name: string
+    notification_holder: NotificationHolder,
+    handler: RequestLifeCycleHandler,
+    system_name: keyof NotificationData
 ): InputChangeEventCallback {
-    return (event: InputChangeEvent) => change_notification_option(page_loader_api, system_name, event);
+    return (event: InputChangeEvent) => change_notification_option(notification_holder, system_name, event, handler);
 }
 
 function change_notification_option(
-    page_loader_api: PageLoaderAPI, system_name: string, event: InputChangeEvent
+    notification_holder: NotificationHolder,
+    system_name: keyof NotificationData,
+    event: InputChangeEvent,
+    handler: RequestLifeCycleHandler,
 ): void {
-    page_loader_api.change_data(system_name, event.target.checked, true, true)
+    notification_holder.change_data(system_name, event.target.checked, true);
+    handler.display(null);
 }
 
 
 export function create_save_notification_settings_callback(
-    page_loader_api: PageLoaderAPI,
+    notification_holder: NotificationHolder,
     handler: RequestLifeCycleHandler,
 ): Callback {
-    return () => save_notification_settings(page_loader_api, handler);
+    return () => save_notification_settings(notification_holder, handler);
 }
 
 
 async function save_notification_settings(
-    page_loader_api: PageLoaderAPI, handler: RequestLifeCycleHandler
+    notification_holder: NotificationHolder, handler: RequestLifeCycleHandler
 ): Promise<void> {
     try {
+        handler.set();
+
         var token: null | string = LOGIN_STATE.token;
         if (token === null) {
             LOGIN_STATE.un_authorize();
             NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.clear();
         } else {
-            var changes: Record<string, any> = page_loader_api.copy_changes();
+            var changes: null | NotificationData = notification_holder.copy_changes();
             var response: Response = await fetch(
-                API_BASE_URL + page_loader_api.endpoint,
+                API_BASE_URL + ENDPOINT_NOTIFICATIONS,
                 {
                     'method': 'PATCH',
                     'headers': {
@@ -51,7 +63,7 @@ async function save_notification_settings(
 
             var response_status: number = response.status;
             if ((response_status >= 200) && (response_status < 400)) {
-                page_loader_api.apply_changes(changes, null, true);
+                notification_holder.apply_changes(changes, null, true);
                 NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.clear();
             } else {
                 NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.set(build_exception_message_from_response(response));
@@ -63,6 +75,17 @@ async function save_notification_settings(
     }
 }
 
-export function create_revert_changes_callback(page_loader_api: PageLoaderAPI): Callback {
-    return () => page_loader_api.revert_changes();
+function revert_changes(
+    notification_holder: NotificationHolder,
+    handler:RequestLifeCycleHandler,
+): void {
+    notification_holder.revert_changes();
+    handler.display(null);
+}
+
+export function create_revert_changes_callback(
+    notification_holder: NotificationHolder,
+    handler: RequestLifeCycleHandler,
+): Callback {
+    return () => revert_changes(notification_holder, handler)
 }

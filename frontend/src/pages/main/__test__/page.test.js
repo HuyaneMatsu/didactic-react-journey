@@ -1,6 +1,7 @@
 import {render_in_router, logged_in_test, logged_off_test} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
 import {MainPage} from './../page';
+import React from 'react';
 
 var WELCOME_RP = new RegExp('[wW]elcome.*');
 

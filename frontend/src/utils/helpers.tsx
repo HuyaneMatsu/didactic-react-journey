@@ -1,25 +1,35 @@
 import {BASE_TITLE} from './../constants';
 
 
-export function get_from_nullable_dict<DictionaryValueType, DefaultType>(
-    dictionary: null | Record<string, DictionaryValueType>, key: string, default_value: DefaultType
-): DictionaryValueType | DefaultType{
+export function get_from_nullable_dict<DictionaryStructure, DefaultType>(
+    dictionary: null | DictionaryStructure, key: keyof DictionaryStructure, default_value: DefaultType
+): Exclude<DictionaryStructure[keyof DictionaryStructure], undefined> | DefaultType {
     if (dictionary === null) {
         return default_value;
     }
 
-    return get_from_dict(dictionary, key, default_value);
+    return get_from_dict<DictionaryStructure, DefaultType>(dictionary, key, default_value);
 }
 
-export function get_from_dict<DictionaryValueType, DefaultType>(
-    dictionary: Record<string, DictionaryValueType>, key: string, default_value: DefaultType
-): DictionaryValueType | DefaultType {
-    var value = dictionary[key];
+export function get_from_dict<DictionaryStructure, DefaultType>(
+    dictionary: DictionaryStructure, key: keyof DictionaryStructure, default_value: DefaultType
+): Exclude<DictionaryStructure[keyof DictionaryStructure], undefined> | DefaultType {
+    var value: DictionaryStructure[keyof DictionaryStructure] = dictionary[key];
     if (value === undefined) {
         return default_value;
     }
 
-    return value;
+    return value as Exclude<DictionaryStructure[keyof DictionaryStructure], undefined>;
+}
+
+export function* iter_dict_items<DictionaryStructure>(
+    dictionary: DictionaryStructure
+): Iterable<[keyof DictionaryStructure, DictionaryStructure[keyof DictionaryStructure]]> {
+    var item: [string, any];
+
+    for (item of Object.entries(dictionary)) {
+        yield item as  [keyof DictionaryStructure, DictionaryStructure[keyof DictionaryStructure]];
+    }
 }
 
 export function choice<ElementType>(list_: Array<ElementType>): ElementType {

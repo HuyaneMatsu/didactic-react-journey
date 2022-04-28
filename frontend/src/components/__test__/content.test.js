@@ -1,6 +1,7 @@
 import {render_in_router} from './../../test_utils';
 import {render, screen} from '@testing-library/react';
 import {Content, TEST_ID_CONTENT} from './../content';
+import React from 'react';
 
 test(
     'Tests whether the content is displayed',

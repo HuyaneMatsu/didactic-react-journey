@@ -1,6 +1,7 @@
 import {render_in_router} from './../../../../test_utils';
 import {render, screen} from '@testing-library/react';
 import {ExceptionPageContent} from './../content';
+import React from 'react';
 
 
 test(

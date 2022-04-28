@@ -1,4 +1,5 @@
 import {SubscriptionAPIBase} from './../utils/subscription_base';
+import {clear_handlers} from './../utils';
 import {API_BASE_URL} from './../constants';
 import {UserData, TestSetSpecificKeywordParameters} from './../structures';
 import {User} from './entities';
@@ -167,6 +168,7 @@ export class LoginState extends SubscriptionAPIBase {
         LOGIN_STATE.un_authorized = true;
         this.user = null
         this.clear_locale_storage();
+        clear_handlers();
     }
 
     maybe_login(): void {

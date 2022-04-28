@@ -2,6 +2,7 @@ import {render_in_router, logged_in_test, escape_regex} from './../../../../test
 import {screen} from '@testing-library/react';
 import {StatsPageMain} from './../main';
 import {to_string, format_date} from './../../../../utils';
+import React from 'react';
 
 
 logged_in_test(
@@ -13,8 +14,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )
 
@@ -27,8 +28,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )
 
@@ -41,8 +42,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )
 
@@ -55,8 +56,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )
 
@@ -70,8 +71,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )
 
@@ -85,7 +86,7 @@ logged_in_test(
         expect(element).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/stats',
-        'loader_api_data': {},
+        'handler_custom_id': '/stats',
+        'handler_result': {},
     },
 )

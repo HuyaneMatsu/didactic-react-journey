@@ -1,6 +1,6 @@
 import React, {createElement as create_element, useEffect as use_effect, ReactElement} from 'react';
 import {
-    PageLoaderAPI, create_subscription, get_handler, create_enter_press_callback, Subscription, RequestLifeCycleHandler
+    create_subscription, get_handler, create_enter_press_callback, Subscription, RequestLifeCycleHandler
 } from './../../utils';
 import {SaveNotificationFieldProps, Callback} from './../../structures';
 import {create_save_notification_settings_callback, create_revert_changes_callback} from './callbacks';
@@ -10,13 +10,15 @@ import {NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER, NOTIFICATION_SAVE_CUSTOM_ID}
 export var TEST_ID_SAVE_NOTIFICATIONS_FIELD: string = 'notifications_page.save_field';
 
 
-export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldProps): ReactElement {
+export function SaveNotificationsField(
+    {notification_holder, parent_handler}: SaveNotificationFieldProps,
+): ReactElement {
     var subscription: Subscription = create_subscription();
     var handler: RequestLifeCycleHandler = get_handler(NOTIFICATION_SAVE_CUSTOM_ID);
     var exception_message: string | null = NOTIFICATION_SAVE_EXCEPTION_MESSAGE_HOLDER.get();
     use_effect(subscription.get_subscriber_callback(handler), []);
 
-    if (page_loader_api.data_changes === null) {
+    if (notification_holder.data_changes === null) {
         return <></>;
     }
 
@@ -30,11 +32,11 @@ export function SaveNotificationsField({page_loader_api}: SaveNotificationFieldP
         save_parameters['className'] = 'save_execute_enabled';
         cancel_parameters['className'] = 'save_cancel_enabled';
 
-        var save_callback: Callback = create_save_notification_settings_callback(page_loader_api, handler);
+        var save_callback: Callback = create_save_notification_settings_callback(notification_holder, handler);
         save_parameters['onClick'] = save_callback;
         save_parameters['onKeyPress'] = create_enter_press_callback(save_callback);
 
-        var cancel_callback: Callback = create_revert_changes_callback(page_loader_api);
+        var cancel_callback: Callback = create_revert_changes_callback(notification_holder, parent_handler);
         cancel_parameters['onClick'] = cancel_callback;
         cancel_parameters['onKeyPress'] = create_enter_press_callback(cancel_callback);
     }

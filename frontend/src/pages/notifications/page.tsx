@@ -1,42 +1,66 @@
-import {useEffect as use_effect, ReactElement} from 'react';
-import {create_subscription, get_page_loader_api, set_title, Subscription, PageLoaderAPI} from './../../utils';
+import React, {useEffect as use_effect, ReactElement} from 'react';
+import {create_subscription, get_handler, set_title, Subscription, RequestLifeCycleHandler} from './../../utils';
 import {SpinningCircle, Page, ExceptionPageContent} from './../../components';
 import {SaveNotificationsField} from './save_field';
 import {NotificationOption} from './option';
-import React from 'react';
-
+import {NotificationData} from './../../structures';
+import {NotificationHolder} from './types';
+import {should_reload_notification_settings, request_notification_settings} from './loading';
+import {ENDPOINT_NOTIFICATIONS} from './constants';
 
 export function NotificationsPage(): ReactElement {
     var subscription: Subscription = create_subscription();
-    var page_loader_api: PageLoaderAPI = get_page_loader_api('/notification_settings');
+    var handler: RequestLifeCycleHandler = get_handler(ENDPOINT_NOTIFICATIONS);
 
-    use_effect(subscription.get_subscriber_callback(page_loader_api), []);
+    if (should_reload_notification_settings(handler)) {
+        request_notification_settings(handler);
+    }
+    
+    use_effect(subscription.get_subscriber_callback(handler), []);
+
+
+    var data: null | NotificationData;
+    var notification_holder: null | NotificationHolder = handler.get_result() as null | NotificationHolder;
+
+    if (notification_holder === null) {
+        data = null;
+    } else {
+        data = notification_holder.get_data();
+    }
+
 
     var content_element: ReactElement;
-    if (page_loader_api.errored_at) {
+
+    if (notification_holder === null) {
+        content_element = <SpinningCircle />;
+
+    } else if (notification_holder.errored_at) {
         content_element = (
-            <ExceptionPageContent message={ page_loader_api.exception_message } redirect_to={ '/' } />
+            <ExceptionPageContent message={ notification_holder.exception_message } redirect_to={ '/' } />
         );
 
-    } else if (page_loader_api.is_loaded) {
+    } else if (data !== null) {
         content_element = (
             <div className="notifications">
                 <div className="listing">
                     <NotificationOption
-                        page_loader_api={ page_loader_api }
+                        notification_holder={ notification_holder }
+                        handler={ handler }
                         system_name={ 'daily' }
                         display_name={ 'Daily' }
                     />
                     <NotificationOption
-                        page_loader_api={ page_loader_api }
+                        notification_holder={ notification_holder }
+                        handler={ handler }
                         system_name={ 'proposal' }
                         display_name={ 'Proposal' }
                     />
                 </div>
-                <SaveNotificationsField page_loader_api={ page_loader_api } />
+                <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler } />
 
             </div>
         );
+
     } else {
         content_element = <SpinningCircle />;
     }

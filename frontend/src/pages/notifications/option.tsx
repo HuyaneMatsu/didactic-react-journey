@@ -1,15 +1,14 @@
-import {PageLoaderAPI} from './../../utils';
 import React, {ReactElement} from 'react';
 import {create_change_notification_option_callback} from './callbacks';
-import {NotificationOptionProps} from './../../structures';
+import {NotificationOptionProps, NotificationData} from './../../structures';
 
 
 export var TEST_ID_NOTIFICATION_OPTION: string = 'notification_page.option';
 
 export function NotificationOption(
-    {page_loader_api, system_name, display_name}: NotificationOptionProps
+    {notification_holder, handler, system_name, display_name}: NotificationOptionProps,
 ): ReactElement {
-    var data: null | Record<string, any> = page_loader_api.data;
+    var data: null | NotificationData = notification_holder.get_data();
     var old_value: undefined | boolean;
     if (data === null) {
         old_value = undefined;
@@ -22,7 +21,7 @@ export function NotificationOption(
 
     var value: boolean;
 
-    var data_changes: null | Record<string, any> = page_loader_api.data_changes;
+    var data_changes: null | NotificationData = notification_holder.data_changes;
     if (data_changes === null) {
         value = old_value;
     } else {
@@ -48,7 +47,7 @@ export function NotificationOption(
                     name={ display_name }
                     id={ element_id }
                     checked={ value }
-                    onChange={ create_change_notification_option_callback(page_loader_api, system_name) }
+                    onChange={ create_change_notification_option_callback(notification_holder, handler, system_name) }
                     data-testid={ TEST_ID_NOTIFICATION_OPTION }
                 />
                 <span></span>

@@ -1,6 +1,7 @@
 import {} from './../../../test_utils';
 import {render, screen} from '@testing-library/react';
 import {SpinningCircle, TEST_ID_SPINNING_CIRCLE} from './../spinning_circle';
+import React from 'react';
 
 
 test(

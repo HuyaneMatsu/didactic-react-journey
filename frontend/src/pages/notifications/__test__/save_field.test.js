@@ -2,23 +2,26 @@ import {screen, fireEvent as fire_event} from '@testing-library/react';
 import {SubscriptionAPIBase} from './../../../utils';
 import {SaveNotificationsField} from './../save_field';
 import {render_in_router, logged_in_test, sleep} from './../../../test_utils';
-import {get_page_loader_api} from './../../../utils';
-
+import {get_handler} from './../../../utils';
+import React from 'react';
+import {NotificationHolder} from './../types';
 
 logged_in_test(
     'Tests whether save notification field has save button',
     function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings')
+        var notification_holder = handler.get_result()
 
-        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+        render_in_router(
+            <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler }/>
+        );
 
         var element = screen.getByText('save');
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )
 
@@ -26,17 +29,19 @@ logged_in_test(
 logged_in_test(
     'Tests whether save notification field has cancel button',
     function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings')
+        var notification_holder = handler.get_result()
 
-        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+        render_in_router(
+            <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler }/>
+        );
 
         var element = screen.getByText('cancel');
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )
 
@@ -45,19 +50,21 @@ logged_in_test(
 logged_in_test(
     'Tests whether data is correctly unassigned when cancelled',
     function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings')
+        var notification_holder = handler.get_result()
 
-        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+        render_in_router(
+            <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler }/>
+        );
 
         var element = screen.getByText('cancel');
 
         fire_event.click(element, {});
-        expect(page_loader_api.data_changes).toEqual(null);
+        expect(notification_holder.data_changes).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )
 
@@ -97,22 +104,24 @@ global.fetch = fetch_function;
 logged_in_test(
     'Tests whether data is being saved when unassigned when approved',
     async function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings')
+        var notification_holder = handler.get_result()
 
-        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+        render_in_router(
+            <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler }/>
+        );
 
         var element = screen.getByText('save');
         fire_event.click(element, {});
         
         await sleep(0.0);
 
-        expect(page_loader_api.data).toEqual({'daily': false});
-        expect(page_loader_api.data_changes).toEqual(null);
+        expect(notification_holder.data).toEqual({'daily': false});
+        expect(notification_holder.data_changes).toEqual(null);
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )
 
@@ -122,9 +131,12 @@ logged_in_test(
 logged_in_test(
     'Tests whether error message shows up',
     async function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings')
+        var notification_holder = handler.get_result()
 
-        render_in_router(<SaveNotificationsField page_loader_api={ page_loader_api }/>);
+        render_in_router(
+            <SaveNotificationsField notification_holder={ notification_holder } parent_handler={ handler }/>
+        );
 
         var element = screen.getByText('save');
         fire_event.click(element, {});
@@ -135,9 +147,8 @@ logged_in_test(
         expect(element).toBeVisible();
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false, 'server_error': true},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false, 'server_error': true}),
     },
 )
 

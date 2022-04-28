@@ -147,7 +147,7 @@ body {
     margin-right: auto;
 }
 
-a {
+a, button{
     cursor: pointer;
 }
 
@@ -331,7 +331,7 @@ b {
     margin-top: var(--size-stats-spacing);
 }
 
-.content .stats a, .content .stats button {
+.content .stats a.back, .content .stats button.back, .content .stats a.hey_mister, .content .stats button.hey_mister {
     margin-top: var(--size-hey-mister-spacing);
     display: block;
     text-decoration: initial;

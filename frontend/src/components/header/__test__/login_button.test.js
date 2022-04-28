@@ -2,6 +2,7 @@ import {render_in_router, logged_in_test, logged_off_test} from './../../../test
 import {render, screen} from '@testing-library/react';
 import {LoginButton, TEST_ID_HEADER_LOGIN} from './../login_button';
 import {LOGIN_STATE} from './../../../core';
+import React from 'react';
 
 test(
     'Tests whether the component\'s is displayed.',

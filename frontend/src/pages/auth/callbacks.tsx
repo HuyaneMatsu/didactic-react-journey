@@ -19,6 +19,8 @@ async function authorize(handler: RequestLifeCycleHandler, code: null | string):
     AUTHORIZATION_EXCEPTION_MESSAGE_HOLDER.clear();
 
     try {
+        handler.set();
+
         if (code === null) {
             display_route = '/';
         } else {

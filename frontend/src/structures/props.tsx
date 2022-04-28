@@ -1,5 +1,8 @@
 import {ReactElement} from 'react';
-import {PageLoaderAPI}  from './../utils';
+import {NotificationData, StatsData} from './data';
+import {NotificationHolder, StatHolder} from './../pages';
+import {RequestLifeCycleHandler} from './../utils';
+
 
 export type HeaderProps = {
     clicked: null | string,
@@ -28,16 +31,23 @@ export type LoadingPageProps = {
 };
 
 export type NotificationOptionProps = {
-    page_loader_api: PageLoaderAPI,
-    system_name: string,
+    notification_holder: NotificationHolder,
+    handler: RequestLifeCycleHandler,
+    system_name: keyof NotificationData,
     display_name: string,
 }
 
 
 export type SaveNotificationFieldProps = {
-    page_loader_api: PageLoaderAPI,
+    notification_holder: NotificationHolder,
+    parent_handler: RequestLifeCycleHandler;
 }
 
 export type StatsPageSubProps = {
-    data: Record<string, any>,
+    data: StatsData,
+}
+
+export type StatsPageSellDailyProps = {
+    data: StatsData,
+    stat_holder: null | StatHolder;
 }

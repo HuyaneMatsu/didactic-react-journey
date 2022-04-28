@@ -2,17 +2,21 @@ import {render_in_router, logged_in_test} from './../../../test_utils';
 import {screen, fireEvent as fire_event} from '@testing-library/react';
 import {TEST_ID_SPINNING_CIRCLE, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../../../components';
 import {NotificationOption, TEST_ID_NOTIFICATION_OPTION} from './../option';
-import {get_page_loader_api} from './../../../utils';
+import {get_handler} from './../../../utils';
+import React from 'react';
+import {NotificationHolder} from './../types';
 
 
 logged_in_test(
     'Tests whether data is correctly shown when changed.',
     function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings');
+        var notification_holder = handler.get_result();
 
         render_in_router(
             <NotificationOption
-                page_loader_api={ page_loader_api }
+                notification_holder={ notification_holder }
+                handler={ handler }
                 system_name={ 'daily' }
                 display_name={ 'Daily' }
             />
@@ -22,23 +26,25 @@ logged_in_test(
 
         fire_event.click(element, {});
 
-        expect(page_loader_api.data_changes['daily']).toEqual(false);
+        expect(notification_holder.data_changes['daily']).toEqual(false);
 
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}),
     },
 )
 
 logged_in_test(
     'Tests whether data is correctly. unassigned when changed',
     function () {
-        var page_loader_api = get_page_loader_api('/notification_settings')
+        var handler = get_handler('/notification_settings');
+        var notification_holder = handler.get_result();
 
         render_in_router(
             <NotificationOption
-                page_loader_api={ page_loader_api }
+                notification_holder={ notification_holder }
+                handler={ handler }
                 system_name={ 'daily' }
                 display_name={ 'Daily' }
             />
@@ -48,12 +54,11 @@ logged_in_test(
 
         fire_event.click(element, {});
 
-        expect(page_loader_api.data_changes).toEqual(null);
+        expect(notification_holder.data_changes).toEqual(null);
 
     },
     {
-        'loader_api_endpoint': '/notification_settings',
-        'loader_api_data': {},
-        'loader_api_data_changes': {'daily': false},
+        'handler_custom_id': '/notification_settings',
+        'handler_result': new NotificationHolder().set_data({}).set_changes({'daily': false}),
     },
 )

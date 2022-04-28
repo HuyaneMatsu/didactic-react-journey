@@ -4,6 +4,7 @@ import {ProfilePage} from './../page';
 import {to_string, format_date} from './../../../utils';
 import {LOGIN_STATE} from './../../../core';
 import {TEST_ID_SPINNING_CIRCLE, TEST_ID_HEADER_NAVIGATOR_BUTTON} from './../../../components';
+import React from 'react';
 
 
 logged_in_test(

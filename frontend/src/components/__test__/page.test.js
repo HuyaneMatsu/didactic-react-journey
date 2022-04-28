@@ -2,6 +2,7 @@ import {render_in_router, logged_in_test, logged_off_test} from './../../test_ut
 import {render, screen} from '@testing-library/react';
 import {Page} from './../page';
 import {TEST_ID_HEADER, TEST_ID_HEADER_NAVIGATOR_BUTTON, TEST_ID_HEADER_LOGIN} from './../header';
+import React from 'react';
 
 test(
     'Tests whether the content is displayed',
