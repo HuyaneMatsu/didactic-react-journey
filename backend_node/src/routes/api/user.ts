@@ -8,7 +8,7 @@ export var api_user_router: Router = router;
 
 
 router.get(
-    '/@me',
+    '/user/@me',
     function sell_daily(request: Request, response: Response) {
         var user: User | null = get_user(request, response);
         if (user === null) {

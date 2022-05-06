@@ -19,13 +19,10 @@ export var FRONTEND_URL: string = 'http://127.0.0.1:3000';
 export var FRONTEND_AUTHORIZATION_URL: string = FRONTEND_URL + '/auth';
 
 export var AUTHORIZATION_URL: string = [
-    'https://discordapp.com/oauth2/authorize',
-    '?', 'client_id', '=', CLIENT_ID,
-    '&', 'client_id', '=', FRONTEND_AUTHORIZATION_URL,
-    '&', 'response_type', '=', 'code',
-    '&', 'scope', '=', 'identify',
+    'https://discord.com/oauth2/authorize?client_id=',
+    to_string(CLIENT_ID),
+    '&redirect_uri=http%3A%2F%2F127.0.0.1%3A3000%2Fauth&response_type=code&scope=identify'
 ].join('');
-
 
 export var AUTHORIZED_USER_ID_TO_USER: Record<string, User> = {};
 

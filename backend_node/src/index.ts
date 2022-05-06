@@ -16,7 +16,7 @@ import {
 
 
 var APP: Application = express();
-var PORT = 3000;
+var PORT: number = 5000;
 
 APP.use(express.json());
 APP.use(express.urlencoded({'extended': false}));

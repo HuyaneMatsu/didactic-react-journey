@@ -7,8 +7,8 @@ export var root_login_router: Router = router;
 
 
 router.get(
-    '/sell_daily',
-    function user_me(request: Request, response: Response) {
+    '/login',
+    function authenticate(request: Request, response: Response) {
         response.redirect(AUTHORIZATION_URL);
     }
 );
