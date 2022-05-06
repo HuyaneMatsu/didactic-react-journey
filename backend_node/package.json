@@ -1,0 +1,33 @@
+{
+    "type": "module",
+    "name": "backend_node",
+    "version": "1.0.0",
+    "description": "Node version of the python backend",
+    "main": "src/index.ts",
+    "scripts": {
+        "prebuild": "tslint -c tslint.json -p tsconfig.json",
+        "build": "tsc",
+        "prestart": "npm run build",
+        "start": "node --loader ts-node/esm --experimental-specifier-resolution=node src/index.ts "
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "keywords": [
+        "backend"
+    ],
+    "author": "HuyaneMatsu",
+    "license": "",
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "express": "^4.18.1",
+        "ts-node": "^10.7.0"
+    },
+    "devDependencies": {
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.13",
+        "@types/node": "^16.11.33",
+        "tslint": "^6.1.3"
+    }
+}

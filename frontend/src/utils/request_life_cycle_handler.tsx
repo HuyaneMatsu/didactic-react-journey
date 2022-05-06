@@ -77,7 +77,7 @@ export function set_handler<CallbackReturnType>(
 
 
 export function clear_handlers(): void {
-    for (const custom_id in HANDLERS) {
+    for (var custom_id in HANDLERS) {
         delete HANDLERS[custom_id];
     }
 }

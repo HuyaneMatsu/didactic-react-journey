@@ -1,0 +1,21 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "trailing-comma": false,
+        "prefer-const": false,
+        "only-arrow-functions": false,
+        "no-var-keyword": false,
+        "no-console": false,
+        "variable-name": false,
+        "array-type": false,
+        "no-bitwise": false,
+        "no-string-literal": false,
+        "no-trailing-whitespace": false,
+        "comment-format": false
+    },
+    "rulesDirectory": []
+}
